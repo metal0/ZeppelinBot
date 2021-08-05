@@ -6,7 +6,8 @@
   "scripts": {
     "format": "prettier --write \"./{backend,dashboard}/{,!(node_modules)/**/}/*.ts\"",
     "lint": "tslint \"./{backend,dashboard}/{,!(node_modules)/**/}/*.ts\"",
-    "codestyle-check": "prettier --check \"./{backend,dashboard}/{,!(node_modules)/**/}/*.ts\""
+    "codestyle-check": "prettier --check \"./{backend,dashboard}/{,!(node_modules)/**/}/*.ts\"",
+    "modules": "cd backend && npm i --production=false && cd ../dashboard && npm i --production=false"
   },
   "dependencies": {},
   "devDependencies": {
