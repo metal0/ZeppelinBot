@@ -14,8 +14,8 @@ interface GuildAccessMonitorPluginType extends BasePluginType {
 async function checkGuild(pluginData: GlobalPluginData<GuildAccessMonitorPluginType>, guild: Guild) {
   if (!(await pluginData.state.allowedGuilds.isAllowed(guild.id))) {
     console.log(`Non-allowed server ${guild.name} (${guild.id}), leaving`);
-    console.log("[Temporarily not leaving automatically]");
-    // guild.leave();
+    // console.log("[Temporarily not leaving automatically]");
+    guild.leave();
   }
 }
 
