@@ -7,6 +7,7 @@ import { DBDateFormat } from "../../utils";
 const CLEAN_PER_LOOP = 50;
 
 export async function cleanupConfigs() {
+  return;
   const configRepository = getRepository(Config);
 
   let cleaned = 0;
