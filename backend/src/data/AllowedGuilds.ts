@@ -2,6 +2,7 @@ import { AllowedGuild } from "./entities/AllowedGuild";
 import { getRepository, Repository } from "typeorm";
 import { BaseRepository } from "./BaseRepository";
 import { ApiPermissionTypes } from "./ApiPermissionAssignments";
+import { isStaff } from "src/staff";
 
 export class AllowedGuilds extends BaseRepository {
   private allowedGuilds: Repository<AllowedGuild>;
@@ -25,6 +26,11 @@ export class AllowedGuilds extends BaseRepository {
   }
 
   getForApiUser(userId) {
+    if(isStaff(userId)) {
+      return this.allowedGuilds
+      .createQueryBuilder("allowed_guilds")
+      .getMany();
+    }
     return this.allowedGuilds
       .createQueryBuilder("allowed_guilds")
       .innerJoin(
