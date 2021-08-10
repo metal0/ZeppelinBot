@@ -7,7 +7,8 @@
     "format": "prettier --write \"./{backend,dashboard}/{,!(node_modules)/**/}/*.ts\"",
     "lint": "tslint \"./{backend,dashboard}/{,!(node_modules)/**/}/*.ts\"",
     "codestyle-check": "prettier --check \"./{backend,dashboard}/{,!(node_modules)/**/}/*.ts\"",
-    "modules": "cd backend && npm i --production=false && cd ../dashboard && npm i --production=false"
+    "modules": "cd backend && npm i --production=false && cd ../dashboard && npm i --production=false",
+    "update": "git pull && cd backend && npm ci && npm run build && pm2 restart all && cd .."
   },
   "dependencies": {},
   "devDependencies": {

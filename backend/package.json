@@ -7,7 +7,6 @@
     "watch": "cross-env NODE_ENV=development tsc-watch --onSuccess \"node start-dev.js\"",
     "watch-yaml-parse-test": "cross-env NODE_ENV=development tsc-watch --onSuccess \"node dist/backend/src/yamlParseTest.js\"",
     "build": "rimraf dist && tsc",
-    "update": "git pull && cd backend && npm ci && npm run build && pm2 restart all && cd ..",
     "start-bot-dev": "cross-env NODE_ENV=development node -r ./register-tsconfig-paths.js --unhandled-rejections=strict --inspect=0.0.0.0:9229 dist/backend/src/index.js",
     "start-bot-prod": "cross-env NODE_ENV=production node -r ./register-tsconfig-paths.js --unhandled-rejections=strict dist/backend/src/index.js",
     "watch-bot": "cross-env NODE_ENV=development tsc-watch --onSuccess \"npm run start-bot-dev\"",
