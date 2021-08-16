@@ -29,8 +29,10 @@ const defaultOptions = {
 
 export const BotControlPlugin = zeppelinGlobalPlugin<BotControlPluginType>()({
   name: "bot_control",
+  prettyName: "Bot Control",
   configSchema: ConfigSchema,
   defaultOptions,
+  showInDocs: true,
 
   // prettier-ignore
   commands: [

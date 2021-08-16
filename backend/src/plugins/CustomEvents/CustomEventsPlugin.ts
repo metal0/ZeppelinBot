@@ -13,7 +13,7 @@ const defaultOptions = {
 
 export const CustomEventsPlugin = zeppelinGuildPlugin<CustomEventsPluginType>()({
   name: "custom_events",
-  showInDocs: false,
+  showInDocs: true,
 
   configSchema: ConfigSchema,
   defaultOptions,

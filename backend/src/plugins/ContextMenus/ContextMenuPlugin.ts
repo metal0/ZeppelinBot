@@ -37,7 +37,8 @@ const configPreprocessor: ConfigPreprocessorFn<ContextMenuPluginType> = options 
 
 export const ContextMenuPlugin = zeppelinGuildPlugin<ContextMenuPluginType>()({
   name: "context_menu",
-
+  showInDocs: true,
+  prettyName: "Context Menu",
   configSchema: ConfigSchema,
   defaultOptions,
   configPreprocessor,
