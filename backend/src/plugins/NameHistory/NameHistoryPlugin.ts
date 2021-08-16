@@ -24,6 +24,10 @@ const defaultOptions: PluginOptions<NameHistoryPluginType> = {
 export const NameHistoryPlugin = zeppelinGuildPlugin<NameHistoryPluginType>()({
   name: "name_history",
   showInDocs: true,
+  info: {
+    description: "Keeps track of the last time a user changed their nickname.",
+    prettyName: "Name History",
+  },
 
   configSchema: ConfigSchema,
   defaultOptions,

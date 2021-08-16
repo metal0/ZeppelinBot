@@ -9,6 +9,7 @@ import { availableTypes } from "./actions/availableActions";
 import { ContextClickedEvt } from "./events/ContextClickedEvt";
 import { ConfigSchema, ContextMenuPluginType } from "./types";
 import { loadAllCommands } from "./utils/loadAllCommands";
+import { trimPluginDescription } from "src/utils";
 
 const defaultOptions: PluginOptions<ContextMenuPluginType> = {
   config: {
@@ -38,7 +39,9 @@ const configPreprocessor: ConfigPreprocessorFn<ContextMenuPluginType> = options 
 export const ContextMenuPlugin = zeppelinGuildPlugin<ContextMenuPluginType>()({
   name: "context_menu",
   showInDocs: true,
-  prettyName: "Context Menu",
+  info: {
+    prettyName: "Context Menu",
+  },
   configSchema: ConfigSchema,
   defaultOptions,
   configPreprocessor,

@@ -14,6 +14,9 @@ const defaultOptions = {
 export const CustomEventsPlugin = zeppelinGuildPlugin<CustomEventsPluginType>()({
   name: "custom_events",
   showInDocs: true,
+  info: {
+    prettyName: "Custom Events",
+  },
 
   configSchema: ConfigSchema,
   defaultOptions,

@@ -29,7 +29,11 @@ const defaultOptions = {
 
 export const BotControlPlugin = zeppelinGlobalPlugin<BotControlPluginType>()({
   name: "bot_control",
-  prettyName: "Bot Control",
+  info: {
+    description: "Bot Control",
+    longDescription: "Bot Control allows you to control the bot from within the guild.",
+    prettyName: "Bot Control",
+  },
   configSchema: ConfigSchema,
   defaultOptions,
   showInDocs: true,

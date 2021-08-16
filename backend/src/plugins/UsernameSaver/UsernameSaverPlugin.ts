@@ -8,6 +8,9 @@ import { UsernameSaverPluginType } from "./types";
 export const UsernameSaverPlugin = zeppelinGuildPlugin<UsernameSaverPluginType>()({
   name: "username_saver",
   showInDocs: true,
+  info: {
+    prettyName: "Username Saver",
+  },
 
   configSchema: t.type({}),
 
