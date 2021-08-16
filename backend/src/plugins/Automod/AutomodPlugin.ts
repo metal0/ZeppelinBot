@@ -1,38 +1,35 @@
-import { zeppelinGuildPlugin } from "../ZeppelinPluginBlueprint";
-import { AutomodPluginType, ConfigSchema } from "./types";
-import { RunAutomodOnJoinEvt } from "./events/RunAutomodOnJoinEvt";
-import { GuildLogs } from "../../data/GuildLogs";
-import { GuildSavedMessages } from "../../data/GuildSavedMessages";
-import { runAutomodOnMessage } from "./events/runAutomodOnMessage";
-import { Queue } from "../../Queue";
 import { configUtils, CooldownManager } from "knub";
-import { availableTriggers } from "./triggers/availableTriggers";
-import { StrictValidationError } from "../../validatorUtils";
 import { ConfigPreprocessorFn } from "knub/dist/config/configTypes";
-import { availableActions } from "./actions/availableActions";
-import { clearOldRecentActions } from "./functions/clearOldRecentActions";
-import { disableCodeBlocks, MINUTES, SECONDS } from "../../utils";
-import { clearOldRecentSpam } from "./functions/clearOldRecentSpam";
 import { GuildAntiraidLevels } from "../../data/GuildAntiraidLevels";
 import { GuildArchives } from "../../data/GuildArchives";
-import { clearOldRecentNicknameChanges } from "./functions/clearOldNicknameChanges";
+import { GuildLogs } from "../../data/GuildLogs";
+import { GuildSavedMessages } from "../../data/GuildSavedMessages";
+import { Queue } from "../../Queue";
+import { discardRegExpRunner, getRegExpRunner } from "../../regExpRunners";
+import { MINUTES, SECONDS } from "../../utils";
+import { registerEventListenersFromMap } from "../../utils/registerEventListenersFromMap";
+import { unregisterEventListenersFromMap } from "../../utils/unregisterEventListenersFromMap";
+import { StrictValidationError } from "../../validatorUtils";
+import { CountersPlugin } from "../Counters/CountersPlugin";
 import { LogsPlugin } from "../Logs/LogsPlugin";
 import { ModActionsPlugin } from "../ModActions/ModActionsPlugin";
 import { MutesPlugin } from "../Mutes/MutesPlugin";
+import { zeppelinGuildPlugin } from "../ZeppelinPluginBlueprint";
+import { availableActions } from "./actions/availableActions";
 import { AntiraidClearCmd } from "./commands/AntiraidClearCmd";
 import { SetAntiraidCmd } from "./commands/SetAntiraidCmd";
 import { ViewAntiraidCmd } from "./commands/ViewAntiraidCmd";
-import { pluginInfo } from "./info";
-import { RegExpRunner } from "../../RegExpRunner";
-import { LogType } from "../../data/LogType";
-import { logger } from "../../logger";
-import { discardRegExpRunner, getRegExpRunner } from "../../regExpRunners";
-import { RunAutomodOnMemberUpdate } from "./events/RunAutomodOnMemberUpdate";
-import { CountersPlugin } from "../Counters/CountersPlugin";
 import { runAutomodOnCounterTrigger } from "./events/runAutomodOnCounterTrigger";
+import { RunAutomodOnJoinEvt, RunAutomodOnLeaveEvt } from "./events/RunAutomodOnJoinLeaveEvt";
+import { RunAutomodOnMemberUpdate } from "./events/RunAutomodOnMemberUpdate";
+import { runAutomodOnMessage } from "./events/runAutomodOnMessage";
 import { runAutomodOnModAction } from "./events/runAutomodOnModAction";
-import { registerEventListenersFromMap } from "../../utils/registerEventListenersFromMap";
-import { unregisterEventListenersFromMap } from "../../utils/unregisterEventListenersFromMap";
+import { clearOldRecentNicknameChanges } from "./functions/clearOldNicknameChanges";
+import { clearOldRecentActions } from "./functions/clearOldRecentActions";
+import { clearOldRecentSpam } from "./functions/clearOldRecentSpam";
+import { pluginInfo } from "./info";
+import { availableTriggers } from "./triggers/availableTriggers";
+import { AutomodPluginType, ConfigSchema } from "./types";
 
 const defaultOptions = {
   config: {
@@ -74,6 +71,10 @@ const configPreprocessor: ConfigPreprocessorFn<AutomodPluginType> = options => {
       // If the rule doesn't have an explicitly set "enabled" property, set it to true
       if (rule["enabled"] == null) {
         rule["enabled"] = true;
+      }
+
+      if (rule["allow_further_rules"] == null) {
+        rule["allow_further_rules"] = false;
       }
 
       if (rule["affects_bots"] == null) {
@@ -179,6 +180,7 @@ export const AutomodPlugin = zeppelinGuildPlugin<AutomodPluginType>()({
   events: [
     RunAutomodOnJoinEvt,
     RunAutomodOnMemberUpdate,
+    RunAutomodOnLeaveEvt,
     // Messages use message events from SavedMessages, see onLoad below
   ],
 

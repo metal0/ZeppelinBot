@@ -1,8 +1,8 @@
-import { utilityCmd } from "../types";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { sendErrorMessage } from "../../../pluginUtils";
-import { customEmojiRegex } from "../../../utils";
 import { getEmojiInfoEmbed } from "../functions/getEmojiInfoEmbed";
+import { getCustomEmojiId } from "../functions/getCustomEmojiId";
+import { utilityCmd } from "../types";
 
 export const EmojiInfoCmd = utilityCmd({
   trigger: ["emoji", "emojiinfo"],
@@ -11,22 +11,22 @@ export const EmojiInfoCmd = utilityCmd({
   permission: "can_emojiinfo",
 
   signature: {
-    emoji: ct.string({ required: false }),
+    emoji: ct.string({ required: true }),
   },
 
   async run({ message, args, pluginData }) {
-    const emojiIdMatch = args.emoji.match(customEmojiRegex);
-    if (!emojiIdMatch?.[2]) {
+    const emojiId = getCustomEmojiId(args.emoji);
+    if (!emojiId) {
       sendErrorMessage(pluginData, message.channel, "Emoji not found");
       return;
     }
 
-    const embed = await getEmojiInfoEmbed(pluginData, emojiIdMatch[2]);
+    const embed = await getEmojiInfoEmbed(pluginData, emojiId);
     if (!embed) {
       sendErrorMessage(pluginData, message.channel, "Emoji not found");
       return;
     }
 
-    message.channel.createMessage({ embed });
+    message.channel.send({ embeds: [embed] });
   },
 });

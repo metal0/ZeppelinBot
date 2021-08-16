@@ -1,8 +1,8 @@
-import { AllowedGuild } from "./entities/AllowedGuild";
 import { getRepository, Repository } from "typeorm";
-import { BaseRepository } from "./BaseRepository";
 import { ApiPermissionTypes } from "./ApiPermissionAssignments";
 import { isStaff } from "src/staff";
+import { BaseRepository } from "./BaseRepository";
+import { AllowedGuild } from "./entities/AllowedGuild";
 
 export class AllowedGuilds extends BaseRepository {
   private allowedGuilds: Repository<AllowedGuild>;

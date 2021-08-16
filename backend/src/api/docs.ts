@@ -1,7 +1,7 @@
 import express from "express";
 import { guildPlugins } from "../plugins/availablePlugins";
-import { notFound } from "./responses";
 import { indentLines } from "../utils";
+import { notFound } from "./responses";
 
 function formatConfigSchema(schema) {
   if (schema._tag === "InterfaceType" || schema._tag === "PartialType") {
@@ -37,7 +37,7 @@ export function initDocs(app: express.Express) {
   app.get("/docs/plugins", (req: express.Request, res: express.Response) => {
     res.json(
       docsPlugins.map(plugin => {
-        const thinInfo = plugin.info ? { prettyName: plugin.info.prettyName } : {};
+        const thinInfo = plugin.info ? { prettyName: plugin.info.prettyName, legacy: plugin.info.legacy ?? false } : {};
         return {
           name: plugin.name,
           info: thinInfo,

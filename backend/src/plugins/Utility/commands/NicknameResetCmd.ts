@@ -1,7 +1,7 @@
-import { utilityCmd } from "../types";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
-import { errorMessage } from "../../../utils";
 import { canActOn, sendSuccessMessage } from "../../../pluginUtils";
+import { errorMessage } from "../../../utils";
+import { utilityCmd } from "../types";
 
 export const NicknameResetCmd = utilityCmd({
   trigger: ["nickname reset", "nick reset"],
@@ -15,16 +15,19 @@ export const NicknameResetCmd = utilityCmd({
 
   async run({ message: msg, args, pluginData }) {
     if (msg.member.id !== args.member.id && !canActOn(pluginData, msg.member, args.member)) {
-      msg.channel.createMessage(errorMessage("Cannot reset nickname: insufficient permissions"));
+      msg.channel.send(errorMessage("Cannot reset nickname: insufficient permissions"));
+      return;
+    }
+
+    if (!args.member.nickname) {
+      msg.channel.send(errorMessage("User does not have a nickname"));
       return;
     }
 
     try {
-      await args.member.edit({
-        nick: "",
-      });
+      await args.member.setNickname(null);
     } catch {
-      msg.channel.createMessage(errorMessage("Failed to reset nickname"));
+      msg.channel.send(errorMessage("Failed to reset nickname"));
       return;
     }
 

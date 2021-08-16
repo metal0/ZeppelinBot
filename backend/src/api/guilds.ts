@@ -1,13 +1,15 @@
-import express, { Request, Response } from "express";
-import { AllowedGuilds } from "../data/AllowedGuilds";
-import { clientError, ok, serverError, unauthorized } from "./responses";
-import { Configs } from "../data/Configs";
-import { validateGuildConfig } from "../configValidator";
-import yaml, { YAMLException } from "js-yaml";
-import { apiTokenAuthHandlers } from "./auth";
 import { ApiPermissions } from "@shared/apiPermissions";
-import { hasGuildPermission, requireGuildPermission } from "./permissions";
+import express, { Request, Response } from "express";
+import { YAMLException } from "js-yaml";
+import { validateGuildConfig } from "../configValidator";
+import { AllowedGuilds } from "../data/AllowedGuilds";
 import { ApiPermissionAssignments } from "../data/ApiPermissionAssignments";
+import { Configs } from "../data/Configs";
+import { apiTokenAuthHandlers } from "./auth";
+import { hasGuildPermission, requireGuildPermission } from "./permissions";
+import { clientError, ok, serverError, unauthorized } from "./responses";
+import { loadYamlSafely } from "../utils/loadYamlSafely";
+import { ObjectAliasError } from "../utils/validateNoObjectAliases";
 
 const apiPermissionAssignments = new ApiPermissionAssignments();
 
@@ -61,9 +63,13 @@ export function initGuildsAPI(app: express.Express) {
     // Validate config
     let parsedConfig;
     try {
-      parsedConfig = yaml.safeLoad(config);
+      parsedConfig = loadYamlSafely(config);
     } catch (e) {
       if (e instanceof YAMLException) {
+        return res.status(400).json({ errors: [e.message] });
+      }
+
+      if (e instanceof ObjectAliasError) {
         return res.status(400).json({ errors: [e.message] });
       }
 
