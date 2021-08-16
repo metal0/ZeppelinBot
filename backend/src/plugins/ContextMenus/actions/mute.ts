@@ -35,8 +35,8 @@ export const MuteAction = contextMenuAction({
     const rolesToRestore = actionConfig.restore_roles_on_mute;
 
     const caseArgs: Partial<CaseArgs> = {
-      modId: pluginData.client.user!.id,
-      automatic: true,
+      modId: interaction.member?.user.id,
+      automatic: false,
       postInCaseLogOverride: actionConfig.postInCaseLog ?? undefined,
       hide: Boolean(actionConfig.hide_case),
     };
@@ -57,15 +57,14 @@ export const MuteAction = contextMenuAction({
         userId,
         duration,
         reason,
-        { contactMethods, caseArgs, isAutomodAction: true },
+        { contactMethods, caseArgs, isAutomodAction: false },
         rolesToRemove,
         rolesToRestore,
       );
 
       const muteMessage = `Muted **${result.case.user_name}** ${
         duration ? `for ${humanizeDuration(duration)}` : "indefinitely"
-      } (Case #${result.case.case_number}) (user notified via ${result.notifyResult.method ??
-        "dm"})\nPlease update the new case with the \`update\` command`;
+      } (Case #${result.case.case_number}) (user notified via ${result.notifyResult.method ?? "dm"})`;
 
       interaction.followUp({ ephemeral: true, content: muteMessage });
     } catch (e) {
