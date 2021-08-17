@@ -31,10 +31,22 @@ export async function setChannelPermissionOverridesAction(
   }
 
   for (const override of action.overrides) {
-    channel.permissionOverwrites.create(
-      override.id as Snowflake,
-      new Permissions(BigInt(override.allow)).add(BigInt(override.deny)).serialize(),
-    );
+    const allow = new Permissions(BigInt(override.allow)).serialize();
+    const deny = new Permissions(BigInt(override.deny)).serialize();
+    const perms = {};
+    for (const key in allow) {
+      if (allow[key] && allow[key] === true) {
+        perms[key] = true;
+      }
+    }
+    for (const key in deny) {
+      if (deny[key] && deny[key] === true) {
+        perms[key] = false;
+      } else if (!perms[key]) {
+        perms[key] = null;
+      }
+    }
+    channel.permissionOverwrites.create(override.id as Snowflake, perms);
 
     /*
     await channel.permissionOverwrites overwritePermissions(
