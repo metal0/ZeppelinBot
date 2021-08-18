@@ -17,17 +17,17 @@ interface GuildAccessMonitorPluginType extends BasePluginType {
 }
 
 async function checkGuild(pluginData: GlobalPluginData<GuildAccessMonitorPluginType>, guild: Guild) {
-  if (!(await pluginData.state.allowedGuilds.isAllowed(guild.id))) {
+  if (!(await pluginData.state.allowedGuilds.find(guild.id))) {
     if (process.env.PUBLIC) {
+      console.log(`New server added: ${guild.name} (${guild.id})`);
       await pluginData.state.allowedGuilds.add(guild.id);
       await pluginData.state.configs.saveNewRevision(`guild-${guild.id}`, "plugins: {}", guild.ownerId);
       await pluginData.state.apiPermissionAssignments.addUser(guild.id, guild.ownerId, [ApiPermissions.Owner]);
       await pluginData.getKnubInstance().reloadGuild(guild.id);
-      console.log(`New server added: ${guild.name} (${guild.id})`);
+      console.log(`Done setup for: ${guild.name} (${guild.id})`);
       return;
     }
     console.log(`Non-allowed server ${guild.name} (${guild.id}), leaving`);
-    // console.log("[Temporarily not leaving automatically]");
     guild.leave();
   }
 }
