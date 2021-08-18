@@ -259,5 +259,8 @@ connect().then(async () => {
   bot.initialize();
   logger.info("Bot Initialized");
   logger.info("Logging in...");
+  if (process.env.PUBLIC) {
+    logger.info("Starting the bot in public mode");
+  }
   await client.login(process.env.TOKEN);
 });
