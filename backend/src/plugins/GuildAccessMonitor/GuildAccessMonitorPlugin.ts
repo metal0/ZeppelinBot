@@ -1,6 +1,9 @@
+import { ApiPermissions } from "@shared/apiPermissions";
 import { Guild } from "discord.js";
 import * as t from "io-ts";
 import { BasePluginType, GlobalPluginData, typedGlobalEventListener } from "knub";
+import { ApiPermissionAssignments } from "src/data/ApiPermissionAssignments";
+import { Configs } from "src/data/Configs";
 import { AllowedGuilds } from "../../data/AllowedGuilds";
 import { zeppelinGlobalPlugin } from "../ZeppelinPluginBlueprint";
 
@@ -8,11 +11,21 @@ interface GuildAccessMonitorPluginType extends BasePluginType {
   config: {};
   state: {
     allowedGuilds: AllowedGuilds;
+    apiPermissionAssignments: ApiPermissionAssignments;
+    configs: Configs;
   };
 }
 
 async function checkGuild(pluginData: GlobalPluginData<GuildAccessMonitorPluginType>, guild: Guild) {
   if (!(await pluginData.state.allowedGuilds.isAllowed(guild.id))) {
+    if (process.env.PUBLIC) {
+      await pluginData.state.allowedGuilds.add(guild.id);
+      await pluginData.state.configs.saveNewRevision(`guild-${guild.id}`, "plugins: {}", guild.ownerId);
+      await pluginData.state.apiPermissionAssignments.addUser(guild.id, guild.ownerId, [ApiPermissions.Owner]);
+      await pluginData.getKnubInstance().reloadGuild(guild.id);
+      console.log(`New server added: ${guild.name} (${guild.id})`);
+      return;
+    }
     console.log(`Non-allowed server ${guild.name} (${guild.id}), leaving`);
     // console.log("[Temporarily not leaving automatically]");
     guild.leave();
@@ -37,6 +50,8 @@ export const GuildAccessMonitorPlugin = zeppelinGlobalPlugin<GuildAccessMonitorP
 
   beforeLoad(pluginData) {
     pluginData.state.allowedGuilds = new AllowedGuilds();
+    pluginData.state.configs = new Configs();
+    pluginData.state.apiPermissionAssignments = new ApiPermissionAssignments();
   },
 
   afterLoad(pluginData) {

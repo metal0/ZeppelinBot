@@ -13,6 +13,9 @@ export class AllowedGuilds extends BaseRepository {
   }
 
   async isAllowed(guildId) {
+    if (process.env.PUBLIC) {
+      return true;
+    }
     const count = await this.allowedGuilds.count({
       where: {
         id: guildId,
@@ -26,10 +29,8 @@ export class AllowedGuilds extends BaseRepository {
   }
 
   getForApiUser(userId) {
-    if(isStaff(userId)) {
-      return this.allowedGuilds
-      .createQueryBuilder("allowed_guilds")
-      .getMany();
+    if (!process.env.PUBLIC && isStaff(userId)) {
+      return this.allowedGuilds.createQueryBuilder("allowed_guilds").getMany();
     }
     return this.allowedGuilds
       .createQueryBuilder("allowed_guilds")
