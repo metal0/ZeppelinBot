@@ -1,7 +1,10 @@
 import { Snowflake, TextChannel } from "discord.js";
 import { GuildPluginData } from "knub";
 import moment from "moment-timezone";
-import { channelToTemplateSafeChannel, memberToTemplateSafeMember } from "../../../utils/templateSafeObjects";
+import {
+  channelToConfigAccessibleChannel,
+  memberToConfigAccessibleMember,
+} from "../../../utils/configAccessibleObjects";
 import { CaseTypes } from "../../../data/CaseTypes";
 import { SavedMessage } from "../../../data/entities/SavedMessage";
 import { LogType } from "../../../data/LogType";
@@ -92,7 +95,7 @@ export async function logAndDetectMessageSpam(
             );
           } catch (e) {
             if (e instanceof RecoverablePluginError && e.code === ERRORS.NO_MUTE_ROLE_IN_CONFIG) {
-              logs.logBotAlert({
+              logs.log(LogType.BOT_ALERT, {
                 body: `Failed to mute <@!${member.id}> in \`spam\` plugin because a mute role has not been specified in server config`,
               });
             } else {
@@ -178,9 +181,9 @@ export async function logAndDetectMessageSpam(
         }
 
         // Create a log entry
-        logs.logMessageSpamDetected({
-          member: member!,
-          channel: channel!,
+        logs.log(LogType.MESSAGE_SPAM_DETECTED, {
+          member: memberToConfigAccessibleMember(member!),
+          channel: channelToConfigAccessibleChannel(channel!),
           description,
           limit: spamConfig.count,
           interval: spamConfig.interval,

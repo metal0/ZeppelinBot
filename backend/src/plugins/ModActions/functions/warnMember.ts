@@ -1,6 +1,6 @@
 import { GuildMember, Snowflake } from "discord.js";
 import { GuildPluginData } from "knub";
-import { memberToTemplateSafeMember, userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
+import { memberToConfigAccessibleMember, userToConfigAccessibleUser } from "../../../utils/configAccessibleObjects";
 import { CaseTypes } from "../../../data/CaseTypes";
 import { LogType } from "../../../data/LogType";
 import { renderTemplate } from "../../../templateFormatter";
@@ -9,7 +9,6 @@ import { waitForButtonConfirm } from "../../../utils/waitForInteraction";
 import { CasesPlugin } from "../../Cases/CasesPlugin";
 import { ModActionsPluginType, WarnOptions, WarnResult } from "../types";
 import { getDefaultContactMethods } from "./getDefaultContactMethods";
-import { LogsPlugin } from "../../Logs/LogsPlugin";
 
 export async function warnMember(
   pluginData: GuildPluginData<ModActionsPluginType>,
@@ -25,7 +24,7 @@ export async function warnMember(
       guildName: pluginData.guild.name,
       reason,
       moderator: warnOptions.caseArgs?.modId
-        ? userToTemplateSafeUser(await resolveUser(pluginData.client, warnOptions.caseArgs.modId))
+        ? userToConfigAccessibleUser(await resolveUser(pluginData.client, warnOptions.caseArgs.modId))
         : {},
     });
     const contactMethods = warnOptions?.contactMethods
@@ -71,11 +70,11 @@ export async function warnMember(
   });
 
   const mod = await pluginData.guild.members.fetch(modId as Snowflake);
-  pluginData.getPlugin(LogsPlugin).logMemberWarn({
-    mod,
-    member,
+  pluginData.state.serverLogs.log(LogType.MEMBER_WARN, {
+    mod: memberToConfigAccessibleMember(mod),
+    member: memberToConfigAccessibleMember(member),
     caseNumber: createdCase.case_number,
-    reason: reason ?? "",
+    reason,
   });
 
   pluginData.state.events.emit("warn", member.id, reason, warnOptions.isAutomodAction);

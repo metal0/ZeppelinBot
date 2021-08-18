@@ -1,14 +1,13 @@
 import { LogType } from "../../../data/LogType";
-import { memberToTemplateSafeMember } from "../../../utils/templateSafeObjects";
+import { memberToConfigAccessibleMember } from "../../../utils/configAccessibleObjects";
 import { logsEvt } from "../types";
-import { logMemberLeave } from "../logFunctions/logMemberLeave";
 
 export const LogsGuildMemberRemoveEvt = logsEvt({
   event: "guildMemberRemove",
 
   async listener(meta) {
-    logMemberLeave(meta.pluginData, {
-      member: meta.args.member,
+    meta.pluginData.state.guildLogs.log(LogType.MEMBER_LEAVE, {
+      member: memberToConfigAccessibleMember(meta.args.member),
     });
   },
 });

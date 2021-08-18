@@ -2,7 +2,6 @@ import * as t from "io-ts";
 import { LogType } from "../../../data/LogType";
 import { CountersPlugin } from "../../Counters/CountersPlugin";
 import { automodAction } from "../helpers";
-import { LogsPlugin } from "../../Logs/LogsPlugin";
 
 export const SetCounterAction = automodAction({
   configType: t.type({
@@ -15,7 +14,7 @@ export const SetCounterAction = automodAction({
   async apply({ pluginData, contexts, actionConfig, matchResult, ruleName }) {
     const countersPlugin = pluginData.getPlugin(CountersPlugin);
     if (!countersPlugin.counterExists(actionConfig.counter)) {
-      pluginData.getPlugin(LogsPlugin).logBotAlert({
+      pluginData.state.logs.log(LogType.BOT_ALERT, {
         body: `Unknown counter \`${actionConfig.counter}\` in \`add_to_counter\` action of Automod rule \`${ruleName}\``,
       });
       return;

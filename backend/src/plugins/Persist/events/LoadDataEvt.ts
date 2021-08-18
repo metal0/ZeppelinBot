@@ -1,6 +1,6 @@
 import { GuildMemberEditData, Permissions } from "discord.js";
 import intersection from "lodash.intersection";
-import { memberToTemplateSafeMember } from "../../../utils/templateSafeObjects";
+import { memberToConfigAccessibleMember } from "../../../utils/configAccessibleObjects";
 import { LogType } from "../../../data/LogType";
 import { canAssignRole } from "../../../utils/canAssignRole";
 import { getMissingPermissions } from "../../../utils/getMissingPermissions";
@@ -37,7 +37,7 @@ export const LoadDataEvt = persistEvt({
     if (config.persisted_roles) requiredPermissions |= p.MANAGE_ROLES;
     const missingPermissions = getMissingPermissions(me.permissions, requiredPermissions);
     if (missingPermissions) {
-      pluginData.getPlugin(LogsPlugin).logBotAlert({
+      pluginData.getPlugin(LogsPlugin).log(LogType.BOT_ALERT, {
         body: `Missing permissions for persist plugin: ${missingPermissionError(missingPermissions)}`,
       });
       return;
@@ -47,7 +47,7 @@ export const LoadDataEvt = persistEvt({
     if (config.persisted_roles) {
       for (const roleId of config.persisted_roles) {
         if (!canAssignRole(pluginData.guild, me, roleId)) {
-          pluginData.getPlugin(LogsPlugin).logBotAlert({
+          pluginData.getPlugin(LogsPlugin).log(LogType.BOT_ALERT, {
             body: `Missing permissions to assign role \`${roleId}\` in persist plugin`,
           });
           return;
@@ -74,8 +74,8 @@ export const LoadDataEvt = persistEvt({
       await member.edit(toRestore, "Restored upon rejoin");
       await pluginData.state.persistedData.clear(member.id);
 
-      pluginData.getPlugin(LogsPlugin).logMemberRestore({
-        member,
+      pluginData.state.logs.log(LogType.MEMBER_RESTORE, {
+        member: memberToConfigAccessibleMember(member),
         restoredData: restoredData.join(", "),
       });
     }

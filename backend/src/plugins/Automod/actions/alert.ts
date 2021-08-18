@@ -2,24 +2,17 @@ import { Snowflake, TextChannel } from "discord.js";
 import * as t from "io-ts";
 import { erisAllowedMentionsToDjsMentionOptions } from "src/utils/erisAllowedMentionsToDjsMentionOptions";
 import { LogType } from "../../../data/LogType";
-import {
-  createTypedTemplateSafeValueContainer,
-  renderTemplate,
-  TemplateParseError,
-  TemplateSafeValueContainer,
-} from "../../../templateFormatter";
+import { renderTemplate, TemplateParseError } from "../../../templateFormatter";
 import {
   createChunkedMessage,
   messageLink,
   stripObjectToScalars,
   tAllowedMentions,
   tNormalizedNullOptional,
-  isTruthy,
   verboseChannelMention,
 } from "../../../utils";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
 import { automodAction } from "../helpers";
-import { TemplateSafeUser, userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
 
 export const AlertAction = automodAction({
   configType: t.type({
@@ -39,39 +32,33 @@ export const AlertAction = automodAction({
       const theMessageLink =
         contexts[0].message && messageLink(pluginData.guild.id, contexts[0].message.channel_id, contexts[0].message.id);
 
-      const safeUsers = contexts.map(c => (c.user ? userToTemplateSafeUser(c.user) : null)).filter(isTruthy);
+      const safeUsers = contexts.map(c => c.user && stripObjectToScalars(c.user)).filter(Boolean);
       const safeUser = safeUsers[0];
       const actionsTaken = Object.keys(pluginData.config.get().rules[ruleName].actions).join(", ");
 
-      const logMessage = await logs.getLogMessage(
-        LogType.AUTOMOD_ACTION,
-        createTypedTemplateSafeValueContainer({
-          rule: ruleName,
-          user: safeUser,
-          users: safeUsers,
-          actionsTaken,
-          matchSummary: matchResult.summary ?? "",
-        }),
-      );
+      const logMessage = await logs.getLogMessage(LogType.AUTOMOD_ACTION, {
+        rule: ruleName,
+        user: safeUser,
+        users: safeUsers,
+        actionsTaken,
+        matchSummary: matchResult.summary,
+      });
 
       let rendered;
       try {
-        rendered = await renderTemplate(
-          actionConfig.text,
-          new TemplateSafeValueContainer({
-            rule: ruleName,
-            user: safeUser,
-            users: safeUsers,
-            text,
-            actionsTaken,
-            matchSummary: matchResult.summary,
-            messageLink: theMessageLink,
-            logMessage: logMessage?.content,
-          }),
-        );
+        rendered = await renderTemplate(actionConfig.text, {
+          rule: ruleName,
+          user: safeUser,
+          users: safeUsers,
+          text,
+          actionsTaken,
+          matchSummary: matchResult.summary,
+          messageLink: theMessageLink,
+          logMessage,
+        });
       } catch (err) {
         if (err instanceof TemplateParseError) {
-          pluginData.getPlugin(LogsPlugin).logBotAlert({
+          pluginData.getPlugin(LogsPlugin).log(LogType.BOT_ALERT, {
             body: `Error in alert format of automod rule ${ruleName}: ${err.message}`,
           });
           return;
@@ -88,13 +75,13 @@ export const AlertAction = automodAction({
         );
       } catch (err) {
         if (err.code === 50001) {
-          logs.logBotAlert({
+          logs.log(LogType.BOT_ALERT, {
             body: `Missing access to send alert to channel ${verboseChannelMention(
               channel,
             )} in automod rule **${ruleName}**`,
           });
         } else {
-          logs.logBotAlert({
+          logs.log(LogType.BOT_ALERT, {
             body: `Error ${err.code || "UNKNOWN"} when sending alert to channel ${verboseChannelMention(
               channel,
             )} in automod rule **${ruleName}**`,
@@ -102,7 +89,7 @@ export const AlertAction = automodAction({
         }
       }
     } else {
-      logs.logBotAlert({
+      logs.log(LogType.BOT_ALERT, {
         body: `Invalid channel id \`${actionConfig.channel}\` for alert action in automod rule **${ruleName}**`,
       });
     }

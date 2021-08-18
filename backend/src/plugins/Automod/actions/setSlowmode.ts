@@ -4,7 +4,6 @@ import { ChannelTypeStrings } from "src/types";
 import { LogType } from "../../../data/LogType";
 import { convertDelayStringToMS, isDiscordAPIError, tDelayString, tNullable } from "../../../utils";
 import { automodAction } from "../helpers";
-import { LogsPlugin } from "../../Logs/LogsPlugin";
 
 export const SetSlowmodeAction = automodAction({
   configType: t.type({
@@ -54,7 +53,7 @@ export const SetSlowmodeAction = automodAction({
             ? `Duration is greater than maximum native slowmode duration`
             : e.message;
 
-        pluginData.getPlugin(LogsPlugin).logBotAlert({
+        pluginData.state.logs.log(LogType.BOT_ALERT, {
           body: `Unable to set slowmode for channel ${channel.id} to ${slowmodeSeconds} seconds: ${errorMessage}`,
         });
       }

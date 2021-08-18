@@ -1,5 +1,5 @@
 import { Snowflake } from "discord.js";
-import { userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
+import { userToConfigAccessibleUser } from "../../../utils/configAccessibleObjects";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { CaseTypes } from "../../../data/CaseTypes";
 import { LogType } from "../../../data/LogType";
@@ -9,7 +9,6 @@ import { resolveUser } from "../../../utils";
 import { formatReasonWithAttachments } from "../functions/formatReasonWithAttachments";
 import { ignoreEvent } from "../functions/ignoreEvent";
 import { IgnoredEventType, modActionsCmd } from "../types";
-import { LogsPlugin } from "../../Logs/LogsPlugin";
 
 const opts = {
   mod: ct.member({ option: true }),
@@ -74,11 +73,11 @@ export const UnbanCmd = modActionsCmd({
     sendSuccessMessage(pluginData, msg.channel, `Member unbanned (Case #${createdCase.case_number})`);
 
     // Log the action
-    pluginData.getPlugin(LogsPlugin).logMemberUnban({
-      mod: mod.user,
+    pluginData.state.serverLogs.log(LogType.MEMBER_UNBAN, {
+      mod: userToConfigAccessibleUser(mod.user),
       userId: user.id,
       caseNumber: createdCase.case_number,
-      reason: reason ?? "",
+      reason,
     });
 
     pluginData.state.events.emit("unban", user.id);

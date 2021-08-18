@@ -1,6 +1,6 @@
 import { Snowflake, TextChannel } from "discord.js";
 import { waitForReply } from "knub/dist/helpers";
-import { userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
+import { userToConfigAccessibleUser } from "../../../utils/configAccessibleObjects";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { CaseTypes } from "../../../data/CaseTypes";
 import { LogType } from "../../../data/LogType";
@@ -10,7 +10,6 @@ import { formatReasonWithAttachments } from "../functions/formatReasonWithAttach
 import { ignoreEvent } from "../functions/ignoreEvent";
 import { isBanned } from "../functions/isBanned";
 import { IgnoredEventType, modActionsCmd } from "../types";
-import { LogsPlugin } from "../../Logs/LogsPlugin";
 
 export const MassunbanCmd = modActionsCmd({
   trigger: "massunban",
@@ -84,8 +83,8 @@ export const MassunbanCmd = modActionsCmd({
       sendErrorMessage(pluginData, msg.channel, "All unbans failed. Make sure the IDs are valid and banned.");
     } else {
       // Some or all unbans were successful. Create a log entry for the mass unban and notify the user.
-      pluginData.getPlugin(LogsPlugin).logMassUnban({
-        mod: msg.author,
+      pluginData.state.serverLogs.log(LogType.MASSUNBAN, {
+        mod: userToConfigAccessibleUser(msg.author),
         count: successfulUnbanCount,
         reason: unbanReason,
       });

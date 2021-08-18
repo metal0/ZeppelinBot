@@ -1,5 +1,5 @@
 import { GuildAuditLogs, User } from "discord.js";
-import { userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
+import { userToConfigAccessibleUser } from "../../../utils/configAccessibleObjects";
 import { CaseTypes } from "../../../data/CaseTypes";
 import { Case } from "../../../data/entities/Case";
 import { LogType } from "../../../data/LogType";
@@ -9,7 +9,6 @@ import { CasesPlugin } from "../../Cases/CasesPlugin";
 import { clearIgnoredEvents } from "../functions/clearIgnoredEvents";
 import { isEventIgnored } from "../functions/isEventIgnored";
 import { IgnoredEventType, modActionsEvt } from "../types";
-import { LogsPlugin } from "../../Logs/LogsPlugin";
 
 /**
  * Create a BAN case automatically when a user is banned manually.
@@ -66,9 +65,9 @@ export const CreateBanCaseOnManualBanEvt = modActionsEvt({
       }
     }
 
-    pluginData.getPlugin(LogsPlugin).logMemberBan({
-      mod: mod ? userToTemplateSafeUser(mod) : null,
-      user: userToTemplateSafeUser(user),
+    pluginData.state.serverLogs.log(LogType.MEMBER_BAN, {
+      mod: mod ? userToConfigAccessibleUser(mod) : null,
+      user: userToConfigAccessibleUser(user),
       caseNumber: createdCase?.case_number ?? 0,
       reason,
     });

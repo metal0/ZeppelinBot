@@ -1,6 +1,6 @@
 import { MessageOptions, Permissions, Snowflake, TextChannel, User } from "discord.js";
 import * as t from "io-ts";
-import { userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
+import { userToConfigAccessibleUser } from "../../../utils/configAccessibleObjects";
 import { LogType } from "../../../data/LogType";
 import { renderTemplate } from "../../../templateFormatter";
 import {
@@ -16,7 +16,6 @@ import {
 import { hasDiscordPermissions } from "../../../utils/hasDiscordPermissions";
 import { automodAction } from "../helpers";
 import { AutomodContext } from "../types";
-import { LogsPlugin } from "../../Logs/LogsPlugin";
 
 export const ReplyAction = automodAction({
   configType: t.union([
@@ -49,7 +48,7 @@ export const ReplyAction = automodAction({
 
       const renderReplyText = async str =>
         renderTemplate(str, {
-          user: userToTemplateSafeUser(user),
+          user: userToConfigAccessibleUser(user),
         });
       const formatted =
         typeof actionConfig === "string"
@@ -66,7 +65,7 @@ export const ReplyAction = automodAction({
             Permissions.FLAGS.SEND_MESSAGES | Permissions.FLAGS.VIEW_CHANNEL,
           )
         ) {
-          pluginData.getPlugin(LogsPlugin).logBotAlert({
+          pluginData.state.logs.log(LogType.BOT_ALERT, {
             body: `Missing permissions to reply in ${verboseChannelMention(channel)} in Automod rule \`${ruleName}\``,
           });
           continue;
@@ -77,7 +76,7 @@ export const ReplyAction = automodAction({
           typeof formatted !== "string" &&
           !hasDiscordPermissions(channel.permissionsFor(pluginData.client.user!.id), Permissions.FLAGS.EMBED_LINKS)
         ) {
-          pluginData.getPlugin(LogsPlugin).logBotAlert({
+          pluginData.state.logs.log(LogType.BOT_ALERT, {
             body: `Missing permissions to reply **with an embed** in ${verboseChannelMention(
               channel,
             )} in Automod rule \`${ruleName}\``,

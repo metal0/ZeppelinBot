@@ -1,11 +1,10 @@
 import { Snowflake } from "discord.js";
 import { GuildPluginData } from "knub";
-import { memberToTemplateSafeMember } from "../../../utils/templateSafeObjects";
+import { memberToConfigAccessibleMember } from "../../../utils/configAccessibleObjects";
 import { LogType } from "../../../data/LogType";
-import { resolveMember, UnknownUser, verboseUserMention } from "../../../utils";
+import { resolveMember, UnknownUser } from "../../../utils";
 import { memberRolesLock } from "../../../utils/lockNameHelpers";
 import { MutesPluginType } from "../types";
-import { LogsPlugin } from "../../Logs/LogsPlugin";
 
 export async function clearExpiredMutes(pluginData: GuildPluginData<MutesPluginType>) {
   const expiredMutes = await pluginData.state.mutes.getExpiredMutes();
@@ -33,16 +32,19 @@ export async function clearExpiredMutes(pluginData: GuildPluginData<MutesPluginT
 
         lock.unlock();
       } catch {
-        pluginData.getPlugin(LogsPlugin).logBotAlert({
-          body: `Failed to remove mute role from ${verboseUserMention(member.user)}`,
+        pluginData.state.serverLogs.log(LogType.BOT_ALERT, {
+          body: `Failed to remove mute role from {userMention(member)}`,
+          member: memberToConfigAccessibleMember(member),
         });
       }
     }
 
     await pluginData.state.mutes.clear(mute.user_id);
 
-    pluginData.getPlugin(LogsPlugin).logMemberMuteExpired({
-      member: member ? memberToTemplateSafeMember(member) : new UnknownUser({ id: mute.user_id }),
+    pluginData.state.serverLogs.log(LogType.MEMBER_MUTE_EXPIRED, {
+      member: member
+        ? memberToConfigAccessibleMember(member)
+        : { id: mute.user_id, user: new UnknownUser({ id: mute.user_id }) },
     });
 
     pluginData.state.events.emit("unmute", mute.user_id);

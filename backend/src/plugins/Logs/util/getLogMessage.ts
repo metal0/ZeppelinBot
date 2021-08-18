@@ -3,12 +3,7 @@ import { GuildPluginData } from "knub";
 import { SavedMessage } from "../../../data/entities/SavedMessage";
 import { LogType } from "../../../data/LogType";
 import { logger } from "../../../logger";
-import {
-  renderTemplate,
-  TemplateParseError,
-  TemplateSafeValueContainer,
-  TypedTemplateSafeValueContainer,
-} from "../../../templateFormatter";
+import { renderTemplate, TemplateParseError } from "../../../templateFormatter";
 import {
   messageSummary,
   renderRecursively,
@@ -18,18 +13,17 @@ import {
   verboseUserName,
 } from "../../../utils";
 import { TimeAndDatePlugin } from "../../TimeAndDate/TimeAndDatePlugin";
-import { FORMAT_NO_TIMESTAMP, ILogTypeData, LogsPluginType, TLogChannel } from "../types";
+import { FORMAT_NO_TIMESTAMP, LogsPluginType, TLogChannel } from "../types";
 import {
-  getTemplateSafeMemberLevel,
-  TemplateSafeMember,
-  memberToTemplateSafeMember,
-  TemplateSafeUser,
-} from "../../../utils/templateSafeObjects";
+  getConfigAccessibleMemberLevel,
+  IConfigAccessibleMember,
+  memberToConfigAccessibleMember,
+} from "../../../utils/configAccessibleObjects";
 
-export async function getLogMessage<TLogType extends keyof ILogTypeData>(
+export async function getLogMessage(
   pluginData: GuildPluginData<LogsPluginType>,
-  type: TLogType,
-  data: TypedTemplateSafeValueContainer<ILogTypeData[TLogType]>,
+  type: LogType,
+  data: any,
   opts?: Pick<TLogChannel, "format" | "timestamp_format" | "include_embed_timestamp">,
 ): Promise<MessageOptions | null> {
   const config = pluginData.config.get();
@@ -48,12 +42,10 @@ export async function getLogMessage<TLogType extends keyof ILogTypeData>(
   const isoTimestamp = time.toISOString();
   const timestamp = timestampFormat ? time.format(timestampFormat) : "";
 
-  const values = new TemplateSafeValueContainer({
+  const values = {
     ...data,
     timestamp,
-    userMention: async (
-      inputUserOrMember: TemplateSafeUser | TemplateSafeMember | TemplateSafeUser[] | TemplateSafeMember[],
-    ) => {
+    userMention: async inputUserOrMember => {
       if (!inputUserOrMember) return "";
 
       const usersOrMembers = Array.isArray(inputUserOrMember) ? inputUserOrMember : [inputUserOrMember];
@@ -61,20 +53,20 @@ export async function getLogMessage<TLogType extends keyof ILogTypeData>(
       const mentions: string[] = [];
       for (const userOrMember of usersOrMembers) {
         let user;
-        let member: TemplateSafeMember | null = null;
+        let member: IConfigAccessibleMember | null = null;
 
         if (userOrMember.user) {
-          member = userOrMember as TemplateSafeMember;
+          member = userOrMember as IConfigAccessibleMember;
           user = member.user;
         } else {
           user = userOrMember;
           const apiMember = await resolveMember(pluginData.client, pluginData.guild, user.id);
           if (apiMember) {
-            member = memberToTemplateSafeMember(apiMember);
+            member = memberToConfigAccessibleMember(apiMember);
           }
         }
 
-        const level = member ? getTemplateSafeMemberLevel(pluginData, member) : 0;
+        const level = member ? getConfigAccessibleMemberLevel(pluginData, member) : 0;
         const memberConfig =
           (await pluginData.config.getMatchingConfig({
             level,
@@ -100,7 +92,7 @@ export async function getLogMessage<TLogType extends keyof ILogTypeData>(
       if (!msg) return "";
       return messageSummary(msg);
     },
-  });
+  };
 
   if (type === LogType.BOT_ALERT) {
     const valuesWithoutTmplEval = { ...values };

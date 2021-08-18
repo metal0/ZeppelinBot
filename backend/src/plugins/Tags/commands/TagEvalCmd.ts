@@ -1,4 +1,4 @@
-import { memberToTemplateSafeMember, userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
+import { memberToConfigAccessibleMember, userToConfigAccessibleUser } from "../../../utils/configAccessibleObjects";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { sendErrorMessage } from "../../../pluginUtils";
 import { TemplateParseError } from "../../../templateFormatter";
@@ -20,8 +20,8 @@ export const TagEvalCmd = tagsCmd({
         args.body,
         [],
         {
-          member: memberToTemplateSafeMember(msg.member),
-          user: userToTemplateSafeUser(msg.member.user),
+          member: memberToConfigAccessibleMember(msg.member),
+          user: userToConfigAccessibleUser(msg.member.user),
         },
         { member: msg.member },
       );

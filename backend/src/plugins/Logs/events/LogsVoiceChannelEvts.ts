@@ -1,9 +1,9 @@
-import { channelToTemplateSafeChannel, memberToTemplateSafeMember } from "../../../utils/templateSafeObjects";
+import {
+  channelToConfigAccessibleChannel,
+  memberToConfigAccessibleMember,
+} from "../../../utils/configAccessibleObjects";
 import { LogType } from "../../../data/LogType";
 import { logsEvt } from "../types";
-import { logVoiceChannelLeave } from "../logFunctions/logVoiceChannelLeave";
-import { logVoiceChannelJoin } from "../logFunctions/logVoiceChannelJoin";
-import { logVoiceChannelMove } from "../logFunctions/logVoiceChannelMove";
 
 export const LogsVoiceStateUpdateEvt = logsEvt({
   event: "voiceStateUpdate",
@@ -15,21 +15,21 @@ export const LogsVoiceStateUpdateEvt = logsEvt({
 
     if (!newChannel && oldChannel) {
       // Leave evt
-      logVoiceChannelLeave(meta.pluginData, {
-        member,
-        channel: oldChannel,
+      meta.pluginData.state.guildLogs.log(LogType.VOICE_CHANNEL_LEAVE, {
+        member: memberToConfigAccessibleMember(member),
+        channel: channelToConfigAccessibleChannel(oldChannel!),
       });
     } else if (!oldChannel && newChannel) {
       // Join Evt
-      logVoiceChannelJoin(meta.pluginData, {
-        member,
-        channel: newChannel,
+      meta.pluginData.state.guildLogs.log(LogType.VOICE_CHANNEL_JOIN, {
+        member: memberToConfigAccessibleMember(member),
+        channel: channelToConfigAccessibleChannel(newChannel),
       });
-    } else if (oldChannel && newChannel) {
-      logVoiceChannelMove(meta.pluginData, {
-        member,
-        oldChannel,
-        newChannel,
+    } else {
+      meta.pluginData.state.guildLogs.log(LogType.VOICE_CHANNEL_MOVE, {
+        member: memberToConfigAccessibleMember(member),
+        oldChannel: channelToConfigAccessibleChannel(oldChannel!),
+        newChannel: channelToConfigAccessibleChannel(newChannel!),
       });
     }
   },

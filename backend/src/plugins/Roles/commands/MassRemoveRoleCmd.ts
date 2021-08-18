@@ -1,12 +1,11 @@
 import { GuildMember } from "discord.js";
-import { memberToTemplateSafeMember, userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
+import { memberToConfigAccessibleMember, userToConfigAccessibleUser } from "../../../utils/configAccessibleObjects";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { LogType } from "../../../data/LogType";
 import { logger } from "../../../logger";
 import { canActOn, sendErrorMessage } from "../../../pluginUtils";
 import { resolveMember, resolveRoleId, successMessage } from "../../../utils";
 import { rolesCmd } from "../types";
-import { LogsPlugin } from "../../Logs/LogsPlugin";
 
 export const MassRemoveRoleCmd = rolesCmd({
   trigger: "massremoverole",
@@ -53,7 +52,7 @@ export const MassRemoveRoleCmd = rolesCmd({
 
     const role = pluginData.guild.roles.cache.get(roleId);
     if (!role) {
-      pluginData.getPlugin(LogsPlugin).logBotAlert({
+      pluginData.state.logs.log(LogType.BOT_ALERT, {
         body: `Unknown role configured for 'roles' plugin: ${roleId}`,
       });
       sendErrorMessage(pluginData, msg.channel, "You cannot remove that role");
@@ -75,10 +74,10 @@ export const MassRemoveRoleCmd = rolesCmd({
       try {
         pluginData.state.logs.ignoreLog(LogType.MEMBER_ROLE_REMOVE, member.id);
         await member.roles.remove(roleId);
-        pluginData.getPlugin(LogsPlugin).logMemberRoleRemove({
-          member,
-          roles: [role],
-          mod: msg.author,
+        pluginData.state.logs.log(LogType.MEMBER_ROLE_REMOVE, {
+          member: memberToConfigAccessibleMember(member),
+          roles: role.name,
+          mod: userToConfigAccessibleUser(msg.author),
         });
         assigned++;
       } catch (e) {

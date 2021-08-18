@@ -42,7 +42,6 @@ import { hasPermission } from "./functions/hasPermission";
 import { activeReloads } from "./guildReloads";
 import { refreshMembersIfNeeded } from "./refreshMembers";
 import { ConfigSchema, UtilityPluginType } from "./types";
-import { LogsPlugin } from "../Logs/LogsPlugin";
 
 const defaultOptions: PluginOptions<UtilityPluginType> = {
   config: {
@@ -119,7 +118,7 @@ export const UtilityPlugin = zeppelinGuildPlugin<UtilityPluginType>()({
     prettyName: "Utility",
   },
 
-  dependencies: [TimeAndDatePlugin, ModActionsPlugin, LogsPlugin],
+  dependencies: [TimeAndDatePlugin, ModActionsPlugin],
   configSchema: ConfigSchema,
   defaultOptions,
 

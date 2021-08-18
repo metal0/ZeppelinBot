@@ -22,7 +22,7 @@ export const ChangeNicknameAction = automodAction({
       const newName = typeof actionConfig === "string" ? actionConfig : actionConfig.name;
 
       member.edit({ nick: newName }).catch(err => {
-        pluginData.getPlugin(LogsPlugin).logBotAlert({
+        pluginData.getPlugin(LogsPlugin).log(LogType.BOT_ALERT, {
           body: `Failed to change the nickname of \`${member.id}\``,
         });
       });

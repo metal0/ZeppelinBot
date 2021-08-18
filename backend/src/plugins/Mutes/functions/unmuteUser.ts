@@ -1,7 +1,7 @@
 import { Snowflake } from "discord.js";
 import humanizeDuration from "humanize-duration";
 import { GuildPluginData } from "knub";
-import { userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
+import { userToConfigAccessibleUser } from "../../../utils/configAccessibleObjects";
 import { CaseTypes } from "../../../data/CaseTypes";
 import { LogType } from "../../../data/LogType";
 import { resolveMember, resolveUser } from "../../../utils";
@@ -10,7 +10,6 @@ import { CasesPlugin } from "../../Cases/CasesPlugin";
 import { CaseArgs } from "../../Cases/types";
 import { MutesPluginType, UnmuteResult } from "../types";
 import { memberHasMutedRole } from "./memberHasMutedRole";
-import { LogsPlugin } from "../../Logs/LogsPlugin";
 
 export async function unmuteUser(
   pluginData: GuildPluginData<MutesPluginType>,
@@ -88,17 +87,17 @@ export async function unmuteUser(
   // Log the action
   const mod = await pluginData.client.users.fetch(modId as Snowflake);
   if (unmuteTime) {
-    pluginData.getPlugin(LogsPlugin).logMemberTimedUnmute({
-      mod,
-      user,
+    pluginData.state.serverLogs.log(LogType.MEMBER_TIMED_UNMUTE, {
+      mod: userToConfigAccessibleUser(mod),
+      user: userToConfigAccessibleUser(user),
       caseNumber: createdCase.case_number,
       time: timeUntilUnmute,
       reason: caseArgs.reason,
     });
   } else {
-    pluginData.getPlugin(LogsPlugin).logMemberUnmute({
-      mod,
-      user,
+    pluginData.state.serverLogs.log(LogType.MEMBER_UNMUTE, {
+      mod: userToConfigAccessibleUser(mod),
+      user: userToConfigAccessibleUser(user),
       caseNumber: createdCase.case_number,
       reason: caseArgs.reason,
     });

@@ -1,6 +1,6 @@
 import { GuildMember } from "discord.js";
 import { GuildPluginData } from "knub";
-import { userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
+import { userToConfigAccessibleUser } from "../../../utils/configAccessibleObjects";
 import { CaseTypes } from "../../../data/CaseTypes";
 import { LogType } from "../../../data/LogType";
 import { renderTemplate } from "../../../templateFormatter";
@@ -9,7 +9,6 @@ import { CasesPlugin } from "../../Cases/CasesPlugin";
 import { IgnoredEventType, KickOptions, KickResult, ModActionsPluginType } from "../types";
 import { getDefaultContactMethods } from "./getDefaultContactMethods";
 import { ignoreEvent } from "./ignoreEvent";
-import { LogsPlugin } from "../../Logs/LogsPlugin";
 
 /**
  * Kick the specified server member. Generates a case.
@@ -35,7 +34,7 @@ export async function kickMember(
           guildName: pluginData.guild.name,
           reason,
           moderator: kickOptions.caseArgs?.modId
-            ? userToTemplateSafeUser(await resolveUser(pluginData.client, kickOptions.caseArgs.modId))
+            ? userToConfigAccessibleUser(await resolveUser(pluginData.client, kickOptions.caseArgs.modId))
             : {},
         });
 
@@ -73,11 +72,11 @@ export async function kickMember(
 
   // Log the action
   const mod = await resolveUser(pluginData.client, modId);
-  pluginData.getPlugin(LogsPlugin).logMemberKick({
-    mod,
-    user: member.user,
+  pluginData.state.serverLogs.log(LogType.MEMBER_KICK, {
+    mod: userToConfigAccessibleUser(mod),
+    user: userToConfigAccessibleUser(member.user),
     caseNumber: createdCase.case_number,
-    reason: reason ?? "",
+    reason,
   });
 
   pluginData.state.events.emit("kick", member.id, reason, kickOptions.isAutomodAction);

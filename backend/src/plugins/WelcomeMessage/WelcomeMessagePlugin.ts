@@ -3,7 +3,6 @@ import { GuildLogs } from "../../data/GuildLogs";
 import { zeppelinGuildPlugin } from "../ZeppelinPluginBlueprint";
 import { SendWelcomeMessageEvt } from "./events/SendWelcomeMessageEvt";
 import { ConfigSchema, WelcomeMessagePluginType } from "./types";
-import { LogsPlugin } from "../Logs/LogsPlugin";
 
 const defaultOptions: PluginOptions<WelcomeMessagePluginType> = {
   config: {
@@ -21,7 +20,6 @@ export const WelcomeMessagePlugin = zeppelinGuildPlugin<WelcomeMessagePluginType
   },
 
   configSchema: ConfigSchema,
-  dependencies: [LogsPlugin],
   defaultOptions,
 
   // prettier-ignore

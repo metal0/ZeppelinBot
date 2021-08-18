@@ -1,23 +1,24 @@
 import * as t from "io-ts";
 import { LogType } from "../../../data/LogType";
-import { isTruthy, stripObjectToScalars, unique } from "../../../utils";
+import { stripObjectToScalars, unique } from "../../../utils";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
 import { automodAction } from "../helpers";
-import { userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
 
 export const LogAction = automodAction({
   configType: t.boolean,
   defaultConfig: true,
 
   async apply({ pluginData, contexts, ruleName, matchResult }) {
-    const users = unique(contexts.map(c => c.user)).filter(isTruthy);
-    const user = users[0];
+    const safeUsers = unique(contexts.map(c => c.user))
+      .filter(Boolean)
+      .map(user => stripObjectToScalars(user));
+    const safeUser = safeUsers[0];
     const actionsTaken = Object.keys(pluginData.config.get().rules[ruleName].actions).join(", ");
 
-    pluginData.getPlugin(LogsPlugin).logAutomodAction({
+    pluginData.getPlugin(LogsPlugin).log(LogType.AUTOMOD_ACTION, {
       rule: ruleName,
-      user,
-      users,
+      user: safeUser,
+      users: safeUsers,
       actionsTaken,
       matchSummary: matchResult.summary,
     });

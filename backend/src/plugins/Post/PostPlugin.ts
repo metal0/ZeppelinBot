@@ -13,7 +13,6 @@ import { ScheduledPostsListCmd } from "./commands/ScheduledPostsListCmd";
 import { ScheduledPostsShowCmd } from "./commands/ScheduledPostsShowCmd";
 import { ConfigSchema, PostPluginType } from "./types";
 import { scheduledPostLoop } from "./util/scheduledPostLoop";
-import { LogsPlugin } from "../Logs/LogsPlugin";
 
 const defaultOptions: PluginOptions<PostPluginType> = {
   config: {
@@ -36,7 +35,7 @@ export const PostPlugin = zeppelinGuildPlugin<PostPluginType>()({
     prettyName: "Post",
   },
 
-  dependencies: [TimeAndDatePlugin, LogsPlugin],
+  dependencies: [TimeAndDatePlugin],
   configSchema: ConfigSchema,
   defaultOptions,
 

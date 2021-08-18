@@ -5,7 +5,6 @@ import { LogType } from "../../../data/LogType";
 import { CasesPlugin } from "../../../plugins/Cases/CasesPlugin";
 import { sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
 import { formatReasonWithAttachments } from "./formatReasonWithAttachments";
-import { LogsPlugin } from "../../Logs/LogsPlugin";
 
 export async function updateCase(pluginData, msg: Message, args) {
   let theCase: Case | undefined;
@@ -34,7 +33,7 @@ export async function updateCase(pluginData, msg: Message, args) {
     body: note,
   });
 
-  pluginData.getPlugin(LogsPlugin).logCaseUpdate({
+  pluginData.state.serverLogs.log(LogType.CASE_UPDATE, {
     mod: msg.author,
     caseNumber: theCase.case_number,
     caseType: CaseTypes[theCase.type],

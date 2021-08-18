@@ -46,7 +46,6 @@ import { outdatedTempbansLoop } from "./functions/outdatedTempbansLoop";
 import { updateCase } from "./functions/updateCase";
 import { warnMember } from "./functions/warnMember";
 import { BanOptions, ConfigSchema, KickOptions, ModActionsPluginType, WarnOptions } from "./types";
-import { LogsPlugin } from "../Logs/LogsPlugin";
 
 const defaultOptions = {
   config: {
@@ -122,7 +121,7 @@ export const ModActionsPlugin = zeppelinGuildPlugin<ModActionsPluginType>()({
     `),
   },
 
-  dependencies: [TimeAndDatePlugin, CasesPlugin, MutesPlugin, LogsPlugin],
+  dependencies: [TimeAndDatePlugin, CasesPlugin, MutesPlugin],
   configSchema: ConfigSchema,
   defaultOptions,
 

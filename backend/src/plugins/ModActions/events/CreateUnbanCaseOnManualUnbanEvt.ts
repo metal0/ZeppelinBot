@@ -1,5 +1,5 @@
 import { GuildAuditLogs, User } from "discord.js";
-import { userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
+import { userToConfigAccessibleUser } from "../../../utils/configAccessibleObjects";
 import { CaseTypes } from "../../../data/CaseTypes";
 import { Case } from "../../../data/entities/Case";
 import { LogType } from "../../../data/LogType";
@@ -9,7 +9,6 @@ import { CasesPlugin } from "../../Cases/CasesPlugin";
 import { clearIgnoredEvents } from "../functions/clearIgnoredEvents";
 import { isEventIgnored } from "../functions/isEventIgnored";
 import { IgnoredEventType, modActionsEvt } from "../types";
-import { LogsPlugin } from "../../Logs/LogsPlugin";
 
 /**
  * Create an UNBAN case automatically when a user is unbanned manually.
@@ -64,11 +63,10 @@ export const CreateUnbanCaseOnManualUnbanEvt = modActionsEvt({
       }
     }
 
-    pluginData.getPlugin(LogsPlugin).logMemberUnban({
-      mod,
+    pluginData.state.serverLogs.log(LogType.MEMBER_UNBAN, {
+      mod: mod ? userToConfigAccessibleUser(mod) : null,
       userId: user.id,
       caseNumber: createdCase?.case_number ?? 0,
-      reason: "",
     });
 
     pluginData.state.events.emit("unban", user.id);

@@ -1,15 +1,14 @@
 import { Snowflake, TextChannel } from "discord.js";
 import {
-  channelToTemplateSafeChannel,
-  memberToTemplateSafeMember,
-  userToTemplateSafeUser,
-} from "../../../utils/templateSafeObjects";
+  channelToConfigAccessibleChannel,
+  memberToConfigAccessibleMember,
+  userToConfigAccessibleUser,
+} from "../../../utils/configAccessibleObjects";
 import { LogType } from "../../../data/LogType";
 import { renderTemplate, TemplateParseError } from "../../../templateFormatter";
 import { createChunkedMessage, stripObjectToScalars } from "../../../utils";
 import { sendDM } from "../../../utils/sendDM";
 import { welcomeMessageEvt } from "../types";
-import { LogsPlugin } from "../../Logs/LogsPlugin";
 
 export const SendWelcomeMessageEvt = welcomeMessageEvt({
   event: "guildMemberAdd",
@@ -40,7 +39,7 @@ export const SendWelcomeMessageEvt = welcomeMessageEvt({
       });
     } catch (e) {
       if (e instanceof TemplateParseError) {
-        pluginData.getPlugin(LogsPlugin).logBotAlert({
+        pluginData.state.logs.log(LogType.BOT_ALERT, {
           body: `Error formatting welcome message: ${e.message}`,
         });
         return;
@@ -53,9 +52,9 @@ export const SendWelcomeMessageEvt = welcomeMessageEvt({
       try {
         await sendDM(member.user, formatted, "welcome message");
       } catch {
-        pluginData.getPlugin(LogsPlugin).logDmFailed({
+        pluginData.state.logs.log(LogType.DM_FAILED, {
           source: "welcome message",
-          user: member.user,
+          user: userToConfigAccessibleUser(member.user),
         });
       }
     }
@@ -67,10 +66,10 @@ export const SendWelcomeMessageEvt = welcomeMessageEvt({
       try {
         await createChunkedMessage(channel, formatted);
       } catch {
-        pluginData.getPlugin(LogsPlugin).logBotAlert({
+        pluginData.state.logs.log(LogType.BOT_ALERT, {
           body: `Failed send a welcome message for {userMention(member)} to {channelMention(channel)}`,
-          member,
-          channel,
+          member: memberToConfigAccessibleMember(member),
+          channel: channelToConfigAccessibleChannel(channel),
         });
       }
     }

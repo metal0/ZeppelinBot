@@ -4,7 +4,6 @@ import { LogType } from "../../../data/LogType";
 import { convertDelayStringToMS, resolveMember } from "../../../utils";
 import { AutoDeletePluginType, MAX_DELAY } from "../types";
 import { addMessageToDeletionQueue } from "./addMessageToDeletionQueue";
-import { LogsPlugin } from "../../Logs/LogsPlugin";
 
 export async function onMessageCreate(pluginData: GuildPluginData<AutoDeletePluginType>, msg: SavedMessage) {
   const member = await resolveMember(pluginData.client, pluginData.guild, msg.user_id);
@@ -15,7 +14,7 @@ export async function onMessageCreate(pluginData: GuildPluginData<AutoDeletePlug
     if (delay > MAX_DELAY) {
       delay = MAX_DELAY;
       if (!pluginData.state.maxDelayWarningSent) {
-        pluginData.getPlugin(LogsPlugin).logBotAlert({
+        pluginData.state.guildLogs.log(LogType.BOT_ALERT, {
           body: `Clamped auto-deletion delay in <#${msg.channel_id}> to 5 minutes`,
         });
         pluginData.state.maxDelayWarningSent = true;

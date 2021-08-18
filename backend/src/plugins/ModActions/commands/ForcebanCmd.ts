@@ -1,5 +1,5 @@
 import { Snowflake } from "discord.js";
-import { userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
+import { userToConfigAccessibleUser } from "../../../utils/configAccessibleObjects";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { CaseTypes } from "../../../data/CaseTypes";
 import { LogType } from "../../../data/LogType";
@@ -10,7 +10,6 @@ import { formatReasonWithAttachments } from "../functions/formatReasonWithAttach
 import { ignoreEvent } from "../functions/ignoreEvent";
 import { isBanned } from "../functions/isBanned";
 import { IgnoredEventType, modActionsCmd } from "../types";
-import { LogsPlugin } from "../../Logs/LogsPlugin";
 
 const opts = {
   mod: ct.member({ option: true }),
@@ -92,8 +91,8 @@ export const ForcebanCmd = modActionsCmd({
     sendSuccessMessage(pluginData, msg.channel, `Member forcebanned (Case #${createdCase.case_number})`);
 
     // Log the action
-    pluginData.getPlugin(LogsPlugin).logMemberForceban({
-      mod,
+    pluginData.state.serverLogs.log(LogType.MEMBER_FORCEBAN, {
+      mod: userToConfigAccessibleUser(mod.user),
       userId: user.id,
       caseNumber: createdCase.case_number,
       reason,
