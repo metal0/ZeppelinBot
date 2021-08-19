@@ -58,7 +58,7 @@ export const CustomEventsPlugin = zeppelinGuildPlugin<CustomEventsPluginType>()(
               msg: messageToTemplateSafeMessage(message),
             });
 
-            runEvent(pluginData, event, { msg: message, args }, values);
+            runEvent(pluginData, event, { msg: message, safeArgs }, values);
           },
         });
         pluginData.commands.add(eventCommand);
