@@ -13,6 +13,7 @@ import {
   messageSummary,
   renderRecursively,
   resolveMember,
+  validateAndParseMessageContent,
   verboseChannelMention,
   verboseUserMention,
   verboseUserName,
@@ -51,12 +52,16 @@ export async function getLogMessage<TLogType extends keyof ILogTypeData>(
   const values = new TemplateSafeValueContainer({
     ...data,
     timestamp,
-    userMention: async (
-      inputUserOrMember: TemplateSafeUser | TemplateSafeMember | TemplateSafeUser[] | TemplateSafeMember[],
-    ) => {
-      if (!inputUserOrMember) return "";
+    userMention: async (inputUserOrMember: unknown) => {
+      if (!inputUserOrMember) {
+        return "";
+      }
 
-      const usersOrMembers = Array.isArray(inputUserOrMember) ? inputUserOrMember : [inputUserOrMember];
+      const inputArray = Array.isArray(inputUserOrMember) ? inputUserOrMember : [inputUserOrMember];
+      // TODO: Resolve IDs to users/members
+      const usersOrMembers = inputArray.filter(
+        v => v instanceof TemplateSafeUser || v instanceof TemplateSafeMember,
+      ) as Array<TemplateSafeUser | TemplateSafeMember>;
 
       const mentions: string[] = [];
       for (const userOrMember of usersOrMembers) {
@@ -129,8 +134,14 @@ export async function getLogMessage<TLogType extends keyof ILogTypeData>(
     if (timestamp) {
       formatted = `\`[${timestamp}]\` ${formatted}`;
     }
-  } else if (formatted != null && formatted.embed && includeEmbedTimestamp) {
-    formatted.embed.timestamp = isoTimestamp;
+  } else if (formatted != null) {
+    formatted = validateAndParseMessageContent(formatted);
+
+    if (formatted.embeds && Array.isArray(formatted.embeds) && includeEmbedTimestamp) {
+      for (const embed of formatted.embeds) {
+        embed.timestamp = isoTimestamp;
+      }
+    }
   }
 
   return formatted;

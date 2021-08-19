@@ -1,12 +1,13 @@
 import { Snowflake, TextChannel } from "discord.js";
 import {
   channelToTemplateSafeChannel,
+  guildToTemplateSafeGuild,
   memberToTemplateSafeMember,
   userToTemplateSafeUser,
 } from "../../../utils/templateSafeObjects";
 import { LogType } from "../../../data/LogType";
-import { renderTemplate, TemplateParseError } from "../../../templateFormatter";
-import { createChunkedMessage, stripObjectToScalars } from "../../../utils";
+import { renderTemplate, TemplateParseError, TemplateSafeValueContainer } from "../../../templateFormatter";
+import { createChunkedMessage, stripObjectToScalars, verboseChannelMention, verboseUserMention } from "../../../utils";
 import { sendDM } from "../../../utils/sendDM";
 import { welcomeMessageEvt } from "../types";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
@@ -32,12 +33,14 @@ export const SendWelcomeMessageEvt = welcomeMessageEvt({
     let formatted;
 
     try {
-      const strippedMember = stripObjectToScalars(member, ["user", "guild"]);
-      formatted = await renderTemplate(config.message, {
-        member: strippedMember,
-        user: strippedMember["user"],
-        guild: strippedMember["guild"],
-      });
+      formatted = await renderTemplate(
+        config.message,
+        new TemplateSafeValueContainer({
+          member: memberToTemplateSafeMember(member),
+          user: userToTemplateSafeUser(member.user),
+          guild: guildToTemplateSafeGuild(member.guild),
+        }),
+      );
     } catch (e) {
       if (e instanceof TemplateParseError) {
         pluginData.getPlugin(LogsPlugin).logBotAlert({
@@ -68,9 +71,9 @@ export const SendWelcomeMessageEvt = welcomeMessageEvt({
         await createChunkedMessage(channel, formatted);
       } catch {
         pluginData.getPlugin(LogsPlugin).logBotAlert({
-          body: `Failed send a welcome message for {userMention(member)} to {channelMention(channel)}`,
-          member,
-          channel,
+          body: `Failed send a welcome message for ${verboseUserMention(member.user)} to ${verboseChannelMention(
+            channel,
+          )}`,
         });
       }
     }

@@ -18,7 +18,9 @@ export const LogsGuildMemberUpdateEvt = logsEvt({
     const oldMember = meta.args.oldMember;
     const member = meta.args.newMember;
 
-    if (!oldMember) return;
+    if (!oldMember || oldMember.partial) {
+      return;
+    }
 
     if (member.nickname !== oldMember.nickname) {
       logMemberNickChange(pluginData, {
@@ -49,46 +51,35 @@ export const LogsGuildMemberUpdateEvt = logsEvt({
       }
 
       if (!skip) {
-        const relevantAuditLogEntry = await safeFindRelevantAuditLogEntry(
-          pluginData,
-          GuildAuditLogs.Actions.MEMBER_ROLE_UPDATE as number,
-          member.id,
-        );
-        const mod = relevantAuditLogEntry?.executor ?? null;
-
         if (addedRoles.length && removedRoles.length) {
           // Roles added *and* removed
           logMemberRoleChanges(pluginData, {
             member,
-            addedRoles: addedRoles
-              .map(roleId => pluginData.guild.roles.cache.get(roleId) ?? { id: roleId, name: `Unknown (${roleId})` })
-              .map(r => r.name)
-              .join(", "),
-            removedRoles: removedRoles
-              .map(roleId => pluginData.guild.roles.cache.get(roleId) ?? { id: roleId, name: `Unknown (${roleId})` })
-              .map(r => r.name)
-              .join(", "),
-            mod,
+            addedRoles: addedRoles.map(
+              roleId => pluginData.guild.roles.cache.get(roleId) ?? { id: roleId, name: `Unknown (${roleId})` },
+            ),
+            removedRoles: removedRoles.map(
+              roleId => pluginData.guild.roles.cache.get(roleId) ?? { id: roleId, name: `Unknown (${roleId})` },
+            ),
+            mod: null,
           });
         } else if (addedRoles.length) {
           // Roles added
           logMemberRoleAdd(pluginData, {
             member,
-            roles: addedRoles
-              .map(roleId => pluginData.guild.roles.cache.get(roleId) ?? { id: roleId, name: `Unknown (${roleId})` })
-              .map(r => r.name)
-              .join(", "),
-            mod,
+            roles: addedRoles.map(
+              roleId => pluginData.guild.roles.cache.get(roleId) ?? { id: roleId, name: `Unknown (${roleId})` },
+            ),
+            mod: null,
           });
         } else if (removedRoles.length && !addedRoles.length) {
           // Roles removed
           logMemberRoleRemove(pluginData, {
             member,
-            roles: removedRoles
-              .map(roleId => pluginData.guild.roles.cache.get(roleId) ?? { id: roleId, name: `Unknown (${roleId})` })
-              .map(r => r.name)
-              .join(", "),
-            mod,
+            roles: removedRoles.map(
+              roleId => pluginData.guild.roles.cache.get(roleId) ?? { id: roleId, name: `Unknown (${roleId})` },
+            ),
+            mod: null,
           });
         }
       }

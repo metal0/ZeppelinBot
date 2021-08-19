@@ -212,8 +212,12 @@ export class GuildSavedMessages extends BaseGuildRepository {
     try {
       await this.messages.insert(data);
     } catch (e) {
-      console.warn(e); // tslint:disable-line
-      return;
+      if (e?.code === "ER_DUP_ENTRY") {
+        console.warn(`Tried to insert duplicate message ID: ${data.id}`);
+        return;
+      }
+
+      throw e;
     }
 
     const inserted = await this.messages.findOne(data.id);
@@ -224,6 +228,11 @@ export class GuildSavedMessages extends BaseGuildRepository {
   async createFromMsg(msg: Message, overrides = {}) {
     const existingSavedMsg = await this.find(msg.id);
     if (existingSavedMsg) return;
+
+    // FIXME: Hotfix
+    if (!msg.channel) {
+      return;
+    }
 
     const savedMessageData = this.msgToSavedMessageData(msg);
     const postedAt = moment.utc(msg.createdTimestamp, "x").format("YYYY-MM-DD HH:mm:ss");

@@ -9,6 +9,12 @@ import { LogsPlugin } from "../../Logs/LogsPlugin";
 
 export async function clearExpiredMutes(pluginData: GuildPluginData<MutesPluginType>) {
   const expiredMutes = await pluginData.state.mutes.getExpiredMutes();
+  if (pluginData.guild.id === "140933721929940992") {
+    // tslint:disable-next-line:no-console
+    console.log(
+      `Expired mutes (${expiredMutes.length}) for 140933721929940992: ${expiredMutes.map(m => m.user_id).join(", ")}`,
+    );
+  }
   for (const mute of expiredMutes) {
     const member = await resolveMember(pluginData.client, pluginData.guild, mute.user_id);
 
@@ -42,9 +48,13 @@ export async function clearExpiredMutes(pluginData: GuildPluginData<MutesPluginT
     await pluginData.state.mutes.clear(mute.user_id);
 
     pluginData.getPlugin(LogsPlugin).logMemberMuteExpired({
-      member: member ? memberToTemplateSafeMember(member) : new UnknownUser({ id: mute.user_id }),
+      member: member || new UnknownUser({ id: mute.user_id }),
     });
 
     pluginData.state.events.emit("unmute", mute.user_id);
+  }
+  if (pluginData.guild.id === "140933721929940992") {
+    // tslint:disable-next-line:no-console
+    console.log("Finished expired mutes loop for 140933721929940992");
   }
 }

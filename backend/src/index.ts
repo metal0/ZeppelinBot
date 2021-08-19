@@ -1,4 +1,4 @@
-import { Client, Intents, TextChannel } from "discord.js";
+import { Client, Constants, Intents, TextChannel, ThreadChannel } from "discord.js";
 import yaml from "js-yaml";
 import { Knub, PluginError } from "knub";
 import { PluginLoadError } from "knub/dist/plugins/PluginLoadError";
@@ -18,8 +18,9 @@ import { RecoverablePluginError } from "./RecoverablePluginError";
 import { SimpleError } from "./SimpleError";
 import { ZeppelinGlobalConfig, ZeppelinGuildConfig } from "./types";
 import { startUptimeCounter } from "./uptime";
-import { errorMessage, isDiscordAPIError, isDiscordHTTPError, successMessage } from "./utils";
+import { errorMessage, isDiscordAPIError, isDiscordHTTPError, SECONDS, successMessage } from "./utils";
 import { loadYamlSafely } from "./utils/loadYamlSafely";
+import { DecayingCounter } from "./utils/DecayingCounter";
 
 if (!process.env.KEY) {
   // tslint:disable-next-line:no-console
@@ -94,6 +95,18 @@ function errorHandler(err) {
     return;
   }
 
+  // FIXME: Hotfix
+  if (err.message && err.message.startsWith("Unknown custom override criteria")) {
+    console.warn(err.message);
+    return;
+  }
+
+  // FIXME: Hotfix
+  if (err.message && err.message.startsWith("Unknown override criteria")) {
+    console.warn(err.message);
+    return;
+  }
+
   // tslint:disable:no-console
   console.error(err);
 
@@ -138,8 +151,10 @@ logger.info("Connecting to database");
 connect().then(async () => {
   const client = new Client({
     partials: ["USER", "CHANNEL", "GUILD_MEMBER", "MESSAGE", "REACTION"],
-    restTimeOffset: 150,
-    restGlobalRateLimit: 50,
+
+    restGlobalRateLimit: 20,
+    restTimeOffset: 1000,
+
     // Disable mentions by default
     allowedMentions: {
       parse: [],
@@ -166,8 +181,30 @@ connect().then(async () => {
   });
   client.setMaxListeners(200);
 
-  client.on("rateLimit", rateLimitData => {
-    logger.info(`[429] ${JSON.stringify(rateLimitData)}`);
+  client.on(Constants.Events.RATE_LIMIT, data => {
+    // tslint:disable-next-line:no-console
+    // console.log(`[DEBUG] [RATE_LIMIT] ${JSON.stringify(data)}`);
+  });
+
+  const safe429DecayInterval = 5 * SECONDS;
+  const safe429MaxCount = 5;
+  const safe429Counter = new DecayingCounter(safe429DecayInterval);
+  client.on(Constants.Events.DEBUG, errorText => {
+    if (!errorText.includes("429")) {
+      // tslint:disable-next-line:no-console
+      console.debug(`[DEBUG] ${errorText}`);
+      return;
+    }
+
+    // tslint:disable-next-line:no-console
+    console.warn(`[DEBUG] [WARN] [429] ${errorText}`);
+
+    const value = safe429Counter.add(1);
+    if (value > safe429MaxCount) {
+      // tslint:disable-next-line:no-console
+      console.error(`Too many 429s (over ${safe429MaxCount} in ${safe429MaxCount * safe429DecayInterval}ms), exiting`);
+      process.exit(1);
+    }
   });
 
   client.on("error", err => {
@@ -239,13 +276,15 @@ connect().then(async () => {
       },
 
       sendSuccessMessageFn(channel, body) {
-        const guildId = channel instanceof TextChannel ? channel.guild.id : undefined;
+        const guildId =
+          channel instanceof TextChannel || channel instanceof ThreadChannel ? channel.guild.id : undefined;
         const emoji = guildId ? bot.getLoadedGuild(guildId)!.config.success_emoji : undefined;
         channel.send(successMessage(body, emoji));
       },
 
       sendErrorMessageFn(channel, body) {
-        const guildId = channel instanceof TextChannel ? channel.guild.id : undefined;
+        const guildId =
+          channel instanceof TextChannel || channel instanceof ThreadChannel ? channel.guild.id : undefined;
         const emoji = guildId ? bot.getLoadedGuild(guildId)!.config.error_emoji : undefined;
         channel.send(errorMessage(body, emoji));
       },

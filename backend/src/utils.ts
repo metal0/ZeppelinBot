@@ -1,6 +1,7 @@
 import {
   Client,
   Constants,
+  DiscordAPIError,
   Emoji,
   Guild,
   GuildAuditLogs,
@@ -43,6 +44,7 @@ import { ChannelTypeStrings } from "./types";
 import { sendDM } from "./utils/sendDM";
 import { waitForButtonConfirm } from "./utils/waitForInteraction";
 import { decodeAndValidateStrict, StrictValidationError } from "./validatorUtils";
+import { z } from "zod";
 
 const fsp = fs.promises;
 
@@ -84,8 +86,8 @@ export function isDiscordHTTPError(err: Error | string) {
   return typeof err === "object" && err.constructor?.name === DISCORD_HTTP_ERROR_NAME;
 }
 
-export function isDiscordAPIError(err: Error | string) {
-  return typeof err === "object" && err.constructor?.name === DISCORD_REST_ERROR_NAME;
+export function isDiscordAPIError(err: Error | string): err is DiscordAPIError {
+  return err instanceof DiscordAPIError;
 }
 
 export function tNullable<T extends t.Type<any, any>>(type: T) {
@@ -319,14 +321,88 @@ export const tEmbed = t.type({
   ),
 });
 
+export const zEmbedInput = z.object({
+  title: z.string().optional(),
+  description: z.string().optional(),
+  url: z.string().optional(),
+  timestamp: z.number().optional(),
+  color: z.number().optional(),
+
+  footer: z.optional(
+    z.object({
+      text: z.string(),
+      icon_url: z.string().optional(),
+    }),
+  ),
+
+  image: z.optional(
+    z.object({
+      url: z.string().optional(),
+      width: z.number().optional(),
+      height: z.number().optional(),
+    }),
+  ),
+
+  thumbnail: z.optional(
+    z.object({
+      url: z.string().optional(),
+      width: z.number().optional(),
+      height: z.number().optional(),
+    }),
+  ),
+
+  video: z.optional(
+    z.object({
+      url: z.string().optional(),
+      width: z.number().optional(),
+      height: z.number().optional(),
+    }),
+  ),
+
+  provider: z.optional(
+    z.object({
+      name: z.string(),
+      url: z.string().optional(),
+    }),
+  ),
+
+  fields: z.optional(
+    z.array(
+      z.object({
+        name: z.string().optional(),
+        value: z.string().optional(),
+        inline: z.boolean().optional(),
+      }),
+    ),
+  ),
+
+  author: z
+    .optional(
+      z.object({
+        name: z.string(),
+        url: z.string().optional(),
+        width: z.number().optional(),
+        height: z.number().optional(),
+      }),
+    )
+    .nullable(),
+});
+
 export type EmbedWith<T extends keyof MessageEmbedOptions> = MessageEmbedOptions &
   Pick<Required<MessageEmbedOptions>, T>;
+
+export const zStrictMessageContent = z.object({
+  content: z.string().optional(),
+  tts: z.boolean().optional(),
+  embeds: z.array(zEmbedInput).optional(),
+});
+
+export type ZStrictMessageContent = z.infer<typeof zStrictMessageContent>;
 
 export type StrictMessageContent = {
   content?: string;
   tts?: boolean;
-  disableEveryone?: boolean;
-  embed?: MessageEmbedOptions;
+  embeds?: MessageEmbedOptions[];
 };
 
 export const tStrictMessageContent = t.type({
@@ -334,9 +410,55 @@ export const tStrictMessageContent = t.type({
   tts: tNullable(t.boolean),
   disableEveryone: tNullable(t.boolean),
   embed: tNullable(tEmbed),
+  embeds: tNullable(t.array(tEmbed)),
 });
 
 export const tMessageContent = t.union([t.string, tStrictMessageContent]);
+
+export function validateAndParseMessageContent(input: unknown): StrictMessageContent {
+  if (input == null) {
+    return {};
+  }
+
+  if (typeof input !== "object") {
+    return { content: String(input) };
+  }
+
+  // Migrate embed -> embeds
+  if ((input as any).embed) {
+    (input as any).embeds = [(input as any).embed];
+    delete (input as any).embed;
+  }
+
+  dropNullValuesRecursively(input);
+
+  return (zStrictMessageContent.parse(input) as unknown) as StrictMessageContent;
+}
+
+function dropNullValuesRecursively(obj: any) {
+  if (obj == null) {
+    return;
+  }
+
+  if (Array.isArray(obj)) {
+    for (const item of obj) {
+      dropNullValuesRecursively(item);
+    }
+  }
+
+  if (typeof obj !== "object") {
+    return;
+  }
+
+  for (const [key, value] of Object.entries(obj)) {
+    if (value == null) {
+      delete obj[key];
+      continue;
+    }
+
+    dropNullValuesRecursively(value);
+  }
+}
 
 /**
  * Mirrors AllowedMentions from Eris
@@ -871,7 +993,7 @@ export function chunkMessageLines(str: string, maxChunkLength = 1990): string[] 
 }
 
 export async function createChunkedMessage(
-  channel: TextChannel | User,
+  channel: TextChannel | ThreadChannel | User,
   messageText: string,
   allowedMentions?: MessageMentionOptions,
 ) {
@@ -1270,8 +1392,8 @@ export async function resolveRoleId(bot: Client, guildId: string, value: string)
   // Role name
   const roleList = (await bot.guilds.fetch(guildId as Snowflake)).roles.cache;
   const role = roleList.filter(x => x.name.toLocaleLowerCase() === value.toLocaleLowerCase());
-  if (role[0]) {
-    return role[0].id;
+  if (role.size >= 1) {
+    return role.firstKey();
   }
 
   // Role ID
@@ -1329,7 +1451,7 @@ export function messageSummary(msg: SavedMessage) {
   if (richEmbed) result += "Embed:```" + Util.escapeCodeBlock(JSON.stringify(richEmbed)) + "```";
 
   // Attachments
-  if (msg.data.attachments) {
+  if (msg.data.attachments && msg.data.attachments.length) {
     result +=
       "Attachments:\n" +
       msg.data.attachments.map((a: ISavedMessageAttachmentData) => disableLinkPreviews(a.url)).join("\n") +

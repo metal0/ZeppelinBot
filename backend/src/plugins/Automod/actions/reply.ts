@@ -1,8 +1,8 @@
-import { MessageOptions, Permissions, Snowflake, TextChannel, User } from "discord.js";
+import { MessageOptions, Permissions, Snowflake, TextChannel, ThreadChannel, User } from "discord.js";
 import * as t from "io-ts";
 import { userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
 import { LogType } from "../../../data/LogType";
-import { renderTemplate } from "../../../templateFormatter";
+import { renderTemplate, TemplateSafeValueContainer } from "../../../templateFormatter";
 import {
   convertDelayStringToMS,
   noop,
@@ -11,6 +11,7 @@ import {
   tMessageContent,
   tNullable,
   unique,
+  validateAndParseMessageContent,
   verboseChannelMention,
 } from "../../../utils";
 import { hasDiscordPermissions } from "../../../utils/hasDiscordPermissions";
@@ -32,7 +33,10 @@ export const ReplyAction = automodAction({
   async apply({ pluginData, contexts, actionConfig, ruleName }) {
     const contextsWithTextChannels = contexts
       .filter(c => c.message?.channel_id)
-      .filter(c => pluginData.guild.channels.cache.get(c.message!.channel_id as Snowflake) instanceof TextChannel);
+      .filter(c => {
+        const channel = pluginData.guild.channels.cache.get(c.message!.channel_id as Snowflake);
+        return channel instanceof TextChannel || channel instanceof ThreadChannel;
+      });
 
     const contextsByChannelId = contextsWithTextChannels.reduce((map: Map<string, AutomodContext[]>, context) => {
       if (!map.has(context.message!.channel_id)) {
@@ -48,9 +52,13 @@ export const ReplyAction = automodAction({
       const user = users[0];
 
       const renderReplyText = async str =>
-        renderTemplate(str, {
-          user: userToTemplateSafeUser(user),
-        });
+        renderTemplate(
+          str,
+          new TemplateSafeValueContainer({
+            user: userToTemplateSafeUser(user),
+          }),
+        );
+
       const formatted =
         typeof actionConfig === "string"
           ? await renderReplyText(actionConfig)
@@ -85,7 +93,7 @@ export const ReplyAction = automodAction({
           continue;
         }
 
-        const messageContent: MessageOptions = typeof formatted === "string" ? { content: formatted } : formatted;
+        const messageContent = validateAndParseMessageContent(formatted);
         const replyMsg = await channel.send({
           ...messageContent,
           allowedMentions: {

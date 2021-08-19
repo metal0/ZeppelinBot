@@ -10,7 +10,7 @@ export const ChannelArchiverPlugin = zeppelinGuildPlugin<ChannelArchiverPluginTy
   info: {
     prettyName: "Channel Archiver",
   },
-  dependencies: [TimeAndDatePlugin],
+  dependencies: () => [TimeAndDatePlugin],
   configSchema: t.type({}),
 
   // prettier-ignore
