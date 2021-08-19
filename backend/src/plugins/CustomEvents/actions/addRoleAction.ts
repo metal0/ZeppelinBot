@@ -21,9 +21,9 @@ export async function addRoleAction(
   event: TCustomEvent,
   eventData: any,
 ) {
-  console.log(values, "values");
+  console.log("values", values.trg);
   const targetId = await renderTemplate(action.target, values, false);
-  console.log("targetId", targetId);
+  console.log("targetId", targetId, targetId.length, "end");
   const target = await resolveMember(pluginData.client, pluginData.guild, targetId);
   if (!target) throw new ActionError(`Unknown target member: ${targetId}`);
 
