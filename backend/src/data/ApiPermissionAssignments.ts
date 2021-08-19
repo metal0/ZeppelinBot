@@ -52,6 +52,13 @@ export class ApiPermissionAssignments extends BaseRepository {
     });
   }
 
+  async updateUser(guildId, userId, permissions: ApiPermissions[]) {
+    const item = await this.getByGuildAndUserId(guildId, userId);
+    if (!item) return null;
+    item.permissions.push(...permissions);
+    return this.apiPermissions.save(item);
+  }
+
   removeUser(guildId, userId) {
     return this.apiPermissions.delete({ guild_id: guildId, type: ApiPermissionTypes.User, target_id: userId });
   }

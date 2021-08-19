@@ -29,6 +29,15 @@ async function checkGuild(pluginData: GlobalPluginData<GuildAccessMonitorPluginT
     }
     console.log(`Non-allowed server ${guild.name} (${guild.id}), leaving`);
     guild.leave();
+  } else {
+    const ownerPerms = await pluginData.state.apiPermissionAssignments.getByGuildAndUserId(guild.id, guild.ownerId);
+    if (!ownerPerms || !ownerPerms.permissions.includes(ApiPermissions.Owner)) {
+      const oldPerms = ownerPerms ? ownerPerms.permissions : [];
+      await pluginData.state.apiPermissionAssignments.updateUser(guild.id, guild.ownerId, [
+        ...oldPerms,
+        ApiPermissions.Owner,
+      ]);
+    }
   }
 }
 
