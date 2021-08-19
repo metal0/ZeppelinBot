@@ -32,7 +32,7 @@ async function checkGuild(pluginData: GlobalPluginData<GuildAccessMonitorPluginT
   } else {
     const ownerPerms = await pluginData.state.apiPermissionAssignments.getByGuildAndUserId(guild.id, guild.ownerId);
     if (!ownerPerms || !ownerPerms.permissions.includes(ApiPermissions.Owner)) {
-      const oldPerms = ownerPerms ? [...ownerPerms.permissions] : [];
+      const oldPerms: ApiPermissions[] = ownerPerms ? [...ownerPerms.permissions] : [];
       await pluginData.state.apiPermissionAssignments.updateUser(guild.id, guild.ownerId, [
         ...oldPerms,
         ApiPermissions.Owner,
