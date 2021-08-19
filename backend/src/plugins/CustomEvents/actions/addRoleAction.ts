@@ -23,6 +23,7 @@ export async function addRoleAction(
 ) {
   console.log(values, "values");
   const targetId = await renderTemplate(action.target, values, false);
+  console.log("targetId", targetId);
   const target = await resolveMember(pluginData.client, pluginData.guild, targetId);
   if (!target) throw new ActionError(`Unknown target member: ${targetId}`);
 
