@@ -1,9 +1,10 @@
 import humanizeDuration from "humanize-duration";
 import moment from "moment-timezone";
 import { LogType } from "../../../data/LogType";
-import { memberToConfigAccessibleMember } from "../../../utils/configAccessibleObjects";
-import { CasesPlugin } from "../../Cases/CasesPlugin";
+import { memberToTemplateSafeMember } from "../../../utils/templateSafeObjects";
 import { logsEvt } from "../types";
+import { logMemberJoin } from "../logFunctions/logMemberJoin";
+import { logMemberJoinWithPriorRecords } from "../logFunctions/logMemberJoinWithPriorRecords";
 
 export const LogsGuildMemberAddEvt = logsEvt({
   event: "guildMemberAdd",
@@ -12,16 +13,8 @@ export const LogsGuildMemberAddEvt = logsEvt({
     const pluginData = meta.pluginData;
     const member = meta.args.member;
 
-    const newThreshold = moment.utc().valueOf() - 1000 * 60 * 60;
-    const accountAge = humanizeDuration(moment.utc().valueOf() - member.user.createdTimestamp, {
-      largest: 2,
-      round: true,
-    });
-
-    pluginData.state.guildLogs.log(LogType.MEMBER_JOIN, {
-      member: memberToConfigAccessibleMember(member),
-      new: member.user.createdTimestamp >= newThreshold ? " :new:" : "",
-      account_age: accountAge,
+    logMemberJoin(pluginData, {
+      member,
     });
 
     // TODO: Uncomment below once circular dependencies in Knub have been fixed
