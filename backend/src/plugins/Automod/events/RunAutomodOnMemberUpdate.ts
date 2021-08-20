@@ -8,12 +8,12 @@ export const RunAutomodOnMemberUpdate = typedGuildEventListener<AutomodPluginTyp
   event: "guildMemberUpdate",
   listener({ pluginData, args: { oldMember, newMember } }) {
     if (!oldMember) return;
+    const oldRoles = oldMember.roles.cache.map(r => r.id);
+    const newRoles = newMember.roles.cache.map(r => r.id);
+    if (isEqual(oldRoles, newRoles)) return;
 
-    if (isEqual(oldMember.roles, newMember.roles)) return;
-
-    const addedRoles = diff(newMember.roles, oldMember.roles);
-    const removedRoles = diff(oldMember.roles, newMember.roles);
-
+    const addedRoles = diff(newRoles, oldRoles);
+    const removedRoles = diff(oldRoles, newRoles);
     if (addedRoles.length || removedRoles.length) {
       const context: AutomodContext = {
         timestamp: Date.now(),
