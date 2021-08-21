@@ -1,5 +1,4 @@
 import { Client, Constants, Intents, TextChannel, ThreadChannel } from "discord.js";
-import yaml from "js-yaml";
 import { Knub, PluginError } from "knub";
 import { PluginLoadError } from "knub/dist/plugins/PluginLoadError";
 // Always use UTC internally
@@ -21,6 +20,7 @@ import { startUptimeCounter } from "./uptime";
 import { errorMessage, isDiscordAPIError, isDiscordHTTPError, SECONDS, successMessage } from "./utils";
 import { loadYamlSafely } from "./utils/loadYamlSafely";
 import { DecayingCounter } from "./utils/DecayingCounter";
+import { PluginNotLoadedError } from "knub/dist/plugins/PluginNotLoadedError";
 
 if (!process.env.KEY) {
   // tslint:disable-next-line:no-console
@@ -97,13 +97,20 @@ function errorHandler(err) {
 
   // FIXME: Hotfix
   if (err.message && err.message.startsWith("Unknown custom override criteria")) {
-    console.warn(err.message);
+    // console.warn(err.message);
     return;
   }
 
   // FIXME: Hotfix
   if (err.message && err.message.startsWith("Unknown override criteria")) {
-    console.warn(err.message);
+    // console.warn(err.message);
+    return;
+  }
+
+  if (err instanceof PluginNotLoadedError) {
+    // We don't want to crash the bot here, although this *should not happen*
+    // TODO: Proper system for preventing plugin load/unload race conditions
+    console.error(err);
     return;
   }
 
@@ -152,8 +159,8 @@ connect().then(async () => {
   const client = new Client({
     partials: ["USER", "CHANNEL", "GUILD_MEMBER", "MESSAGE", "REACTION"],
 
-    restGlobalRateLimit: 20,
-    restTimeOffset: 1000,
+    restGlobalRateLimit: 50,
+    // restTimeOffset: 1000,
 
     // Disable mentions by default
     allowedMentions: {
@@ -191,8 +198,6 @@ connect().then(async () => {
   const safe429Counter = new DecayingCounter(safe429DecayInterval);
   client.on(Constants.Events.DEBUG, errorText => {
     if (!errorText.includes("429")) {
-      // tslint:disable-next-line:no-console
-      console.debug(`[DEBUG] ${errorText}`);
       return;
     }
 

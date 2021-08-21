@@ -20,7 +20,7 @@ export async function unmuteUser(
 ): Promise<UnmuteResult | null> {
   const existingMute = await pluginData.state.mutes.findExistingMuteForUserId(userId);
   const user = await resolveUser(pluginData.client, userId);
-  const member = await resolveMember(pluginData.client, pluginData.guild, userId); // Grab the fresh member so we don't have stale role info
+  const member = await resolveMember(pluginData.client, pluginData.guild, userId, true); // Grab the fresh member so we don't have stale role info
   const modId = caseArgs.modId || pluginData.client.user!.id;
 
   if (!existingMute && member && !memberHasMutedRole(pluginData, member)) return null;
@@ -43,12 +43,13 @@ export async function unmuteUser(
       }
       if (existingMute?.roles_to_restore) {
         const guildRoles = pluginData.guild.roles.cache;
-        let newRoles = [...member.roles.cache.keys()];
-        newRoles = muteRole && newRoles.includes(muteRole) ? newRoles.splice(newRoles.indexOf(muteRole), 1) : newRoles;
+        const newRoles = [...member.roles.cache.keys()].filter(roleId => roleId !== muteRole);
         for (const toRestore of existingMute.roles_to_restore) {
-          if (guildRoles.has(toRestore as Snowflake) && toRestore !== muteRole) newRoles.push(toRestore);
+          if (guildRoles.has(toRestore) && toRestore !== muteRole && !newRoles.includes(toRestore)) {
+            newRoles.push(toRestore);
+          }
         }
-        await member.roles.set(newRoles as Snowflake[]);
+        await member.roles.set(newRoles);
       }
 
       lock.unlock();

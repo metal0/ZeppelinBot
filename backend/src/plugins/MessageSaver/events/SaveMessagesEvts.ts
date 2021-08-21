@@ -1,5 +1,18 @@
-import { Message } from "discord.js";
+import { Constants, Message, MessageType, Snowflake } from "discord.js";
 import { messageSaverEvt } from "../types";
+import { SECONDS } from "../../../utils";
+
+const recentlyCreatedMessages: Snowflake[] = [];
+const recentlyCreatedMessagesToKeep = 100;
+
+setInterval(() => {
+  const toDelete = recentlyCreatedMessages.length - recentlyCreatedMessagesToKeep;
+  if (toDelete > 0) {
+    recentlyCreatedMessages.splice(0, toDelete);
+  }
+}, 60 * SECONDS);
+
+const AFFECTED_MESSAGE_TYPES: MessageType[] = ["DEFAULT", "REPLY", "APPLICATION_COMMAND"];
 
 export const MessageCreateEvt = messageSaverEvt({
   event: "messageCreate",
@@ -7,8 +20,7 @@ export const MessageCreateEvt = messageSaverEvt({
   allowSelf: true,
 
   async listener(meta) {
-    // Only save regular chat messages
-    if (meta.args.message.type !== "DEFAULT" && meta.args.message.type !== "REPLY") {
+    if (!AFFECTED_MESSAGE_TYPES.includes(meta.args.message.type)) {
       return;
     }
 
@@ -17,7 +29,17 @@ export const MessageCreateEvt = messageSaverEvt({
       return;
     }
 
-    await meta.pluginData.state.savedMessages.createFromMsg(meta.args.message);
+    meta.pluginData.state.queue.add(async () => {
+      if (recentlyCreatedMessages.includes(meta.args.message.id)) {
+        console.warn(
+          `Tried to save duplicate message from messageCreate event: ${meta.args.message.guildId} / ${meta.args.message.channelId} / ${meta.args.message.id}`,
+        );
+        return;
+      }
+      recentlyCreatedMessages.push(meta.args.message.id);
+
+      await meta.pluginData.state.savedMessages.createFromMsg(meta.args.message);
+    });
   },
 });
 
@@ -35,7 +57,9 @@ export const MessageUpdateEvt = messageSaverEvt({
       return;
     }
 
-    await meta.pluginData.state.savedMessages.saveEditFromMsg(meta.args.newMessage as Message);
+    meta.pluginData.state.queue.add(async () => {
+      await meta.pluginData.state.savedMessages.saveEditFromMsg(meta.args.newMessage as Message);
+    });
   },
 });
 
@@ -50,7 +74,9 @@ export const MessageDeleteEvt = messageSaverEvt({
       return;
     }
 
-    await meta.pluginData.state.savedMessages.markAsDeleted(msg.id);
+    meta.pluginData.state.queue.add(async () => {
+      await meta.pluginData.state.savedMessages.markAsDeleted(msg.id);
+    });
   },
 });
 
@@ -61,6 +87,8 @@ export const MessageDeleteBulkEvt = messageSaverEvt({
 
   async listener(meta) {
     const ids = meta.args.messages.map(m => m.id);
-    await meta.pluginData.state.savedMessages.markBulkAsDeleted(ids);
+    meta.pluginData.state.queue.add(async () => {
+      await meta.pluginData.state.savedMessages.markBulkAsDeleted(ids);
+    });
   },
 });

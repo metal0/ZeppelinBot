@@ -9,14 +9,8 @@ import { LogsPlugin } from "../../Logs/LogsPlugin";
 
 export async function clearExpiredMutes(pluginData: GuildPluginData<MutesPluginType>) {
   const expiredMutes = await pluginData.state.mutes.getExpiredMutes();
-  if (pluginData.guild.id === "140933721929940992") {
-    // tslint:disable-next-line:no-console
-    console.log(
-      `Expired mutes (${expiredMutes.length}) for 140933721929940992: ${expiredMutes.map(m => m.user_id).join(", ")}`,
-    );
-  }
   for (const mute of expiredMutes) {
-    const member = await resolveMember(pluginData.client, pluginData.guild, mute.user_id);
+    const member = await resolveMember(pluginData.client, pluginData.guild, mute.user_id, true);
 
     if (member) {
       try {
@@ -24,17 +18,17 @@ export async function clearExpiredMutes(pluginData: GuildPluginData<MutesPluginT
 
         const muteRole = pluginData.config.get().mute_role;
         if (muteRole) {
-          await member.roles.remove(muteRole as Snowflake);
+          await member.roles.remove(muteRole);
         }
         if (mute.roles_to_restore) {
           const guildRoles = pluginData.guild.roles.cache;
-          let newRoles = [...member.roles.cache.keys()];
-          newRoles =
-            muteRole && newRoles.includes(muteRole) ? newRoles.splice(newRoles.indexOf(muteRole), 1) : newRoles;
+          const newRoles = [...member.roles.cache.keys()].filter(roleId => roleId !== muteRole);
           for (const toRestore of mute.roles_to_restore) {
-            if (guildRoles.has(toRestore as Snowflake) && toRestore !== muteRole) newRoles.push(toRestore);
+            if (guildRoles.has(toRestore) && toRestore !== muteRole && !newRoles.includes(toRestore)) {
+              newRoles.push(toRestore);
+            }
           }
-          await member.roles.set(newRoles as Snowflake[]);
+          await member.roles.set(newRoles);
         }
 
         lock.unlock();
@@ -52,9 +46,5 @@ export async function clearExpiredMutes(pluginData: GuildPluginData<MutesPluginT
     });
 
     pluginData.state.events.emit("unmute", mute.user_id);
-  }
-  if (pluginData.guild.id === "140933721929940992") {
-    // tslint:disable-next-line:no-console
-    console.log("Finished expired mutes loop for 140933721929940992");
   }
 }
