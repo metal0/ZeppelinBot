@@ -8,9 +8,6 @@ export const RunAutomodOnMemberUpdate = typedGuildEventListener<AutomodPluginTyp
   event: "guildMemberUpdate",
   listener({ pluginData, args: { oldMember, newMember } }) {
     if (!oldMember) return;
-    const oldRoles = oldMember.roles.cache.map(r => r.id);
-    const newRoles = newMember.roles.cache.map(r => r.id);
-    if (isEqual(oldRoles, newRoles)) return;
 
     const oldRoles = [...oldMember.roles.cache.keys()];
     const newRoles = [...newMember.roles.cache.keys()];
