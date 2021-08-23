@@ -1,6 +1,7 @@
 import * as t from "io-ts";
 import { BasePluginType } from "knub";
 import { AddRoleAction } from "./actions/addRoleAction";
+import { RemoveRoleAction } from "./actions/removeRoleAction";
 import { CreateCaseAction } from "./actions/createCaseAction";
 import { MakeRoleMentionableAction } from "./actions/makeRoleMentionableAction";
 import { MakeRoleUnmentionableAction } from "./actions/makeRoleUnmentionableAction";
@@ -22,6 +23,7 @@ type TAnyTrigger = t.TypeOf<typeof AnyTrigger>;
 
 const AnyAction = t.union([
   AddRoleAction,
+  RemoveRoleAction,
   CreateCaseAction,
   MoveToVoiceChannelAction,
   MessageAction,
