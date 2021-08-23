@@ -7,8 +7,6 @@ import { Config } from "../entities/Config";
 const CLEAN_PER_LOOP = 50;
 
 export async function cleanupConfigs() {
-  
-
   const configRepository = getRepository(Config);
 
   let cleaned = 0;
@@ -109,5 +107,4 @@ export async function cleanupConfigs() {
   } while (rows.length === CLEAN_PER_LOOP);
   */
   return cleaned;
-  
 }
