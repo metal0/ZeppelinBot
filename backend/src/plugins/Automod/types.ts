@@ -1,4 +1,4 @@
-import { GuildMember, PartialGuildMember, User } from "discord.js";
+import { GuildMember, PartialGuildMember, ThreadChannel, User } from "discord.js";
 import * as t from "io-ts";
 import { BasePluginType, CooldownManager } from "knub";
 import { SavedMessage } from "../../data/entities/SavedMessage";
@@ -129,6 +129,10 @@ export interface AutomodContext {
   };
   antiraid?: {
     level: string | null;
+  };
+  threadChange?: {
+    created?: ThreadChannel;
+    deleted?: ThreadChannel;
   };
 }
 
