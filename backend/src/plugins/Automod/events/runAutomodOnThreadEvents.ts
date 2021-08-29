@@ -1,4 +1,5 @@
 import { typedGuildEventListener } from "knub";
+import { RecentActionType } from "../constants";
 import { runAutomod } from "../functions/runAutomod";
 import { AutomodContext, AutomodPluginType } from "../types";
 
@@ -16,6 +17,13 @@ export const RunAutomodOnThreadCreate = typedGuildEventListener<AutomodPluginTyp
     };
 
     pluginData.state.queue.add(() => {
+      pluginData.state.recentActions.push({
+        type: RecentActionType.ThreadCreate,
+        context,
+        count: 1,
+        identifier: null,
+      });
+
       runAutomod(pluginData, context);
     });
   },
