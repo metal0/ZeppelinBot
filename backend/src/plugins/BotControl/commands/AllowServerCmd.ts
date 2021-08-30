@@ -38,7 +38,13 @@ export const AllowServerCmd = botControlCmd({
     await pluginData.state.configs.saveNewRevision(`guild-${args.guildId}`, "plugins: {}", msg.author.id);
 
     if (args.userId) {
-      await pluginData.state.apiPermissionAssignments.addUser(args.guildId, args.userId, [ApiPermissions.EditConfig]);
+      const existingAssignment = await pluginData.state.apiPermissionAssignments.getByGuildAndUserId(
+        args.guildId,
+        args.userId,
+      );
+      if (!existingAssignment) {
+        await pluginData.state.apiPermissionAssignments.addUser(args.guildId, args.userId, [ApiPermissions.EditConfig]);
+      }
     }
 
     sendSuccessMessage(pluginData, msg.channel as TextChannel, "Server is now allowed to use Zeppelin!");

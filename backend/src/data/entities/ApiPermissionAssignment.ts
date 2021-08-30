@@ -1,3 +1,4 @@
+import { ApiPermissions } from "@shared/apiPermissions";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
 import { ApiUserInfo } from "./ApiUserInfo";
 
@@ -16,7 +17,7 @@ export class ApiPermissionAssignment {
   target_id: string;
 
   @Column("simple-array")
-  permissions: string[];
+  permissions: ApiPermissions[];
 
   @ManyToOne(
     type => ApiUserInfo,
