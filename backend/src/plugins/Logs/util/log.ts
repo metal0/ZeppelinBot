@@ -1,11 +1,10 @@
-import { MessageMentionTypes, Snowflake, TextChannel } from "discord.js";
+import { MessageEmbed, MessageMentionTypes, MessageOptions, Snowflake, TextChannel } from "discord.js";
 import { GuildPluginData } from "knub";
-import { SavedMessage } from "../../../data/entities/SavedMessage";
 import { allowTimeout } from "../../../RegExpRunner";
-import { createChunkedMessage, get, noop } from "../../../utils";
-import { ILogTypeData, LogsPluginType, LogTypeData, TLogChannelMap } from "../types";
+import { createChunkedEmbedMessage, createChunkedMessage, noop } from "../../../utils";
+import { ILogTypeData, LogsPluginType, ParsedMessageType, TLogChannelMap } from "../types";
 import { getLogMessage } from "./getLogMessage";
-import { TemplateSafeValueContainer, TypedTemplateSafeValueContainer } from "../../../templateFormatter";
+import { TypedTemplateSafeValueContainer } from "../../../templateFormatter";
 import { LogType } from "../../../data/LogType";
 
 const excludedUserProps = ["user", "member", "mod"];
@@ -79,7 +78,6 @@ export async function log<TLogType extends keyof ILogTypeData>(
           }
         }
       }
-
       const message = await getLogMessage(pluginData, type, data, {
         format: opts.format,
         include_embed_timestamp: opts.include_embed_timestamp,
@@ -87,12 +85,6 @@ export async function log<TLogType extends keyof ILogTypeData>(
       });
 
       if (message) {
-        // For non-string log messages (i.e. embeds) batching or chunking is not possible, so send them immediately
-        if (typeof message !== "string") {
-          await channel.send(message).catch(noop);
-          return;
-        }
-
         // Default to batched unless explicitly disabled
         const batched = opts.batched ?? true;
         const batchTime = opts.batch_time ?? 1000;
@@ -104,16 +96,51 @@ export async function log<TLogType extends keyof ILogTypeData>(
           if (!pluginData.state.batches.has(channel.id)) {
             pluginData.state.batches.set(channel.id, []);
             setTimeout(async () => {
-              const batchedMessage = pluginData.state.batches.get(channel.id)!.join("\n");
+              const batch = pluginData.state.batches.get(channel.id);
+              if (!batch) return;
+
+              const chunks: ParsedMessageType[] = [];
+              for (const msg of batch) {
+                if (typeof msg === "string") {
+                  // check if the latest chunk is a string, if not, make it one
+                  if (typeof chunks[chunks.length - 1] === "string") {
+                    chunks[chunks.length - 1] += `\n${msg}`;
+                  } else {
+                    chunks.push(msg);
+                  }
+                } else {
+                  const msgEmbeds = msg.embeds;
+                  const lastEntry = chunks[chunks.length - 1];
+
+                  if (!msgEmbeds || msgEmbeds.length === 0) continue;
+                  // check if the latest chunk is an embed, if not, make it one
+                  if (typeof lastEntry !== "string" && lastEntry.embeds) {
+                    (chunks[chunks.length - 1] as MessageOptions).embeds!.push(...msgEmbeds);
+                  } else {
+                    chunks.push({ embeds: msgEmbeds });
+                  }
+                }
+              }
+              for (const chunk of chunks) {
+                if (typeof chunk === "string") {
+                  await createChunkedMessage(channel, chunk, { parse });
+                } else if (chunk.embeds) {
+                  await createChunkedEmbedMessage(channel, chunk.embeds, { parse });
+                }
+              }
+
               pluginData.state.batches.delete(channel.id);
-              createChunkedMessage(channel, batchedMessage, { parse }).catch(noop);
             }, batchTime);
           }
 
           pluginData.state.batches.get(channel.id)!.push(message);
         } else {
           // If we're not batching log messages, just send them immediately
-          await createChunkedMessage(channel, message, { parse }).catch(noop);
+          if (typeof message === "string") {
+            await createChunkedMessage(channel, message, { parse }).catch(noop);
+          } else {
+            await channel.send({ embeds: message.embeds, allowedMentions: { parse } });
+          }
         }
       }
     }

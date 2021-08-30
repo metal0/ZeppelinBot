@@ -1015,6 +1015,18 @@ export async function createChunkedMessage(
   }
 }
 
+export async function createChunkedEmbedMessage(
+  channel: TextChannel | ThreadChannel | User,
+  messageEmbeds: Array<MessageEmbed | MessageEmbedOptions>,
+  allowedMentions?: MessageMentionOptions,
+  maxChunkLength = 10,
+) {
+  const chunks = chunkArray(messageEmbeds, maxChunkLength);
+  for (const chunk of chunks) {
+    await channel.send({ embeds: chunk, allowedMentions });
+  }
+}
+
 /**
  * Downloads the file from the given URL to a temporary file, with retry support
  */
