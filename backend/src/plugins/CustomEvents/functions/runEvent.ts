@@ -3,7 +3,7 @@ import { GuildPluginData } from "knub";
 import { sendErrorMessage } from "../../../pluginUtils";
 import { ActionError } from "../ActionError";
 import { addRoleAction } from "../actions/addRoleAction";
-import { removeRoleAction, RemoveRoleAction } from "../actions/removeRoleAction";
+import { removeRoleAction } from "../actions/removeRoleAction";
 import { createCaseAction } from "../actions/createCaseAction";
 import { makeRoleMentionableAction } from "../actions/makeRoleMentionableAction";
 import { makeRoleUnmentionableAction } from "../actions/makeRoleUnmentionableAction";
