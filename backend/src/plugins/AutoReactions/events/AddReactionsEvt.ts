@@ -1,3 +1,4 @@
+import { MessageType } from "discord-api-types";
 import { GuildChannel, Permissions } from "discord.js";
 import { LogType } from "../../../data/LogType";
 import { isDiscordAPIError } from "../../../utils";
@@ -31,6 +32,8 @@ export const AddReactionsEvt = autoReactionsEvt({
       });
       return;
     }
+
+    if (message.type !== "DEFAULT" || message.author.id === me.id) return;
 
     for (const reaction of autoReaction.reactions) {
       try {
