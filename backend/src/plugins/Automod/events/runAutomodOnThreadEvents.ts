@@ -26,7 +26,6 @@ export const RunAutomodOnThreadCreate = typedGuildEventListener<AutomodPluginTyp
         }
       }
     }
-    console.log("context.message", context.message);
 
     pluginData.state.queue.add(() => {
       runAutomod(pluginData, context);
