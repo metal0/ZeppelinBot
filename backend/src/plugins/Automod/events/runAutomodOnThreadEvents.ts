@@ -14,7 +14,7 @@ export const RunAutomodOnThreadCreate = typedGuildEventListener<AutomodPluginTyp
       user,
     };
     const sourceChannel = pluginData.client.channels.cache.find(c => c.id === thread.parentId);
-    if (sourceChannel && sourceChannel.isText()) {
+    if (sourceChannel?.isText()) {
       const sourceMessage = sourceChannel.messages.cache.find(
         m => m.thread?.id === thread.id || m.reference?.channelId === thread.id,
       );
