@@ -35,7 +35,24 @@ export class GuildSavedMessages extends BaseGuildRepository {
     this.toBePermanent = new Set();
   }
 
-  public msgToSavedMessageData(msg: Message): ISavedMessageData {
+  public static msgToSavedMessage(message: Message): SavedMessage {
+    const postedAt = moment.utc(message.createdTimestamp, "x").format("YYYY-MM-DD HH:mm:ss");
+
+    return {
+      data: GuildSavedMessages.msgToSavedMessageData(message),
+      id: message.id,
+      guild_id: (message.channel as GuildChannel).guildId,
+      channel_id: message.channelId,
+      user_id: message.author.id,
+      is_bot: message.author.bot,
+      posted_at: postedAt,
+      // @ts-expect-error
+      deleted_at: null,
+      is_permanent: false,
+    };
+  }
+
+  public static msgToSavedMessageData(msg: Message): ISavedMessageData {
     const data: ISavedMessageData = {
       author: {
         username: msg.author.username,
@@ -231,7 +248,7 @@ export class GuildSavedMessages extends BaseGuildRepository {
       return;
     }
 
-    const savedMessageData = this.msgToSavedMessageData(msg);
+    const savedMessageData = GuildSavedMessages.msgToSavedMessageData(msg);
     const postedAt = moment.utc(msg.createdTimestamp, "x").format("YYYY-MM-DD HH:mm:ss");
 
     const data = {
@@ -319,7 +336,7 @@ export class GuildSavedMessages extends BaseGuildRepository {
   }
 
   async saveEditFromMsg(msg: Message) {
-    const newData = this.msgToSavedMessageData(msg);
+    const newData = GuildSavedMessages.msgToSavedMessageData(msg);
     return this.saveEdit(msg.id, newData);
   }
 
