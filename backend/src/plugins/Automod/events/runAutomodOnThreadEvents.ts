@@ -1,5 +1,4 @@
 import { typedGuildEventListener } from "knub";
-import { GuildSavedMessages } from "../../../data/GuildSavedMessages";
 import { runAutomod } from "../functions/runAutomod";
 import { AutomodContext, AutomodPluginType } from "../types";
 
@@ -22,7 +21,7 @@ export const RunAutomodOnThreadCreate = typedGuildEventListener<AutomodPluginTyp
         m => m.thread?.id === thread.id || m.reference?.channelId === thread.id,
       );
       if (sourceMessage) {
-        const savedMessage = GuildSavedMessages.msgToSavedMessage(sourceMessage);
+        const savedMessage = pluginData.state.savedMessages.msgToSavedMessage(sourceMessage);
         savedMessage.channel_id = thread.id;
         context.message = savedMessage;
       }
