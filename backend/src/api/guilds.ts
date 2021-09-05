@@ -36,7 +36,7 @@ export function initGuildsAPI(app: express.Express) {
     "/my-permissions", // a
     async (req: Request, res: Response) => {
       if (isStaff(req.user!.userId)) {
-        res.json([ApiPermissions.Owner]);
+        res.json([ApiPermissions.Owner, ApiPermissions.ManageAccess, ApiPermissions.EditConfig]);
         return;
       }
       const permissions = await apiPermissionAssignments.getByUserId(req.user!.userId);
