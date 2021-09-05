@@ -15,7 +15,6 @@ import moment from "moment-timezone";
 import { ApiAuditLog } from "../data/ApiAuditLog";
 import { AuditLogEventTypes } from "../data/apiAuditLogTypes";
 import { Queue } from "../Queue";
-import { isStaff } from "src/staff";
 
 const apiPermissionAssignments = new ApiPermissionAssignments();
 const auditLog = new ApiAuditLog();
