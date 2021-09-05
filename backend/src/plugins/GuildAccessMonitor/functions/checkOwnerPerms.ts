@@ -8,6 +8,7 @@ export async function checkGuildOwnerPermissions(
   guildId: string,
   ownerId: string,
 ) {
+  /*
   const ownerPerms = await pluginData.state.apiPermissionAssignments.getByGuildAndUserId(guildId, ownerId);
   if (!ownerPerms || !ownerPerms.permissions.includes(ApiPermissions.Owner)) {
     if (!ownerPerms) {
@@ -35,4 +36,5 @@ export async function checkGuildOwnerPermissions(
       });
     }
   }
+  */
 }
