@@ -15,6 +15,7 @@ import moment from "moment-timezone";
 import { ApiAuditLog } from "../data/ApiAuditLog";
 import { AuditLogEventTypes } from "../data/apiAuditLogTypes";
 import { Queue } from "../Queue";
+import { isStaff } from "src/staff";
 
 const apiPermissionAssignments = new ApiPermissionAssignments();
 const auditLog = new ApiAuditLog();
@@ -34,6 +35,10 @@ export function initGuildsAPI(app: express.Express) {
   guildRouter.get(
     "/my-permissions", // a
     async (req: Request, res: Response) => {
+      if (isStaff(req.user!.userId)) {
+        res.json([ApiPermissions.Owner]);
+        return;
+      }
       const permissions = await apiPermissionAssignments.getByUserId(req.user!.userId);
       res.json(permissions);
     },
