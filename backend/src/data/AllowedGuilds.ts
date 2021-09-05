@@ -3,6 +3,8 @@ import { ApiPermissionTypes } from "./ApiPermissionAssignments";
 import { isStaff } from "src/staff";
 import { BaseRepository } from "./BaseRepository";
 import { AllowedGuild } from "./entities/AllowedGuild";
+import moment from "moment-timezone";
+import { DBDateFormat } from "../utils";
 
 export class AllowedGuilds extends BaseRepository {
   private allowedGuilds: Repository<AllowedGuild>;
@@ -44,7 +46,10 @@ export class AllowedGuilds extends BaseRepository {
   }
 
   updateInfo(id, name, icon, ownerId) {
-    return this.allowedGuilds.update({ id }, { name, icon, owner_id: ownerId });
+    return this.allowedGuilds.update(
+      { id },
+      { name, icon, owner_id: ownerId, updated_at: moment.utc().format(DBDateFormat) },
+    );
   }
 
   add(id, data: Partial<Omit<AllowedGuild, "id">> = {}) {

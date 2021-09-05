@@ -2,8 +2,9 @@ import { ApiPermissions } from "@shared/apiPermissions";
 import { TextChannel } from "discord.js";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { isOwnerPreFilter, sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
-import { isSnowflake } from "../../../utils";
+import { DBDateFormat, isSnowflake } from "../../../utils";
 import { botControlCmd } from "../types";
+import moment from "moment-timezone";
 
 export const AllowServerCmd = botControlCmd({
   trigger: ["allow_server", "allowserver", "add_server", "addserver"],
@@ -38,13 +39,20 @@ export const AllowServerCmd = botControlCmd({
     await pluginData.state.configs.saveNewRevision(`guild-${args.guildId}`, "plugins: {}", msg.author.id);
 
     if (args.userId) {
-      const existingAssignment = await pluginData.state.apiPermissionAssignments.getByGuildAndUserId(
+      await pluginData.state.apiPermissionAssignments.addUser(args.guildId, args.userId, [ApiPermissions.ManageAccess]);
+    }
+
+    if (args.userId !== msg.author.id) {
+      // Add temporary access to user who added server
+      await pluginData.state.apiPermissionAssignments.addUser(
         args.guildId,
-        args.userId,
+        msg.author.id,
+        [ApiPermissions.ManageAccess],
+        moment
+          .utc()
+          .add(1, "hour")
+          .format(DBDateFormat),
       );
-      if (!existingAssignment) {
-        await pluginData.state.apiPermissionAssignments.addUser(args.guildId, args.userId, [ApiPermissions.EditConfig]);
-      }
     }
 
     sendSuccessMessage(pluginData, msg.channel as TextChannel, "Server is now allowed to use Zeppelin!");
