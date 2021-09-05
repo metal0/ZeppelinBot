@@ -34,7 +34,7 @@ export class CreateApiAuditLogTable1630837718830 implements MigrationInterface {
           {
             name: "created_at",
             type: "datetime",
-            default: "(NOW())",
+            default: "NOW()",
           },
         ],
         indices: [

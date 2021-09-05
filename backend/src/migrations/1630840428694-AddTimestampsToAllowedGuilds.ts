@@ -6,12 +6,12 @@ export class AddTimestampsToAllowedGuilds1630840428694 implements MigrationInter
       new TableColumn({
         name: "created_at",
         type: "datetime",
-        default: "(NOW())",
+        default: "NOW()",
       }),
       new TableColumn({
         name: "updated_at",
         type: "datetime",
-        default: "(NOW())",
+        default: "NOW()",
         onUpdate: "CURRENT_TIMESTAMP",
       }),
     ]);
