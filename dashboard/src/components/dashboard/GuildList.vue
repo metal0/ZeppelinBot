@@ -66,7 +66,7 @@
       canManageAccess(guildId: string) {
         const guildPermissions = this.guildPermissionAssignments[guildId] || [];
         const myPermissions = guildPermissions.find(p => p.type === "USER" && p.target_id === this.userId) || null;
-        return myPermissions && (hasPermission(new Set(myPermissions.permissions), ApiPermissions.ManageAccess) || hasPermission(new Set(myPermissions.permissions), ApiPermissions.Owner));
+        return myPermissions && hasPermission(new Set(myPermissions.permissions), ApiPermissions.ManageAccess);
       },
     },
   };
