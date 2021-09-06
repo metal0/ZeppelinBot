@@ -8,8 +8,8 @@ export function generateTemplateMarkdown(definitions: TemplateFunction[]): strin
       const exampl = def.examples ? def.examples.map(ex => `> \`{${ex}}\``).join("\n") : null;
       return trimPluginDescription(`
       ### ${def.name}
-      **${def.description}**
-      \`{${def.name}${usage}}\`
+      **${def.description}**\n
+      \`{${def.name}${usage}}\`\n
       ${exampl ? `Examples:\n${exampl}` : ""}`);
     })
     .join("\n\n");
