@@ -9,8 +9,8 @@ export function generateTemplateMarkdown(definitions: TemplateFunction[]): strin
       return trimPluginDescription(`
       ### ${def.name}
       **${def.description}**\n
-      \`{${def.name}${usage}}\`\n
-      ${exampl ? `Examples:\n${exampl}` : ""}`);
+      **__Usage__**: \`{${def.name}${usage}}\`\n
+      ${exampl ? `**__Examples__:**\n${exampl}` : ""}`);
     })
     .join("\n\n\n\n");
 }
