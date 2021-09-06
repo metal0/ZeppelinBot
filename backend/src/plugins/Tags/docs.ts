@@ -7,10 +7,12 @@ export function generateTemplateMarkdown(definitions: TemplateFunction[]): strin
       const usage = def.signature ?? `(${def.arguments.join(", ")})`;
       const exampl = def.examples ? def.examples.map(ex => `> \`{${ex}}\``).join("\n") : null;
       return trimPluginDescription(`
-      ### ${def.name}
+      ## ${def.name}
       **${def.description}**\n
-      **__Usage__**: \`{${def.name}${usage}}\`\n
-      ${exampl ? `**__Examples__:**\n${exampl}` : ""}`);
+      __Usage__: \`{${def.name}${usage}}\`\n
+      ${exampl ? `__Examples__:\n${exampl}` : ""}
+      **--------------**
+      `);
     })
-    .join("\n\n\n\n");
+    .join("\n\n");
 }
