@@ -12,5 +12,5 @@ export function generateTemplateMarkdown(definitions: TemplateFunction[]): strin
       \`{${def.name}${usage}}\`\n
       ${exampl ? `Examples:\n${exampl}` : ""}`);
     })
-    .join("\n\n");
+    .join("\n\n\n\n");
 }
