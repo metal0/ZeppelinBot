@@ -10,8 +10,7 @@ export function generateTemplateMarkdown(definitions: TemplateFunction[]): strin
       ## ${def.name}
       **${def.description}**\n
       __Usage__: \`{${def.name}${usage}}\`\n
-      ${exampl ? `__Examples__:\n${exampl}` : ""}
-      **--------------**
+      ${exampl ? `__Examples__:\n${exampl}` : ""}\n\n
       `);
     })
     .join("\n\n");
