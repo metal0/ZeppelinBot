@@ -5,12 +5,12 @@ export function generateTemplateMarkdown(definitions: TemplateFunction[]): strin
   return definitions
     .map(def => {
       const usage = def.signature ?? `(${def.arguments.join(", ")})`;
-      const exampl = def.examples ? def.examples.map(ex => `> ${ex}`).join("\n") : "";
+      const exampl = def.examples ? def.examples.map(ex => `> \`{${ex}}\``).join("\n") : null;
       return trimPluginDescription(`
       ### ${def.name}
-      \`{${def.name}${usage}}\`
       **${def.description}**
-      ${exampl}`);
+      \`{${def.name}${usage}}\`
+      ${exampl ? `Examples:\n${exampl}` : ""}`);
     })
     .join("\n\n");
 }
