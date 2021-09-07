@@ -1,4 +1,3 @@
-import { Role, User } from "discord.js";
 import * as t from "io-ts";
 import { tNullable } from "../../../utils";
 import { getTextMatchPartialSummary } from "../functions/getTextMatchPartialSummary";
@@ -7,6 +6,13 @@ import { automodTrigger } from "../helpers";
 interface MatchResultType {
   reason: "everyone" | "repliedUser" | "users" | "roles";
 }
+
+const summaryType: Record<MatchResultType["reason"], string> = {
+  everyone: "everyone",
+  repliedUser: "replied user",
+  users: "user",
+  roles: "role",
+};
 
 export const MatchMentionsTrigger = automodTrigger<MatchResultType>()({
   configType: t.type({
@@ -24,9 +30,7 @@ export const MatchMentionsTrigger = automodTrigger<MatchResultType>()({
   },
 
   async match({ pluginData, context, triggerConfig }) {
-    if (!context.message) {
-      return;
-    }
+    if (!context.message) return;
 
     const channel = pluginData.client.channels.resolve(context.message.channel_id);
     if (!channel || !channel?.isText()) return;
@@ -82,20 +86,6 @@ export const MatchMentionsTrigger = automodTrigger<MatchResultType>()({
 
   renderMatchInformation({ pluginData, contexts, matchResult }) {
     const partialSummary = getTextMatchPartialSummary(pluginData, "message", contexts[0]);
-
-    if (matchResult.extra.reason === "everyone") {
-      return `Matched everyone mention in ${partialSummary}`;
-    }
-    if (matchResult.extra.reason === "repliedUser") {
-      return `Matched reply mention in ${partialSummary}`;
-    }
-    if (matchResult.extra.reason === "users") {
-      return `Matched user mention in ${partialSummary}`;
-    }
-    if (matchResult.extra.reason === "roles") {
-      return `Matched role mention in ${partialSummary}`;
-    }
-
-    return `Matched mention in ${partialSummary}`;
+    return `Matched ${summaryType[matchResult.extra.reason]} mention in ${partialSummary}`;
   },
 });
