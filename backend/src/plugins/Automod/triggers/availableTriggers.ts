@@ -29,6 +29,7 @@ import { StickerSpamTrigger } from "./stickerSpam";
 import { UnbanTrigger } from "./unban";
 import { UnmuteTrigger } from "./unmute";
 import { WarnTrigger } from "./warn";
+import { MatchMentionsTrigger } from "./matchMentions";
 
 export const availableTriggers: Record<string, AutomodTriggerBlueprint<any, any>> = {
   any_message: AnyMessageTrigger,
@@ -39,6 +40,7 @@ export const availableTriggers: Record<string, AutomodTriggerBlueprint<any, any>
   match_links: MatchLinksTrigger,
   match_attachment_type: MatchAttachmentTypeTrigger,
   match_mime_type: MatchMimeTypeTrigger,
+  match_mentions: MatchMentionsTrigger,
   member_join: MemberJoinTrigger,
   role_added: RoleAddedTrigger,
   role_removed: RoleRemovedTrigger,
@@ -75,6 +77,7 @@ export const AvailableTriggers = t.type({
   match_links: MatchLinksTrigger.configType,
   match_attachment_type: MatchAttachmentTypeTrigger.configType,
   match_mime_type: MatchMimeTypeTrigger.configType,
+  match_mentions: MatchMentionsTrigger.configType,
   member_join: MemberJoinTrigger.configType,
   member_leave: MemberLeaveTrigger.configType,
   role_added: RoleAddedTrigger.configType,
