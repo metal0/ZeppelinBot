@@ -6,6 +6,7 @@ import { AlertAction } from "./alert";
 import { ArchiveThreadAction } from "./archiveThread";
 import { BanAction } from "./ban";
 import { ChangeNicknameAction } from "./changeNickname";
+import { ChangeRolesAction } from "./changeRoles";
 import { CleanAction } from "./clean";
 import { CrosspostMessageAction } from "./crosspostMessage";
 import { KickAction } from "./kick";
@@ -38,6 +39,7 @@ export const availableActions: Record<string, AutomodActionBlueprint<any>> = {
   archive_thread: ArchiveThreadAction,
   start_thread: StartThreadAction,
   crosspost_message: CrosspostMessageAction,
+  change_roles: ChangeRolesAction,
 };
 
 export const AvailableActions = t.type({
@@ -59,4 +61,5 @@ export const AvailableActions = t.type({
   archive_thread: ArchiveThreadAction.configType,
   start_thread: StartThreadAction.configType,
   crosspost_message: CrosspostMessageAction.configType,
+  change_roles: ChangeRolesAction.configType,
 });
