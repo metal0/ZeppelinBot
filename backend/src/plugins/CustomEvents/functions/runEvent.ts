@@ -12,6 +12,7 @@ import { moveToVoiceChannelAction } from "../actions/moveToVoiceChannelAction";
 import { setChannelPermissionOverridesAction } from "../actions/setChannelPermissionOverrides";
 import { CustomEventsPluginType, TCustomEvent } from "../types";
 import { TemplateSafeValueContainer } from "../../../templateFormatter";
+import { addToCounterAction } from "../actions/addToCounter";
 
 export async function runEvent(
   pluginData: GuildPluginData<CustomEventsPluginType>,
@@ -37,6 +38,8 @@ export async function runEvent(
         await makeRoleUnmentionableAction(pluginData, action, values, event, eventData);
       } else if (action.type === "set_channel_permission_overrides") {
         await setChannelPermissionOverridesAction(pluginData, action, values, event, eventData);
+      } else if (action.type === "add_to_counter") {
+        await addToCounterAction(pluginData, action, values, event, eventData);
       }
     }
   } catch (e) {
