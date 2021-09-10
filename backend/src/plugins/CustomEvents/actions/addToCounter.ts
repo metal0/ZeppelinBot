@@ -1,8 +1,7 @@
-import { Snowflake } from "discord.js";
 import * as t from "io-ts";
 import { GuildPluginData } from "knub";
 import { CountersPlugin } from "src/plugins/Counters/CountersPlugin";
-import { canActOn } from "../../../pluginUtils";
+import { emitCounterEvent } from "src/plugins/Counters/functions/emitCounterEvent";
 import { renderTemplate, TemplateSafeValueContainer } from "../../../templateFormatter";
 import { resolveMember } from "../../../utils";
 import { ActionError } from "../ActionError";
@@ -27,14 +26,14 @@ export async function addToCounterAction(
   if (!countersPlugin.counterExists(action.counter)) {
     return;
   }
-  console.log("values", values);
-  console.log("eventData", eventData);
-  /*
-    countersPlugin.changeCounterValue(
-      action.counter,
-      values.msg?.channel!.id || null,
-      contexts[0].user?.id || null,
-      actionConfig.amount,
-    );
-    */
+  const targetId = await renderTemplate(action.target, values, false);
+  const target = await resolveMember(pluginData.client, pluginData.guild, targetId);
+  if (!target && action.target) throw new ActionError(`Unknown target member: ${targetId}`);
+
+  countersPlugin.changeCounterValue(
+    action.counter,
+    eventData.msg?.channelId || null,
+    target ? targetId : null,
+    action.amount,
+  );
 }
