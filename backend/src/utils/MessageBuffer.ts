@@ -1,5 +1,6 @@
 import { StrictMessageContent } from "../utils";
 import Timeout = NodeJS.Timeout;
+import { calculateEmbedSize } from "./calculateEmbedSize";
 
 type ConsumeFn = (part: StrictMessageContent) => void;
 
@@ -15,9 +16,11 @@ type Chunk = {
 export interface MessageBufferOpts {
   consume?: ConsumeFn;
   timeout?: number;
+  textSeparator?: string;
 }
 
 const MAX_CHARS_PER_MESSAGE = 2000;
+const MAX_EMBED_LENGTH_PER_MESSAGE = 6000;
 const MAX_EMBEDS_PER_MESSAGE = 10;
 
 /**
@@ -27,6 +30,8 @@ export class MessageBuffer {
   protected autoConsumeFn: ConsumeFn | null = null;
 
   protected timeoutMs: number | null = null;
+
+  protected textSeparator: string = "";
 
   protected chunk: Chunk | null = null;
 
@@ -41,6 +46,10 @@ export class MessageBuffer {
 
     if (opts.timeout) {
       this.timeoutMs = opts.timeout;
+    }
+
+    if (opts.textSeparator) {
+      this.textSeparator = opts.textSeparator;
     }
   }
 
@@ -71,13 +80,24 @@ export class MessageBuffer {
         this.startNewChunk(contentType);
       }
 
-      if (chunk.content.content == null) chunk.content.content = "";
-      chunk.content.content += content.content;
+      if (chunk.content.content == null || chunk.content.content === "") {
+        chunk.content.content = content.content;
+      } else {
+        chunk.content.content += this.textSeparator + content.content;
+      }
     }
 
     if (content.embeds) {
-      if (chunk.content.embeds && chunk.content.embeds.length + content.embeds.length > MAX_EMBEDS_PER_MESSAGE) {
-        this.startNewChunk(contentType);
+      if (chunk.content.embeds) {
+        if (chunk.content.embeds.length + content.embeds.length > MAX_EMBEDS_PER_MESSAGE) {
+          this.startNewChunk(contentType);
+        } else {
+          const existingEmbedsLength = chunk.content.embeds.reduce((sum, embed) => sum + calculateEmbedSize(embed), 0);
+          const embedsLength = content.embeds.reduce((sum, embed) => sum + calculateEmbedSize(embed), 0);
+          if (existingEmbedsLength + embedsLength > MAX_EMBED_LENGTH_PER_MESSAGE) {
+            this.startNewChunk(contentType);
+          }
+        }
       }
 
       if (chunk.content.embeds == null) chunk.content.embeds = [];

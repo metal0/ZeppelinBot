@@ -39,8 +39,9 @@ export const NameHistoryPlugin = zeppelinGuildPlugin<NameHistoryPluginType>()({
 
   // prettier-ignore
   events: [
-    ChannelJoinEvt,
-    MessageCreateEvt,
+    // FIXME: Temporary
+    // ChannelJoinEvt,
+    // MessageCreateEvt,
   ],
 
   beforeLoad(pluginData) {
