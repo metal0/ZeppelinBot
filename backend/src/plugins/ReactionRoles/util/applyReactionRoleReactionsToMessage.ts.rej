@@ -1,4 +1,0 @@
-diff a/backend/src/plugins/ReactionRoles/util/applyReactionRoleReactionsToMessage.ts b/backend/src/plugins/ReactionRoles/util/applyReactionRoleReactionsToMessage.ts	(rejected hunks)
-@@ -68 +68 @@ export async function applyReactionRoleReactionsToMessage(
--  const emojisToAdd = reactionRoles.map((rr) => rr.emoji);
-+  const emojisToAdd = reactionRoles.map(rr => rr.emoji);

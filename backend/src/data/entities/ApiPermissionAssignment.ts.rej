@@ -1,7 +1,0 @@
-diff a/backend/src/data/entities/ApiPermissionAssignment.ts b/backend/src/data/entities/ApiPermissionAssignment.ts	(rejected hunks)
-@@ -26 +26,4 @@ export class ApiPermissionAssignment {
--  @ManyToOne((type) => ApiUserInfo, (userInfo) => userInfo.permissionAssignments)
-+  @ManyToOne(
-+    type => ApiUserInfo,
-+    userInfo => userInfo.permissionAssignments,
-+  )

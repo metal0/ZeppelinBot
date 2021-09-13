@@ -1,4 +1,0 @@
-diff a/shared/src/apiPermissions.ts b/shared/src/apiPermissions.ts	(rejected hunks)
-@@ -38 +38 @@ export function permissionArrToSet(permissions: string[]): Set<ApiPermissions> {
--  return new Set(permissions.filter((p) => reverseApiPermissions[p])) as Set<ApiPermissions>;
-+  return new Set(permissions.filter(p => reverseApiPermissions[p])) as Set<ApiPermissions>;

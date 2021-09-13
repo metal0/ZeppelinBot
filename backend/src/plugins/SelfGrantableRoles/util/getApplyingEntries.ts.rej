@@ -1,4 +1,0 @@
-diff a/backend/src/plugins/SelfGrantableRoles/util/getApplyingEntries.ts b/backend/src/plugins/SelfGrantableRoles/util/getApplyingEntries.ts	(rejected hunks)
-@@ -14 +14 @@ export async function getApplyingEntries(
--    .map((pair) => pair[1]);
-+    .map(pair => pair[1]);

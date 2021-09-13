@@ -1,7 +1,0 @@
-diff a/backend/src/utils/tColor.ts b/backend/src/utils/tColor.ts	(rejected hunks)
-@@ -11 +11 @@ export const tColor = new t.Type<number, string>(
--    either.chain(t.string.validate(from, to), (input) => {
-+    either.chain(t.string.validate(from, to), input => {
-@@ -15 +15 @@ export const tColor = new t.Type<number, string>(
--  (s) => intToRgb(s).join(","),
-+  s => intToRgb(s).join(","),

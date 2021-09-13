@@ -1,4 +1,0 @@
-diff a/backend/src/plugins/CompanionChannels/functions/handleCompanionPermissions.ts b/backend/src/plugins/CompanionChannels/functions/handleCompanionPermissions.ts	(rejected hunks)
-@@ -68 +68 @@ export async function handleCompanionPermissions(
--      const onlyAllowed = filterObject(fullSerialized, (v) => v === true);
-+      const onlyAllowed = filterObject(fullSerialized, v => v === true);

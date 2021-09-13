@@ -1,4 +1,0 @@
-diff a/backend/src/plugins/Logs/logFunctions/logAutomodAction.ts b/backend/src/plugins/Logs/logFunctions/logAutomodAction.ts	(rejected hunks)
-@@ -24 +24 @@ export function logAutomodAction(pluginData: GuildPluginData<LogsPluginType>, da
--      users: data.users.map((user) => userToTemplateSafeUser(user)),
-+      users: data.users.map(user => userToTemplateSafeUser(user)),

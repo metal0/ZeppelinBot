@@ -1,4 +1,0 @@
-diff a/backend/src/plugins/AutoDelete/util/deleteNextItem.ts b/backend/src/plugins/AutoDelete/util/deleteNextItem.ts	(rejected hunks)
-@@ -48 +48 @@ export async function deleteNextItem(pluginData: GuildPluginData<AutoDeletePlugi
--  (channel as TextChannel).messages.delete(itemToDelete.message.id as Snowflake).catch((err) => {
-+  (channel as TextChannel).messages.delete(itemToDelete.message.id as Snowflake).catch(err => {

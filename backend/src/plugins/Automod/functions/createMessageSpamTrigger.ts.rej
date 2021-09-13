@@ -1,9 +1,0 @@
-diff a/backend/src/plugins/Automod/functions/createMessageSpamTrigger.ts b/backend/src/plugins/Automod/functions/createMessageSpamTrigger.ts	(rejected hunks)
-@@ -63 +63 @@ export function createMessageSpamTrigger(spamType: RecentActionType, prettyName:
--          .map((action) => action.context.message)
-+          .map(action => action.context.message)
-@@ -78,2 +78,2 @@ export function createMessageSpamTrigger(spamType: RecentActionType, prettyName:
--            .map((action) => action.context)
--            .filter((_context) => _context !== context),
-+            .map(action => action.context)
-+            .filter(_context => _context !== context),

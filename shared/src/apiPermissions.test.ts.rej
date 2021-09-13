@@ -1,7 +1,0 @@
-diff a/shared/src/apiPermissions.test.ts b/shared/src/apiPermissions.test.ts	(rejected hunks)
-@@ -4 +4 @@ import test from "ava";
--test("Directly granted permissions match", (t) => {
-+test("Directly granted permissions match", t => {
-@@ -9 +9 @@ test("Directly granted permissions match", (t) => {
--test("Implicitly granted permissions by hierarchy match", (t) => {
-+test("Implicitly granted permissions by hierarchy match", t => {

@@ -1,4 +1,0 @@
-diff a/backend/src/plugins/Automod/actions/mute.ts b/backend/src/plugins/Automod/actions/mute.ts	(rejected hunks)
-@@ -43 +43 @@ export const MuteAction = automodAction({
--    const userIdsToMute = unique(contexts.map((c) => c.user?.id).filter(nonNullish));
-+    const userIdsToMute = unique(contexts.map(c => c.user?.id).filter(nonNullish));

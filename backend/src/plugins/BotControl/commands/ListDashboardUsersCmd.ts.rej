@@ -1,4 +1,0 @@
-diff a/backend/src/plugins/BotControl/commands/ListDashboardUsersCmd.ts b/backend/src/plugins/BotControl/commands/ListDashboardUsersCmd.ts	(rejected hunks)
-@@ -24 +24 @@ export const ListDashboardUsersCmd = botControlCmd({
--      dashboardUsers.map(async (perm) => ({
-+      dashboardUsers.map(async perm => ({

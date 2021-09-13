@@ -1,7 +1,0 @@
-diff a/backend/src/data/GuildCases.ts b/backend/src/data/GuildCases.ts	(rejected hunks)
-@@ -126 +126 @@ export class GuildCases extends BaseGuildRepository {
--      .catch((err) => {
-+      .catch(err => {
-@@ -151 +151 @@ export class GuildCases extends BaseGuildRepository {
--    return connection.transaction(async (entityManager) => {
-+    return connection.transaction(async entityManager => {

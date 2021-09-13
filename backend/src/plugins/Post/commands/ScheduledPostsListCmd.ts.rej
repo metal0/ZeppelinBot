@@ -1,4 +1,0 @@
-diff a/backend/src/plugins/Post/commands/ScheduledPostsListCmd.ts b/backend/src/plugins/Post/commands/ScheduledPostsListCmd.ts	(rejected hunks)
-@@ -24 +24 @@ export const ScheduledPostsListCmd = postCmd({
--    const postLines = scheduledPosts.map((p) => {
-+    const postLines = scheduledPosts.map(p => {

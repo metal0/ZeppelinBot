@@ -1,4 +1,0 @@
-diff a/backend/src/plugins/Automod/triggers/matchWords.ts b/backend/src/plugins/Automod/triggers/matchWords.ts	(rejected hunks)
-@@ -67 +67 @@ export const MatchWordsTrigger = automodTrigger<MatchResultType>()({
--          ? [...word].map((c) => escapeStringRegexp(c)).join(`(?:\\s*|.{0,${looseMatchingThreshold})`)
-+          ? [...word].map(c => escapeStringRegexp(c)).join(`(?:\\s*|.{0,${looseMatchingThreshold})`)

@@ -1,4 +1,0 @@
-diff a/backend/src/plugins/Automod/actions/log.ts b/backend/src/plugins/Automod/actions/log.ts	(rejected hunks)
-@@ -13 +13 @@ export const LogAction = automodAction({
--    const users = unique(contexts.map((c) => c.user)).filter(isTruthy);
-+    const users = unique(contexts.map(c => c.user)).filter(isTruthy);

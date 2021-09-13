@@ -1,7 +1,0 @@
-diff a/backend/src/data/GuildVCAlerts.ts b/backend/src/data/GuildVCAlerts.ts	(rejected hunks)
-@@ -22 +22,4 @@ export class GuildVCAlerts extends BaseGuildRepository {
--    return this.allAlerts.createQueryBuilder().where("guild_id = :guildId", { guildId: this.guildId }).getMany();
-+    return this.allAlerts
-+      .createQueryBuilder()
-+      .where("guild_id = :guildId", { guildId: this.guildId })
-+      .getMany();

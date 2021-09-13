@@ -1,4 +1,0 @@
-diff a/dashboard/src/directives/trim-indents.ts b/dashboard/src/directives/trim-indents.ts	(rejected hunks)
-@@ -22 +22 @@ Vue.directive("trim-indents", {
--      .map((line) => line.slice(spacesToTrim))
-+      .map(line => line.slice(spacesToTrim))

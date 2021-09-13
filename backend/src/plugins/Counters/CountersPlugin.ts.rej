@@ -1,4 +1,0 @@
-diff a/backend/src/plugins/Counters/CountersPlugin.ts b/backend/src/plugins/Counters/CountersPlugin.ts	(rejected hunks)
-@@ -58 +58 @@ const defaultOptions: PluginOptions<CountersPluginType> = {
--const configPreprocessor: ConfigPreprocessorFn<CountersPluginType> = (options) => {
-+const configPreprocessor: ConfigPreprocessorFn<CountersPluginType> = options => {

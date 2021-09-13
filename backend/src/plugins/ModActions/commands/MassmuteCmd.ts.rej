@@ -1,4 +1,0 @@
-diff a/backend/src/plugins/ModActions/commands/MassmuteCmd.ts b/backend/src/plugins/ModActions/commands/MassmuteCmd.ts	(rejected hunks)
-@@ -56 +56 @@ export const MassmuteCmd = modActionsCmd({
--    args.userIds.forEach((userId) => {
-+    args.userIds.forEach(userId => {

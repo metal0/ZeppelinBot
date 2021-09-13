@@ -1,4 +1,0 @@
-diff a/backend/src/plugins/Mutes/commands/ClearBannedMutesCmd.ts b/backend/src/plugins/Mutes/commands/ClearBannedMutesCmd.ts	(rejected hunks)
-@@ -16 +16 @@ export const ClearBannedMutesCmd = mutesCmd({
--    const bannedIds = bans.map((b) => b.user.id);
-+    const bannedIds = bans.map(b => b.user.id);

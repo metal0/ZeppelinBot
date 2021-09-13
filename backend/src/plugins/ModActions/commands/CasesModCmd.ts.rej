@@ -1,7 +1,0 @@
-diff a/backend/src/plugins/ModActions/commands/CasesModCmd.ts b/backend/src/plugins/ModActions/commands/CasesModCmd.ts	(rejected hunks)
-@@ -49 +49 @@ export const CasesModCmd = modActionsCmd({
--      async (page) => {
-+      async page => {
-@@ -51 +51 @@ export const CasesModCmd = modActionsCmd({
--        const lines = await asyncMap(cases, (c) => casesPlugin.getCaseSummary(c, true, msg.author.id));
-+        const lines = await asyncMap(cases, c => casesPlugin.getCaseSummary(c, true, msg.author.id));

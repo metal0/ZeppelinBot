@@ -1,4 +1,0 @@
-diff a/backend/src/plugins/ReactionRoles/events/AddReactionRoleEvt.ts b/backend/src/plugins/ReactionRoles/events/AddReactionRoleEvt.ts	(rejected hunks)
-@@ -32 +32 @@ export const AddReactionRoleEvt = reactionRolesEvt({
--      const reactionRoleRoleIds = reactionRoles.map((rr) => rr.role_id);
-+      const reactionRoleRoleIds = reactionRoles.map(rr => rr.role_id);

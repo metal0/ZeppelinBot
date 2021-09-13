@@ -1,4 +1,0 @@
-diff a/backend/src/plugins/Automod/actions/ban.ts b/backend/src/plugins/Automod/actions/ban.ts	(rejected hunks)
-@@ -38 +38 @@ export const BanAction = automodAction({
--    const userIdsToBan = unique(contexts.map((c) => c.user?.id).filter(nonNullish));
-+    const userIdsToBan = unique(contexts.map(c => c.user?.id).filter(nonNullish));

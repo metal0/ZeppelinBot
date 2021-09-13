@@ -1,4 +1,0 @@
-diff a/backend/src/plugins/LocateUser/utils/fillAlertsList.ts b/backend/src/plugins/LocateUser/utils/fillAlertsList.ts	(rejected hunks)
-@@ -7 +7 @@ export async function fillActiveAlertsList(pluginData: GuildPluginData<LocateUse
--  allAlerts.forEach((alert) => {
-+  allAlerts.forEach(alert => {

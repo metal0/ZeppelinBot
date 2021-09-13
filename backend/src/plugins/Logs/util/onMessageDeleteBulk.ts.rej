@@ -1,4 +1,0 @@
-diff a/backend/src/plugins/Logs/util/onMessageDeleteBulk.ts b/backend/src/plugins/Logs/util/onMessageDeleteBulk.ts	(rejected hunks)
-@@ -20 +20 @@ export async function onMessageDeleteBulk(pluginData: GuildPluginData<LogsPlugin
--  const authorIds = Array.from(new Set(savedMessages.map((item) => `\`${item.user_id}\``)));
-+  const authorIds = Array.from(new Set(savedMessages.map(item => `\`${item.user_id}\``)));

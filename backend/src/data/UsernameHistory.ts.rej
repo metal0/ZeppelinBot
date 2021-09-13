@@ -1,4 +1,0 @@
-diff a/backend/src/data/UsernameHistory.ts b/backend/src/data/UsernameHistory.ts	(rejected hunks)
-@@ -70 +70 @@ export class UsernameHistory extends BaseRepository {
--        id: In(toDelete.map((v) => v.id)),
-+        id: In(toDelete.map(v => v.id)),

@@ -1,7 +1,0 @@
-diff a/backend/src/data/GuildSlowmodes.ts b/backend/src/data/GuildSlowmodes.ts	(rejected hunks)
-@@ -70 +70,4 @@ export class GuildSlowmodes extends BaseGuildRepository {
--    const expiresAt = moment.utc().add(slowmode.slowmode_seconds, "seconds").format("YYYY-MM-DD HH:mm:ss");
-+    const expiresAt = moment
-+      .utc()
-+      .add(slowmode.slowmode_seconds, "seconds")
-+      .format("YYYY-MM-DD HH:mm:ss");

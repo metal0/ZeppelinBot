@@ -1,7 +1,0 @@
-diff a/backend/src/plugins/SelfGrantableRoles/SelfGrantableRolesPlugin.ts b/backend/src/plugins/SelfGrantableRoles/SelfGrantableRolesPlugin.ts	(rejected hunks)
-@@ -73 +73 @@ export const SelfGrantableRolesPlugin = zeppelinGuildPlugin<SelfGrantableRolesPl
--  configPreprocessor: (options) => {
-+  configPreprocessor: options => {
-@@ -82 +82 @@ export const SelfGrantableRolesPlugin = zeppelinGuildPlugin<SelfGrantableRolesPl
--          entry.roles[roleId] = aliases.map((a) => a.toLowerCase());
-+          entry.roles[roleId] = aliases.map(a => a.toLowerCase());

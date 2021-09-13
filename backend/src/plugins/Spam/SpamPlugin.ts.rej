@@ -1,4 +1,0 @@
-diff a/backend/src/plugins/Spam/SpamPlugin.ts b/backend/src/plugins/Spam/SpamPlugin.ts	(rejected hunks)
-@@ -85 +85 @@ export const SpamPlugin = zeppelinGuildPlugin<SpamPluginType>()({
--    state.onMessageCreateFn = (msg) => onMessageCreate(pluginData, msg);
-+    state.onMessageCreateFn = msg => onMessageCreate(pluginData, msg);

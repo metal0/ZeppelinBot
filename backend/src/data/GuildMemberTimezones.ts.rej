@@ -1,4 +1,0 @@
-diff a/backend/src/data/GuildMemberTimezones.ts b/backend/src/data/GuildMemberTimezones.ts	(rejected hunks)
-@@ -22 +22 @@ export class GuildMemberTimezones extends BaseGuildRepository {
--    await connection.transaction(async (entityManager) => {
-+    await connection.transaction(async entityManager => {

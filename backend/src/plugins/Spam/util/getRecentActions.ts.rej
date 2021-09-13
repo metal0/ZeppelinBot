@@ -1,4 +1,0 @@
-diff a/backend/src/plugins/Spam/util/getRecentActions.ts b/backend/src/plugins/Spam/util/getRecentActions.ts	(rejected hunks)
-@@ -11 +11 @@ export function getRecentActions(
--  return pluginData.state.recentActions.filter((action) => {
-+  return pluginData.state.recentActions.filter(action => {

@@ -1,4 +1,0 @@
-diff a/backend/src/plugins/Automod/functions/findRecentSpam.ts b/backend/src/plugins/Automod/functions/findRecentSpam.ts	(rejected hunks)
-@@ -10 +10 @@ export function findRecentSpam(
--  return pluginData.state.recentSpam.find((spam) => {
-+  return pluginData.state.recentSpam.find(spam => {

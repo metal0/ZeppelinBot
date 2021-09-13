@@ -1,7 +1,0 @@
-diff a/backend/src/data/GuildArchives.ts b/backend/src/data/GuildArchives.ts	(rejected hunks)
-@@ -91 +91 @@ export class GuildArchives extends BaseGuildRepository {
--          attachments: msg.data.attachments?.map((att) => {
-+          attachments: msg.data.attachments?.map(att => {
-@@ -94 +94 @@ export class GuildArchives extends BaseGuildRepository {
--          stickers: msg.data.stickers?.map((sti) => {
-+          stickers: msg.data.stickers?.map(sti => {

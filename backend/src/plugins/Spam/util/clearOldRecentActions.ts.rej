@@ -1,6 +1,0 @@
-diff a/backend/src/plugins/Spam/util/clearOldRecentActions.ts b/backend/src/plugins/Spam/util/clearOldRecentActions.ts	(rejected hunks)
-@@ -9,3 +9 @@ export function clearOldRecentActions(pluginData: GuildPluginData<SpamPluginType
--  pluginData.state.recentActions = pluginData.state.recentActions.filter(
--    (action) => action.timestamp >= expiryTimestamp,
--  );
-+  pluginData.state.recentActions = pluginData.state.recentActions.filter(action => action.timestamp >= expiryTimestamp);

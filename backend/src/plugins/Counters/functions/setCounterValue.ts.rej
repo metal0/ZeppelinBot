@@ -1,7 +1,0 @@
-diff a/backend/src/plugins/Counters/functions/setCounterValue.ts b/backend/src/plugins/Counters/functions/setCounterValue.ts	(rejected hunks)
-@@ -38 +38 @@ export async function setCounterValue(
--      triggersArr.map((trigger) => checkCounterTrigger(pluginData, counterName, trigger, channelId, userId)),
-+      triggersArr.map(trigger => checkCounterTrigger(pluginData, counterName, trigger, channelId, userId)),
-@@ -41 +41 @@ export async function setCounterValue(
--      triggersArr.map((trigger) => checkReverseCounterTrigger(pluginData, counterName, trigger, channelId, userId)),
-+      triggersArr.map(trigger => checkReverseCounterTrigger(pluginData, counterName, trigger, channelId, userId)),

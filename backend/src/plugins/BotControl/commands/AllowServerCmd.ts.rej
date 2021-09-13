@@ -1,7 +1,0 @@
-diff a/backend/src/plugins/BotControl/commands/AllowServerCmd.ts b/backend/src/plugins/BotControl/commands/AllowServerCmd.ts	(rejected hunks)
-@@ -51 +51,4 @@ export const AllowServerCmd = botControlCmd({
--        moment.utc().add(1, "hour").format(DBDateFormat),
-+        moment
-+          .utc()
-+          .add(1, "hour")
-+          .format(DBDateFormat),

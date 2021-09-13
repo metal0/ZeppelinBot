@@ -1,4 +1,0 @@
-diff a/backend/src/plugins/BotControl/commands/RemoveDashboardUserCmd.ts b/backend/src/plugins/BotControl/commands/RemoveDashboardUserCmd.ts	(rejected hunks)
-@@ -37 +37 @@ export const RemoveDashboardUserCmd = botControlCmd({
--    const userNameList = args.users.map((user) => `<@!${user.id}> (**${user.tag}**, \`${user.id}\`)`);
-+    const userNameList = args.users.map(user => `<@!${user.id}> (**${user.tag}**, \`${user.id}\`)`);

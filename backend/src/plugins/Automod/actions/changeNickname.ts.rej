@@ -1,7 +1,0 @@
-diff a/backend/src/plugins/Automod/actions/changeNickname.ts b/backend/src/plugins/Automod/actions/changeNickname.ts	(rejected hunks)
-@@ -18 +18 @@ export const ChangeNicknameAction = automodAction({
--    const members = unique(contexts.map((c) => c.member).filter(nonNullish));
-+    const members = unique(contexts.map(c => c.member).filter(nonNullish));
-@@ -24 +24 @@ export const ChangeNicknameAction = automodAction({
--      member.edit({ nick: newName }).catch((err) => {
-+      member.edit({ nick: newName }).catch(err => {

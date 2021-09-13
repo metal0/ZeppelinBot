@@ -1,6 +1,0 @@
-diff a/backend/src/plugins/Automod/actions/archiveThread.ts b/backend/src/plugins/Automod/actions/archiveThread.ts	(rejected hunks)
-@@ -12,2 +12,2 @@ export const ArchiveThreadAction = automodAction({
--      .filter((c) => c.message?.channel_id)
--      .map((c) => pluginData.guild.channels.cache.get(c.message!.channel_id))
-+      .filter(c => c.message?.channel_id)
-+      .map(c => pluginData.guild.channels.cache.get(c.message!.channel_id))

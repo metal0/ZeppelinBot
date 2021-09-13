@@ -1,4 +1,0 @@
-diff a/backend/src/plugins/Slowmode/commands/SlowmodeListCmd.ts b/backend/src/plugins/Slowmode/commands/SlowmodeListCmd.ts	(rejected hunks)
-@@ -33 +33 @@ export const SlowmodeListCmd = slowmodeCmd({
--      const lines = slowmodes.map((slowmode) => {
-+      const lines = slowmodes.map(slowmode => {

@@ -1,7 +1,0 @@
-diff a/backend/src/plugins/BotControl/commands/AddServerFromInviteCmd.ts b/backend/src/plugins/BotControl/commands/AddServerFromInviteCmd.ts	(rejected hunks)
-@@ -55 +55,4 @@ export const AddServerFromInviteCmd = botControlCmd({
--        moment.utc().add(1, "hour").format(DBDateFormat),
-+        moment
-+          .utc()
-+          .add(1, "hour")
-+          .format(DBDateFormat),

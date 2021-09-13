@@ -1,7 +1,0 @@
-diff a/backend/src/data/GuildLogs.ts b/backend/src/data/GuildLogs.ts	(rejected hunks)
-@@ -49 +49 @@ export class GuildLogs extends events.EventEmitter {
--    return this.ignoredLogs.some((info) => type === info.type && ignoreId === info.ignoreId);
-+    return this.ignoredLogs.some(info => type === info.type && ignoreId === info.ignoreId);
-@@ -54 +54 @@ export class GuildLogs extends events.EventEmitter {
--      this.ignoredLogs.findIndex((info) => type === info.type && ignoreId === info.ignoreId),
-+      this.ignoredLogs.findIndex(info => type === info.type && ignoreId === info.ignoreId),

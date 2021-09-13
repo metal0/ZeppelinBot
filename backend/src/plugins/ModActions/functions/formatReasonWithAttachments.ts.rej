@@ -1,4 +1,0 @@
-diff a/backend/src/plugins/ModActions/functions/formatReasonWithAttachments.ts b/backend/src/plugins/ModActions/functions/formatReasonWithAttachments.ts	(rejected hunks)
-@@ -4 +4 @@ export function formatReasonWithAttachments(reason: string, attachments: Message
--  const attachmentUrls = attachments.map((a) => a.url);
-+  const attachmentUrls = attachments.map(a => a.url);

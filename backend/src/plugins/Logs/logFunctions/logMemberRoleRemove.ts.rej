@@ -1,4 +1,0 @@
-diff a/backend/src/plugins/Logs/logFunctions/logMemberRoleRemove.ts b/backend/src/plugins/Logs/logFunctions/logMemberRoleRemove.ts	(rejected hunks)
-@@ -22 +22 @@ export function logMemberRoleRemove(pluginData: GuildPluginData<LogsPluginType>,
--      roles: data.roles.map((r) => r.name).join(", "),
-+      roles: data.roles.map(r => r.name).join(", "),

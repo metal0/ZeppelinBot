@@ -1,4 +1,0 @@
-diff a/backend/src/data/ApiUserInfo.ts b/backend/src/data/ApiUserInfo.ts	(rejected hunks)
-@@ -25 +25 @@ export class ApiUserInfo extends BaseRepository {
--    return connection.transaction(async (entityManager) => {
-+    return connection.transaction(async entityManager => {

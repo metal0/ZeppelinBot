@@ -1,4 +1,0 @@
-diff a/backend/src/plugins/Automod/triggers/exampleTrigger.ts b/backend/src/plugins/Automod/triggers/exampleTrigger.ts	(rejected hunks)
-@@ -18 +18 @@ export const ExampleTrigger = automodTrigger<ExampleMatchResultType>()({
--    const foundFruit = triggerConfig.allowedFruits.find((fruit) => context.message?.data.content === fruit);
-+    const foundFruit = triggerConfig.allowedFruits.find(fruit => context.message?.data.content === fruit);
