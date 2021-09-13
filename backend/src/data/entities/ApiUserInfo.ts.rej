@@ -1,0 +1,13 @@
+diff a/backend/src/data/entities/ApiUserInfo.ts b/backend/src/data/entities/ApiUserInfo.ts	(rejected hunks)
+@@ -23 +23,4 @@ export class ApiUserInfo {
+-  @OneToMany((type) => ApiLogin, (login) => login.userInfo)
++  @OneToMany(
++    type => ApiLogin,
++    login => login.userInfo,
++  )
+@@ -26 +29,4 @@ export class ApiUserInfo {
+-  @OneToMany((type) => ApiPermissionAssignment, (p) => p.userInfo)
++  @OneToMany(
++    type => ApiPermissionAssignment,
++    p => p.userInfo,
++  )

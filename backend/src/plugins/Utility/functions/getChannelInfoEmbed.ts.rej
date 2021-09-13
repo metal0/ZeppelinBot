@@ -1,0 +1,12 @@
+diff a/backend/src/plugins/Utility/functions/getChannelInfoEmbed.ts b/backend/src/plugins/Utility/functions/getChannelInfoEmbed.ts	(rejected hunks)
+@@ -99,2 +99,2 @@ export async function getChannelInfoEmbed(
+-    const muted = voiceMembers.filter((vm) => vm.voice.mute || vm.voice.selfMute);
+-    const deafened = voiceMembers.filter((vm) => vm.voice.deaf || vm.voice.selfDeaf);
++    const muted = voiceMembers.filter(vm => vm.voice.mute || vm.voice.selfMute);
++    const deafened = voiceMembers.filter(vm => vm.voice.deaf || vm.voice.selfDeaf);
+@@ -115 +115 @@ export async function getChannelInfoEmbed(
+-      (ch) => ch.parentId === channel.id && ch.type !== ChannelTypeStrings.VOICE,
++      ch => ch.parentId === channel.id && ch.type !== ChannelTypeStrings.VOICE,
+@@ -118 +118 @@ export async function getChannelInfoEmbed(
+-      (ch) =>
++      ch =>

@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/LocateUser/events/SendAlertsEvts.ts b/backend/src/plugins/LocateUser/events/SendAlertsEvts.ts	(rejected hunks)
+@@ -22 +22 @@ export const VoiceStateUpdateAlertEvt = locateUserEvt({
+-      triggeredAlerts.forEach((alert) => {
++      triggeredAlerts.forEach(alert => {

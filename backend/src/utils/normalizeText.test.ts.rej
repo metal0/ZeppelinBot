@@ -1,0 +1,13 @@
+diff a/backend/src/utils/normalizeText.test.ts b/backend/src/utils/normalizeText.test.ts	(rejected hunks)
+@@ -4 +4 @@ import { normalizeText } from "./normalizeText";
+-test("Replaces special characters", (t) => {
++test("Replaces special characters", t => {
+@@ -11 +11 @@ test("Replaces special characters", (t) => {
+-test("Does not change lowercase ASCII text", (t) => {
++test("Does not change lowercase ASCII text", t => {
+@@ -16 +16 @@ test("Does not change lowercase ASCII text", (t) => {
+-test("Replaces whitespace", (t) => {
++test("Replaces whitespace", t => {
+@@ -22 +22 @@ test("Replaces whitespace", (t) => {
+-test("Result is always lowercase", (t) => {
++test("Result is always lowercase", t => {

@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/SelfGrantableRoles/util/findMatchingRoles.ts b/backend/src/plugins/SelfGrantableRoles/util/findMatchingRoles.ts	(rejected hunks)
+@@ -14 +14 @@ export function findMatchingRoles(roleNames: string[], entries: TSelfGrantableRo
+-  return roleNames.map((roleName) => aliasToRoleId.get(roleName)).filter(Boolean);
++  return roleNames.map(roleName => aliasToRoleId.get(roleName)).filter(Boolean);

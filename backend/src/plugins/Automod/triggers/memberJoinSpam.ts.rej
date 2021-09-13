@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/Automod/triggers/memberJoinSpam.ts b/backend/src/plugins/Automod/triggers/memberJoinSpam.ts	(rejected hunks)
+@@ -33 +33 @@ export const MemberJoinSpamTrigger = automodTrigger<unknown>()({
+-      const extraContexts = matchingActions.map((a) => a.context).filter((c) => c !== context);
++      const extraContexts = matchingActions.map(a => a.context).filter(c => c !== context);

@@ -1,0 +1,7 @@
+diff a/backend/src/plugins/Utility/commands/HelpCmd.ts b/backend/src/plugins/Utility/commands/HelpCmd.ts	(rejected hunks)
+@@ -61 +61,4 @@ export const HelpCmd = utilityCmd({
+-      const commandSlug = trigger.trim().toLowerCase().replace(/\s/g, "-");
++      const commandSlug = trigger
++        .trim()
++        .toLowerCase()
++        .replace(/\s/g, "-");

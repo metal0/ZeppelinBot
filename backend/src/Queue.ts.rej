@@ -1,0 +1,7 @@
+diff a/backend/src/Queue.ts b/backend/src/Queue.ts	(rejected hunks)
+@@ -32 +32 @@ export class Queue<TQueueFunction extends AnyFn = AnyFn> {
+-    const promise = new Promise<any>((resolve) => {
++    const promise = new Promise<any>(resolve => {
+@@ -53 +53 @@ export class Queue<TQueueFunction extends AnyFn = AnyFn> {
+-    new Promise((resolve) => {
++    new Promise(resolve => {

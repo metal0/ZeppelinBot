@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/ReactionRoles/util/runAutoRefresh.ts b/backend/src/plugins/ReactionRoles/util/runAutoRefresh.ts	(rejected hunks)
+@@ -8 +8 @@ export async function runAutoRefresh(pluginData: GuildPluginData<ReactionRolesPl
+-  const idPairs = new Set(reactionRoles.map((r) => `${r.channel_id}-${r.message_id}`));
++  const idPairs = new Set(reactionRoles.map(r => `${r.channel_id}-${r.message_id}`));

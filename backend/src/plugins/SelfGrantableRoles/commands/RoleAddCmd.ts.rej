@@ -1,0 +1,13 @@
+diff a/backend/src/plugins/SelfGrantableRoles/commands/RoleAddCmd.ts b/backend/src/plugins/SelfGrantableRoles/commands/RoleAddCmd.ts	(rejected hunks)
+@@ -34 +34 @@ export const RoleAddCmd = selfGrantableRolesCmd({
+-      .map((id) => pluginData.guild.roles.cache.get(id as Snowflake)!)
++      .map(id => pluginData.guild.roles.cache.get(id as Snowflake)!)
+@@ -97 +97 @@ export const RoleAddCmd = selfGrantableRolesCmd({
+-    const addedRolesStr = Array.from(rolesToAdd.values()).map((r) => (mentionRoles ? `<@&${r.id}>` : `**${r.name}**`));
++    const addedRolesStr = Array.from(rolesToAdd.values()).map(r => (mentionRoles ? `<@&${r.id}>` : `**${r.name}**`));
+@@ -107 +107 @@ export const RoleAddCmd = selfGrantableRolesCmd({
+-            .map((r) => (mentionRoles ? `<@&${r.id}>` : `**${r.name}**`))
++            .map(r => (mentionRoles ? `<@&${r.id}>` : `**${r.name}**`))
+@@ -111 +111 @@ export const RoleAddCmd = selfGrantableRolesCmd({
+-        ? "removed " + Array.from(removed.values()).map((r) => (mentionRoles ? `<@&${r.id}>` : `**${r.name}**`))
++        ? "removed " + Array.from(removed.values()).map(r => (mentionRoles ? `<@&${r.id}>` : `**${r.name}**`))

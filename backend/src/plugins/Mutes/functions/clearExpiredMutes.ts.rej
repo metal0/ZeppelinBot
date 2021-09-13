@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/Mutes/functions/clearExpiredMutes.ts b/backend/src/plugins/Mutes/functions/clearExpiredMutes.ts	(rejected hunks)
+@@ -25 +25 @@ export async function clearExpiredMutes(pluginData: GuildPluginData<MutesPluginT
+-          const newRoles = [...member.roles.cache.keys()].filter((roleId) => roleId !== muteRole);
++          const newRoles = [...member.roles.cache.keys()].filter(roleId => roleId !== muteRole);

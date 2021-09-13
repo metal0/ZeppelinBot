@@ -1,0 +1,13 @@
+diff a/backend/src/plugins/Logs/events/LogsUserUpdateEvts.ts b/backend/src/plugins/Logs/events/LogsUserUpdateEvts.ts	(rejected hunks)
+@@ -61 +61 @@ export const LogsGuildMemberUpdateEvt = logsEvt({
+-              (roleId) => pluginData.guild.roles.cache.get(roleId) ?? { id: roleId, name: `Unknown (${roleId})` },
++              roleId => pluginData.guild.roles.cache.get(roleId) ?? { id: roleId, name: `Unknown (${roleId})` },
+@@ -64 +64 @@ export const LogsGuildMemberUpdateEvt = logsEvt({
+-              (roleId) => pluginData.guild.roles.cache.get(roleId) ?? { id: roleId, name: `Unknown (${roleId})` },
++              roleId => pluginData.guild.roles.cache.get(roleId) ?? { id: roleId, name: `Unknown (${roleId})` },
+@@ -73 +73 @@ export const LogsGuildMemberUpdateEvt = logsEvt({
+-              (roleId) => pluginData.guild.roles.cache.get(roleId) ?? { id: roleId, name: `Unknown (${roleId})` },
++              roleId => pluginData.guild.roles.cache.get(roleId) ?? { id: roleId, name: `Unknown (${roleId})` },
+@@ -82 +82 @@ export const LogsGuildMemberUpdateEvt = logsEvt({
+-              (roleId) => pluginData.guild.roles.cache.get(roleId) ?? { id: roleId, name: `Unknown (${roleId})` },
++              roleId => pluginData.guild.roles.cache.get(roleId) ?? { id: roleId, name: `Unknown (${roleId})` },

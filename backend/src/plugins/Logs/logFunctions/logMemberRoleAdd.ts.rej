@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/Logs/logFunctions/logMemberRoleAdd.ts b/backend/src/plugins/Logs/logFunctions/logMemberRoleAdd.ts	(rejected hunks)
+@@ -22 +22 @@ export function logMemberRoleAdd(pluginData: GuildPluginData<LogsPluginType>, da
+-      roles: data.roles.map((r) => r.name).join(", "),
++      roles: data.roles.map(r => r.name).join(", "),

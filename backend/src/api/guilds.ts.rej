@@ -1,0 +1,4 @@
+diff a/backend/src/api/guilds.ts b/backend/src/api/guilds.ts	(rejected hunks)
+@@ -134 +134 @@ export function initGuildsAPI(app: express.Express) {
+-        if (!Array.isArray(permissions) || permissions.some((p) => !validPermissions.has(p))) {
++        if (!Array.isArray(permissions) || permissions.some(p => !validPermissions.has(p))) {

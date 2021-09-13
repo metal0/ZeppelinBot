@@ -1,0 +1,7 @@
+diff a/backend/src/plugins/Cases/functions/getCaseTypeAmountForUserId.ts b/backend/src/plugins/Cases/functions/getCaseTypeAmountForUserId.ts	(rejected hunks)
+@@ -10 +10 @@ export async function getCaseTypeAmountForUserId(
+-  const cases = (await pluginData.state.cases.getByUserId(userID)).filter((c) => !c.is_hidden);
++  const cases = (await pluginData.state.cases.getByUserId(userID)).filter(c => !c.is_hidden);
+@@ -14 +14 @@ export async function getCaseTypeAmountForUserId(
+-    cases.forEach((singleCase) => {
++    cases.forEach(singleCase => {

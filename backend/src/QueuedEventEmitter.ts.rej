@@ -1,0 +1,4 @@
+diff a/backend/src/QueuedEventEmitter.ts b/backend/src/QueuedEventEmitter.ts	(rejected hunks)
+@@ -45 +45 @@ export class QueuedEventEmitter {
+-    listeners.forEach((listener) => {
++    listeners.forEach(listener => {

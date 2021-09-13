@@ -1,0 +1,6 @@
+diff a/backend/src/plugins/Utility/functions/getInviteInfoEmbed.ts b/backend/src/plugins/Utility/functions/getInviteInfoEmbed.ts	(rejected hunks)
+@@ -123 +123,3 @@ export async function getInviteInfoEmbed(
+-    }*/ const channelCreatedAtTimestamp = snowflakeToTimestamp(invite.channel.id);
++    }*/ const channelCreatedAtTimestamp = snowflakeToTimestamp(
++      invite.channel.id,
++    );

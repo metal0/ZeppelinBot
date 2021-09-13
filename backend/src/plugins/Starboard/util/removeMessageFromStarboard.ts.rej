@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/Starboard/util/removeMessageFromStarboard.ts b/backend/src/plugins/Starboard/util/removeMessageFromStarboard.ts	(rejected hunks)
+@@ -14 +14 @@ export async function removeMessageFromStarboard(
+-  const channel = pluginData.client.channels.cache.find((c) => c.id === msg.starboard_channel_id);
++  const channel = pluginData.client.channels.cache.find(c => c.id === msg.starboard_channel_id);

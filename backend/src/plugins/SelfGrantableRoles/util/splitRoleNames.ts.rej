@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/SelfGrantableRoles/util/splitRoleNames.ts b/backend/src/plugins/SelfGrantableRoles/util/splitRoleNames.ts	(rejected hunks)
+@@ -3 +3 @@ export function splitRoleNames(roleNames: string[]) {
+-    .map((v) => v.split(/[\s,]+/))
++    .map(v => v.split(/[\s,]+/))

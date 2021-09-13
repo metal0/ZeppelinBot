@@ -1,0 +1,7 @@
+diff a/backend/src/utils/tValidTimezone.ts b/backend/src/utils/tValidTimezone.ts	(rejected hunks)
+@@ -9 +9 @@ export const tValidTimezone = new t.Type<string, string>(
+-    either.chain(t.string.validate(from, to), (input) => {
++    either.chain(t.string.validate(from, to), input => {
+@@ -12 +12 @@ export const tValidTimezone = new t.Type<string, string>(
+-  (s) => s,
++  s => s,

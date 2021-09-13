@@ -1,0 +1,7 @@
+diff a/backend/src/plugins/Censor/CensorPlugin.ts b/backend/src/plugins/Censor/CensorPlugin.ts	(rejected hunks)
+@@ -74 +74 @@ export const CensorPlugin = zeppelinGuildPlugin<CensorPluginType>()({
+-    state.onMessageCreateFn = (msg) => onMessageCreate(pluginData, msg);
++    state.onMessageCreateFn = msg => onMessageCreate(pluginData, msg);
+@@ -77 +77 @@ export const CensorPlugin = zeppelinGuildPlugin<CensorPluginType>()({
+-    state.onMessageUpdateFn = (msg) => onMessageUpdate(pluginData, msg);
++    state.onMessageUpdateFn = msg => onMessageUpdate(pluginData, msg);

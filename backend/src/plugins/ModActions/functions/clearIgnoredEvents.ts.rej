@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/ModActions/functions/clearIgnoredEvents.ts b/backend/src/plugins/ModActions/functions/clearIgnoredEvents.ts	(rejected hunks)
+@@ -10 +10 @@ export function clearIgnoredEvents(
+-    pluginData.state.ignoredEvents.findIndex((info) => type === info.type && userId === info.userId),
++    pluginData.state.ignoredEvents.findIndex(info => type === info.type && userId === info.userId),

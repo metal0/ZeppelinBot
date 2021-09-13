@@ -1,0 +1,11 @@
+diff a/backend/src/plugins/Utility/functions/getServerInfoEmbed.ts b/backend/src/plugins/Utility/functions/getServerInfoEmbed.ts	(rejected hunks)
+@@ -137 +137 @@ export async function getServerInfoEmbed(
+-    onlineMemberCount = thisServer.members.cache.filter((m) => m.presence?.status !== "offline").size; // Extremely inaccurate fallback
++    onlineMemberCount = thisServer.members.cache.filter(m => m.presence?.status !== "offline").size; // Extremely inaccurate fallback
+@@ -165,3 +165,3 @@ export async function getServerInfoEmbed(
+-    const categories = thisServer.channels.cache.filter((channel) => channel.type === ChannelTypeStrings.CATEGORY);
+-    const textChannels = thisServer.channels.cache.filter((channel) => channel.type === ChannelTypeStrings.TEXT);
+-    const voiceChannels = thisServer.channels.cache.filter((channel) => channel.type === ChannelTypeStrings.VOICE);
++    const categories = thisServer.channels.cache.filter(channel => channel.type === ChannelTypeStrings.CATEGORY);
++    const textChannels = thisServer.channels.cache.filter(channel => channel.type === ChannelTypeStrings.TEXT);
++    const voiceChannels = thisServer.channels.cache.filter(channel => channel.type === ChannelTypeStrings.VOICE);

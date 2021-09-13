@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/ModActions/functions/isEventIgnored.ts b/backend/src/plugins/ModActions/functions/isEventIgnored.ts	(rejected hunks)
+@@ -9 +9 @@ export function isEventIgnored(
+-  return pluginData.state.ignoredEvents.some((info) => type === info.type && userId === info.userId);
++  return pluginData.state.ignoredEvents.some(info => type === info.type && userId === info.userId);

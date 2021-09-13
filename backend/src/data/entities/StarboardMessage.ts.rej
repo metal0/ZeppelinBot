@@ -1,0 +1,4 @@
+diff a/backend/src/data/entities/StarboardMessage.ts b/backend/src/data/entities/StarboardMessage.ts	(rejected hunks)
+@@ -19 +19 @@ export class StarboardMessage {
+-  @OneToOne((type) => SavedMessage)
++  @OneToOne(type => SavedMessage)

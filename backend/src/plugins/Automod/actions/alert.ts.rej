@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/Automod/actions/alert.ts b/backend/src/plugins/Automod/actions/alert.ts	(rejected hunks)
+@@ -44 +44 @@ export const AlertAction = automodAction({
+-      const safeUsers = contexts.map((c) => (c.user ? userToTemplateSafeUser(c.user) : null)).filter(isTruthy);
++      const safeUsers = contexts.map(c => (c.user ? userToTemplateSafeUser(c.user) : null)).filter(isTruthy);

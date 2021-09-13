@@ -1,0 +1,7 @@
+diff a/backend/src/migrations/1556909512501-MigrateUsernamesToNewHistoryTable.ts b/backend/src/migrations/1556909512501-MigrateUsernamesToNewHistoryTable.ts	(rejected hunks)
+@@ -12 +12 @@ export class MigrateUsernamesToNewHistoryTable1556909512501 implements Migration
+-    await new Promise(async (resolve) => {
++    await new Promise(async resolve => {
+@@ -21 +21 @@ export class MigrateUsernamesToNewHistoryTable1556909512501 implements Migration
+-      return new Promise(async (resolve) => {
++      return new Promise(async resolve => {

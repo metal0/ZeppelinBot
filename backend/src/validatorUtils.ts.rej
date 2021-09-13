@@ -1,0 +1,28 @@
+diff a/backend/src/validatorUtils.ts b/backend/src/validatorUtils.ts	(rejected hunks)
+@@ -28 +28 @@ export const TRegex = new t.Type<RegExp, string>(
+-    either.chain(t.string.validate(from, to), (s) => {
++    either.chain(t.string.validate(from, to), s => {
+@@ -39 +39 @@ export const TRegex = new t.Type<RegExp, string>(
+-  (s) => `/${s.source}/${s.flags}`,
++  s => `/${s.source}/${s.flags}`,
+@@ -60 +60 @@ function getContextPath(context) {
+-    .map(function (_a) {
++    .map(function(_a) {
+@@ -83,2 +83,2 @@ const report = fold((errors: any): StrictValidationError | void => {
+-  const errorStrings = errors.map((err) => {
+-    const context = err.context.map((c) => c.key).filter((k) => k && !k.startsWith("{"));
++  const errorStrings = errors.map(err => {
++    const context = err.context.map(c => c.key).filter(k => k && !k.startsWith("{"));
+@@ -102,2 +102,2 @@ export function validate(schema: t.Type<any>, value: any): StrictValidationError
+-        (err) => report(validationResult),
+-        (result) => null,
++        err => report(validationResult),
++        result => null,
+@@ -122,2 +122,2 @@ export function decodeAndValidateStrict<T extends t.HasProps>(
+-      (err) => report(validationResult),
+-      (result) => {
++      err => report(validationResult),
++      result => {
+@@ -136 +136 @@ export function decodeAndValidateStrict<T extends t.HasProps>(
+-          const errors = diff.filter((d) => d.kind === "N").map((d) => `Unknown property <${d.path.join(".")}>`);
++          const errors = diff.filter(d => d.kind === "N").map(d => `Unknown property <${d.path.join(".")}>`);

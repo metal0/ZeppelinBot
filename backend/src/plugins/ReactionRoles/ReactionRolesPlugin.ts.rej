@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/ReactionRoles/ReactionRolesPlugin.ts b/backend/src/plugins/ReactionRoles/ReactionRolesPlugin.ts	(rejected hunks)
+@@ -45 +45 @@ const MAXIMUM_COMPONENT_ROWS = 5;
+-const configPreprocessor: ConfigPreprocessorFn<ReactionRolesPluginType> = (options) => {
++const configPreprocessor: ConfigPreprocessorFn<ReactionRolesPluginType> = options => {

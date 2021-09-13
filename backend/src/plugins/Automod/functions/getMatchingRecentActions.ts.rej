@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/Automod/functions/getMatchingRecentActions.ts b/backend/src/plugins/Automod/functions/getMatchingRecentActions.ts	(rejected hunks)
+@@ -14 +14 @@ export function getMatchingRecentActions(
+-  return pluginData.state.recentActions.filter((action) => {
++  return pluginData.state.recentActions.filter(action => {

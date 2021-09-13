@@ -1,0 +1,7 @@
+diff a/backend/src/plugins/Automod/triggers/matchMimeType.ts b/backend/src/plugins/Automod/triggers/matchMimeType.ts	(rejected hunks)
+@@ -37 +37 @@ export const MatchMimeTypeTrigger = automodTrigger<MatchResultType>()({
+-        ? (trigger.mime_type_blacklist ?? []).map((_t) => _t.toLowerCase())
++        ? (trigger.mime_type_blacklist ?? []).map(_t => _t.toLowerCase())
+@@ -50 +50 @@ export const MatchMimeTypeTrigger = automodTrigger<MatchResultType>()({
+-        ? (trigger.mime_type_whitelist ?? []).map((_t) => _t.toLowerCase())
++        ? (trigger.mime_type_whitelist ?? []).map(_t => _t.toLowerCase())

@@ -1,0 +1,13 @@
+diff a/backend/src/data/ApiLogins.ts b/backend/src/data/ApiLogins.ts	(rejected hunks)
+@@ -71 +71,4 @@ export class ApiLogins extends BaseRepository {
+-      expires_at: moment.utc().add(LOGIN_EXPIRY_TIME, "ms").format(DBDateFormat),
++      expires_at: moment
++        .utc()
++        .add(LOGIN_EXPIRY_TIME, "ms")
++        .format(DBDateFormat),
+@@ -96 +99,4 @@ export class ApiLogins extends BaseRepository {
+-        expires_at: moment().utc().add(LOGIN_EXPIRY_TIME, "ms").format(DBDateFormat),
++        expires_at: moment()
++          .utc()
++          .add(LOGIN_EXPIRY_TIME, "ms")
++          .format(DBDateFormat),

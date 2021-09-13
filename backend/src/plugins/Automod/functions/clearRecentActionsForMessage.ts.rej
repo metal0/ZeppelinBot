@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/Automod/functions/clearRecentActionsForMessage.ts b/backend/src/plugins/Automod/functions/clearRecentActionsForMessage.ts	(rejected hunks)
+@@ -9 +9 @@ export function clearRecentActionsForMessage(pluginData: GuildPluginData<Automod
+-  pluginData.state.recentActions = pluginData.state.recentActions.filter((act) => {
++  pluginData.state.recentActions = pluginData.state.recentActions.filter(act => {

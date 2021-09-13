@@ -1,0 +1,15 @@
+diff a/backend/src/plugins/Post/util/actualPostCmd.ts b/backend/src/plugins/Post/util/actualPostCmd.ts	(rejected hunks)
+@@ -150 +150,4 @@ export async function actualPostCmd(
+-      post_at: postAt.clone().tz("Etc/UTC").format(DBDateFormat),
++      post_at: postAt
++        .clone()
++        .tz("Etc/UTC")
++        .format(DBDateFormat),
+@@ -153 +156,6 @@ export async function actualPostCmd(
+-      repeat_until: repeatUntil ? repeatUntil.clone().tz("Etc/UTC").format(DBDateFormat) : null,
++      repeat_until: repeatUntil
++        ? repeatUntil
++            .clone()
++            .tz("Etc/UTC")
++            .format(DBDateFormat)
++        : null,

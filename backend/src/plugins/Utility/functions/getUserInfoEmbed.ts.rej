@@ -1,0 +1,13 @@
+diff a/backend/src/plugins/Utility/functions/getUserInfoEmbed.ts b/backend/src/plugins/Utility/functions/getUserInfoEmbed.ts	(rejected hunks)
+@@ -105 +105 @@ export async function getUserInfoEmbed(
+-    const roles = Array.from(member.roles.cache.values()).filter((r) => r.id !== pluginData.guild.id);
++    const roles = Array.from(member.roles.cache.values()).filter(r => r.id !== pluginData.guild.id);
+@@ -112 +112 @@ export async function getUserInfoEmbed(
+-          ${roles.length > 0 ? "Roles: " + roles.map((r) => `<@&${r.id}>`).join(", ") : ""}
++          ${roles.length > 0 ? "Roles: " + roles.map(r => `<@&${r.id}>`).join(", ") : ""}
+@@ -133 +133 @@ export async function getUserInfoEmbed(
+-  const cases = (await pluginData.state.cases.getByUserId(user.id)).filter((c) => !c.is_hidden);
++  const cases = (await pluginData.state.cases.getByUserId(user.id)).filter(c => !c.is_hidden);
+@@ -140 +140 @@ export async function getUserInfoEmbed(
+-    const caseSummary = cases.slice(0, 3).map((c) => {
++    const caseSummary = cases.slice(0, 3).map(c => {

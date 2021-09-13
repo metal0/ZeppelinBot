@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/SelfGrantableRoles/util/normalizeRoleNames.ts b/backend/src/plugins/SelfGrantableRoles/util/normalizeRoleNames.ts	(rejected hunks)
+@@ -2 +2 @@ export function normalizeRoleNames(roleNames: string[]) {
+-  return roleNames.map((v) => v.toLowerCase());
++  return roleNames.map(v => v.toLowerCase());

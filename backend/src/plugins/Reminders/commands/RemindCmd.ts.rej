@@ -1,0 +1,7 @@
+diff a/backend/src/plugins/Reminders/commands/RemindCmd.ts b/backend/src/plugins/Reminders/commands/RemindCmd.ts	(rejected hunks)
+@@ -56 +56,4 @@ export const RemindCmd = remindersCmd({
+-      reminderTime.clone().tz("Etc/UTC").format("YYYY-MM-DD HH:mm:ss"),
++      reminderTime
++        .clone()
++        .tz("Etc/UTC")
++        .format("YYYY-MM-DD HH:mm:ss"),

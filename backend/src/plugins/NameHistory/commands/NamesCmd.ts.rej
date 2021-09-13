@@ -1,0 +1,7 @@
+diff a/backend/src/plugins/NameHistory/commands/NamesCmd.ts b/backend/src/plugins/NameHistory/commands/NamesCmd.ts	(rejected hunks)
+@@ -29 +29 @@ export const NamesCmd = nameHistoryCmd({
+-      (r) => `\`[${r.timestamp}]\` ${r.nickname ? `**${disableCodeBlocks(r.nickname)}**` : "*None*"}`,
++      r => `\`[${r.timestamp}]\` ${r.nickname ? `**${disableCodeBlocks(r.nickname)}**` : "*None*"}`,
+@@ -31 +31 @@ export const NamesCmd = nameHistoryCmd({
+-    const usernameRows = usernames.map((r) => `\`[${r.timestamp}]\` **${disableCodeBlocks(r.username)}**`);
++    const usernameRows = usernames.map(r => `\`[${r.timestamp}]\` **${disableCodeBlocks(r.username)}**`);

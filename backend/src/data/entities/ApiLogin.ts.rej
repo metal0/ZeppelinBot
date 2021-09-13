@@ -1,0 +1,7 @@
+diff a/backend/src/data/entities/ApiLogin.ts b/backend/src/data/entities/ApiLogin.ts	(rejected hunks)
+@@ -22 +22,4 @@ export class ApiLogin {
+-  @ManyToOne((type) => ApiUserInfo, (userInfo) => userInfo.logins)
++  @ManyToOne(
++    type => ApiUserInfo,
++    userInfo => userInfo.logins,
++  )

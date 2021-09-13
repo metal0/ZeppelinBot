@@ -1,0 +1,7 @@
+diff a/backend/src/data/GuildScheduledPosts.ts b/backend/src/data/GuildScheduledPosts.ts	(rejected hunks)
+@@ -14 +14,4 @@ export class GuildScheduledPosts extends BaseGuildRepository {
+-    return this.scheduledPosts.createQueryBuilder().where("guild_id = :guildId", { guildId: this.guildId }).getMany();
++    return this.scheduledPosts
++      .createQueryBuilder()
++      .where("guild_id = :guildId", { guildId: this.guildId })
++      .getMany();

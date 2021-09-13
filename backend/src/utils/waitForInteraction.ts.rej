@@ -1,0 +1,4 @@
+diff a/backend/src/utils/waitForInteraction.ts b/backend/src/utils/waitForInteraction.ts	(rejected hunks)
+@@ -11 +11 @@ export async function waitForButtonConfirm(
+-  return new Promise(async (resolve) => {
++  return new Promise(async resolve => {

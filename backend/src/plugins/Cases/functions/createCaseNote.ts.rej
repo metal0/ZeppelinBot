@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/Cases/functions/createCaseNote.ts b/backend/src/plugins/Cases/functions/createCaseNote.ts	(rejected hunks)
+@@ -25 +25 @@ export async function createCaseNote(pluginData: GuildPluginData<CasesPluginType
+-    body = args.noteDetails.map((d) => `__[${d}]__`).join(" ") + " " + body;
++    body = args.noteDetails.map(d => `__[${d}]__`).join(" ") + " " + body;

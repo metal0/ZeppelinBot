@@ -1,0 +1,7 @@
+diff a/dashboard/src/api.ts b/dashboard/src/api.ts	(rejected hunks)
+@@ -25 +25 @@ function buildQueryString(params: QueryParamObject) {
+-      .map((pair) => `${encodeURIComponent(pair[0])}=${encodeURIComponent(pair[1] || "")}`)
++      .map(pair => `${encodeURIComponent(pair[0])}=${encodeURIComponent(pair[1] || "")}`)
+@@ -31 +31 @@ export function request(resource, fetchOpts: RequestInit = {}) {
+-  return fetch(`${apiUrl}/${resource}`, fetchOpts).then(async (res) => {
++  return fetch(`${apiUrl}/${resource}`, fetchOpts).then(async res => {

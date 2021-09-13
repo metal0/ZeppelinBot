@@ -99,7 +99,7 @@ interface Props {
 
 export function LogChannels({ logChannels, setLogChannels }: Props) {
   function addLogChannel(props: Partial<LogChannel> = {}) {
-    setLogChannels((_logChannels) => {
+    setLogChannels(_logChannels => {
       return [
         ..._logChannels,
         {
@@ -113,7 +113,7 @@ export function LogChannels({ logChannels, setLogChannels }: Props) {
   }
 
   function deleteLogChannel(index) {
-    setLogChannels((_logChannels) => {
+    setLogChannels(_logChannels => {
       const newArr = [..._logChannels];
       newArr.splice(index, 1);
       return newArr;
@@ -121,7 +121,7 @@ export function LogChannels({ logChannels, setLogChannels }: Props) {
   }
 
   function addReverseLogChannel() {
-    const includedLogTypesInOtherLogChannels = new Set(logChannels.map((l) => Array.from(l.logTypes)).flat());
+    const includedLogTypesInOtherLogChannels = new Set(logChannels.map(l => Array.from(l.logTypes)).flat());
     addLogChannel({
       includeExclude: "exclude",
       logTypes: includedLogTypesInOtherLogChannels,
@@ -129,21 +129,21 @@ export function LogChannels({ logChannels, setLogChannels }: Props) {
   }
 
   function setId(index: number, id: string) {
-    setLogChannels((_logChannels) => {
+    setLogChannels(_logChannels => {
       _logChannels[index].id = id;
       return [..._logChannels];
     });
   }
 
   function setIncludeExclude(index: number, includeExclude: LogChannel["includeExclude"]) {
-    setLogChannels((_logChannels) => {
+    setLogChannels(_logChannels => {
       _logChannels[index].includeExclude = includeExclude;
       return [..._logChannels];
     });
   }
 
   function toggleLogType(index: number, logType: LOG_TYPE, enabled: boolean) {
-    setLogChannels((_logChannels) => {
+    setLogChannels(_logChannels => {
       if (enabled) {
         _logChannels[index].logTypes.add(logType);
       } else {
@@ -159,13 +159,13 @@ export function LogChannels({ logChannels, setLogChannels }: Props) {
       {logChannels.map((logChannel, index) => (
         <div className="log-channel">
           <label>
-            ID: <input value={logChannel.id} onChange={(e) => setId(index, e.target.value)} />
+            ID: <input value={logChannel.id} onChange={e => setId(index, e.target.value)} />
           </label>
           <label>
             Mode:
             <select
               value={logChannel.includeExclude}
-              onChange={(e) => setIncludeExclude(index, e.target.value as LogChannel["includeExclude"])}
+              onChange={e => setIncludeExclude(index, e.target.value as LogChannel["includeExclude"])}
             >
               <option value={"include"}>Include</option>
               <option value={"exclude"}>Exclude</option>
@@ -177,7 +177,7 @@ export function LogChannels({ logChannels, setLogChannels }: Props) {
                 <input
                   type="checkbox"
                   checked={logChannel.logTypes.has(logType as LOG_TYPE)}
-                  onChange={(e) => toggleLogType(index, logType as LOG_TYPE, e.target.checked)}
+                  onChange={e => toggleLogType(index, logType as LOG_TYPE, e.target.checked)}
                 />
                 {description}
               </label>

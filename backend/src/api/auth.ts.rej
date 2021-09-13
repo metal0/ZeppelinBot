@@ -1,0 +1,10 @@
+diff a/backend/src/api/auth.ts b/backend/src/api/auth.ts	(rejected hunks)
+@@ -36 +36 @@ function simpleDiscordAPIRequest(bearerToken, path): Promise<any> {
+-      (res) => {
++      res => {
+@@ -43 +43 @@ function simpleDiscordAPIRequest(bearerToken, path): Promise<any> {
+-        res.on("data", (data) => (rawData += data));
++        res.on("data", data => (rawData += data));
+@@ -50 +50 @@ function simpleDiscordAPIRequest(bearerToken, path): Promise<any> {
+-    request.on("error", (err) => reject(err));
++    request.on("error", err => reject(err));

@@ -1,0 +1,7 @@
+diff a/backend/src/data/db.ts b/backend/src/data/db.ts	(rejected hunks)
+@@ -10 +10 @@ export function connect() {
+-    connectionPromise = createConnection().then((newConnection) => {
++    connectionPromise = createConnection().then(newConnection => {
+@@ -12 +12 @@ export function connect() {
+-      return newConnection.query("SELECT TIMEDIFF(NOW(), UTC_TIMESTAMP) AS tz").then((r) => {
++      return newConnection.query("SELECT TIMEDIFF(NOW(), UTC_TIMESTAMP) AS tz").then(r => {

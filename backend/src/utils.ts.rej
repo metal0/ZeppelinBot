@@ -1,0 +1,104 @@
+diff a/backend/src/utils.ts b/backend/src/utils.ts	(rejected hunks)
+@@ -109 +109 @@ export const tNormalizedNullOrUndefined = new t.Type<undefined, null | undefined
+-  (s) => undefined,
++  s => undefined,
+@@ -157 +157 @@ export function tDeepPartial<T>(type: T): TDeepPartial<T> {
+-    return t.union(type.types.map((unionType) => tDeepPartial(unionType))) as TDeepPartial<T>;
++    return t.union(type.types.map(unionType => tDeepPartial(unionType))) as TDeepPartial<T>;
+@@ -159,2 +159,2 @@ export function tDeepPartial<T>(type: T): TDeepPartial<T> {
+-    const types = type.types.map((intersectionType) => tDeepPartial(intersectionType));
+-    return t.intersection(types as [t.Mixed, t.Mixed]) as unknown as TDeepPartial<T>;
++    const types = type.types.map(intersectionType => tDeepPartial(intersectionType));
++    return (t.intersection(types as [t.Mixed, t.Mixed]) as unknown) as TDeepPartial<T>;
+@@ -436 +436 @@ export function validateAndParseMessageContent(input: unknown): StrictMessageCon
+-    return zStrictMessageContent.parse(input) as unknown as StrictMessageContent;
++    return (zStrictMessageContent.parse(input) as unknown) as StrictMessageContent;
+@@ -495 +495 @@ export const tAlphanumeric = new t.Type<string, string>(
+-    either.chain(t.string.validate(from, to), (s) => {
++    either.chain(t.string.validate(from, to), s => {
+@@ -498 +498 @@ export const tAlphanumeric = new t.Type<string, string>(
+-  (s) => s,
++  s => s,
+@@ -505 +505 @@ export const tDateTime = new t.Type<string, string>(
+-    either.chain(t.string.validate(from, to), (s) => {
++    either.chain(t.string.validate(from, to), s => {
+@@ -511 +511 @@ export const tDateTime = new t.Type<string, string>(
+-  (s) => s,
++  s => s,
+@@ -518 +518 @@ export const tDelayString = new t.Type<string, string>(
+-    either.chain(t.string.validate(from, to), (s) => {
++    either.chain(t.string.validate(from, to), s => {
+@@ -522 +522 @@ export const tDelayString = new t.Type<string, string>(
+-  (s) => s,
++  s => s,
+@@ -611,2 +611,2 @@ export function stripObjectToScalars(obj, includedNested: string[] = []) {
+-        .filter((p) => p === key || p.startsWith(prefix))
+-        .map((p) => (p === key ? p : p.slice(prefix.length)));
++        .filter(p => p === key || p.startsWith(prefix))
++        .map(p => (p === key ? p : p.slice(prefix.length)));
+@@ -631 +631 @@ export function sleep(ms: number): Promise<void> {
+-  return new Promise((resolve) => {
++  return new Promise(resolve => {
+@@ -679 +679 @@ export async function findRelevantAuditLogEntry(
+-  const relevantEntry = entries.find((entry) => {
++  const relevantEntry = entries.find(entry => {
+@@ -747,2 +747 @@ export function isNotNull(value): value is Exclude<typeof value, null> {
+-const quickInviteDetection =
+-  /discord(?:app)?\.com\/(?:friend-)?invite\/([a-z0-9\-]+)|discord\.gg\/(?:\S+\/)?([a-z0-9\-]+)/gi;
++const quickInviteDetection = /discord(?:app)?\.com\/(?:friend-)?invite\/([a-z0-9\-]+)|discord\.gg\/(?:\S+\/)?([a-z0-9\-]+)/gi;
+@@ -762 +761 @@ export function getInviteCodesInString(str: string): string[] {
+-    inviteCodes.push(...[...quickDetectionMatch].map((m) => m[1] || m[2]));
++    inviteCodes.push(...[...quickDetectionMatch].map(m => m[1] || m[2]));
+@@ -767,2 +766,2 @@ export function getInviteCodesInString(str: string): string[] {
+-  const potentialInviteLinks = linksInString.filter((url) => isInviteHostRegex.test(url.hostname));
+-  const withNormalizedPaths = potentialInviteLinks.map((url) => {
++  const potentialInviteLinks = linksInString.filter(url => isInviteHostRegex.test(url.hostname));
++  const withNormalizedPaths = potentialInviteLinks.map(url => {
+@@ -774 +773 @@ export function getInviteCodesInString(str: string): string[] {
+-    .map((url) => {
++    .map(url => {
+@@ -820 +819 @@ export function trimLines(str: string) {
+-    .map((l) => l.trim())
++    .map(l => l.trim())
+@@ -828 +827 @@ export function trimEmptyLines(str: string) {
+-    .filter((l) => l.trim() !== "")
++    .filter(l => l.trim() !== "")
+@@ -864 +863 @@ export function trimIndents(str: string, indentLength: number) {
+-    .map((line) => line.replace(regex, ""))
++    .map(line => line.replace(regex, ""))
+@@ -875 +874 @@ export function indentLines(str: string, indentLength: number) {
+-    .map((line) => indentLine(line, indentLength))
++    .map(line => indentLine(line, indentLength))
+@@ -981 +980 @@ export function chunkMessageLines(str: string, maxChunkLength = 1990): string[]
+-  return chunks.map((chunk) => {
++  return chunks.map(chunk => {
+@@ -1035 +1034 @@ export function downloadFile(attachmentUrl: string, retries = 3): Promise<{ path
+-  return new Promise((resolve) => {
++  return new Promise(resolve => {
+@@ -1042 +1041 @@ export function downloadFile(attachmentUrl: string, retries = 3): Promise<{ path
+-        .get(attachmentUrl, (res) => {
++        .get(attachmentUrl, res => {
+@@ -1052 +1051 @@ export function downloadFile(attachmentUrl: string, retries = 3): Promise<{ path
+-        .on("error", (httpsErr) => {
++        .on("error", httpsErr => {
+@@ -1077 +1076 @@ export function simpleClosestStringMatch(searchStr, haystack, getter?) {
+-  const itemsWithRankings: Array<ItemWithRanking<any>> = haystack.map((item) => {
++  const itemsWithRankings: Array<ItemWithRanking<any>> = haystack.map(item => {
+@@ -1116 +1115 @@ function resolveGetter(getter: sorterGetterResolvable): sorterGetterFn {
+-    return (obj) => obj[getter];
++    return obj => obj[getter];
+@@ -1123 +1122 @@ export function multiSorter(getters: Array<sorterGetterResolvable | sorterGetter
+-  const resolvedGetters: sorterGetterFnWithDirection[] = getters.map((getter) => {
++  const resolvedGetters: sorterGetterFnWithDirection[] = getters.map(getter => {
+@@ -1304 +1303 @@ export function resolveUserId(bot: Client, value: string) {
+-    const user = bot.users.cache.find((u) => u.username === usernameMatch[1] && u.discriminator === usernameMatch[2]);
++    const user = bot.users.cache.find(u => u.username === usernameMatch[1] && u.discriminator === usernameMatch[2]);
+@@ -1419 +1418 @@ export async function resolveRoleId(bot: Client, guildId: string, value: string)
+-  const role = roleList.filter((x) => x.name.toLocaleLowerCase() === value.toLocaleLowerCase());
++  const role = roleList.filter(x => x.name.toLocaleLowerCase() === value.toLocaleLowerCase());
+@@ -1475 +1474 @@ export function messageSummary(msg: SavedMessage) {
+-  const richEmbed = (msg.data.embeds || []).find((e) => (e as MessageEmbed).type === "rich");
++  const richEmbed = (msg.data.embeds || []).find(e => (e as MessageEmbed).type === "rich");
+@@ -1603 +1602 @@ export function canUseEmoji(client: Client, emoji: string): boolean {
+-      if (guild[1].emojis.cache.some((e) => (e as any).id === emoji)) {
++      if (guild[1].emojis.cache.some(e => (e as any).id === emoji)) {

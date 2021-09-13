@@ -1,0 +1,6 @@
+diff a/backend/src/plugins/ReactionRoles/commands/PostButtonRolesCmd.ts b/backend/src/plugins/ReactionRoles/commands/PostButtonRolesCmd.ts	(rejected hunks)
+@@ -34 +34,3 @@ export const PostButtonRolesCmd = reactionRolesCmd({
+-      const customId = createHash("md5").update(`${buttonName}${moment.utc().valueOf()}`).digest("hex");
++      const customId = createHash("md5")
++        .update(`${buttonName}${moment.utc().valueOf()}`)
++        .digest("hex");

@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/BotControl/commands/AddDashboardUserCmd.ts b/backend/src/plugins/BotControl/commands/AddDashboardUserCmd.ts	(rejected hunks)
+@@ -38 +38 @@ export const AddDashboardUserCmd = botControlCmd({
+-    const userNameList = args.users.map((user) => `<@!${user.id}> (**${user.tag}**, \`${user.id}\`)`);
++    const userNameList = args.users.map(user => `<@!${user.id}> (**${user.tag}**, \`${user.id}\`)`);

@@ -1,0 +1,10 @@
+diff a/dashboard/src/store/guilds.ts b/dashboard/src/store/guilds.ts	(rejected hunks)
+@@ -93 +93 @@ export const GuildStore: Module<GuildState, RootState> = {
+-        permissionAssignments.map((p) => ({
++        permissionAssignments.map(p => ({
+@@ -105 +105 @@ export const GuildStore: Module<GuildState, RootState> = {
+-          guildPermissionAssignments.findIndex((p) => p.target_id === targetId && p.type === type),
++          guildPermissionAssignments.findIndex(p => p.target_id === targetId && p.type === type),
+@@ -110 +110 @@ export const GuildStore: Module<GuildState, RootState> = {
+-        const itemToEdit = guildPermissionAssignments.find((p) => p.target_id === targetId && p.type === type);
++        const itemToEdit = guildPermissionAssignments.find(p => p.target_id === targetId && p.type === type);

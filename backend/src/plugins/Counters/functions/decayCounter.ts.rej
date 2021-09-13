@@ -1,0 +1,6 @@
+diff a/backend/src/plugins/Counters/functions/decayCounter.ts b/backend/src/plugins/Counters/functions/decayCounter.ts	(rejected hunks)
+@@ -28,2 +28,2 @@ export async function decayCounter(
+-    await Promise.all(triggersArr.map((trigger) => checkAllValuesForTrigger(pluginData, counterName, trigger)));
+-    await Promise.all(triggersArr.map((trigger) => checkAllValuesForReverseTrigger(pluginData, counterName, trigger)));
++    await Promise.all(triggersArr.map(trigger => checkAllValuesForTrigger(pluginData, counterName, trigger)));
++    await Promise.all(triggersArr.map(trigger => checkAllValuesForReverseTrigger(pluginData, counterName, trigger)));

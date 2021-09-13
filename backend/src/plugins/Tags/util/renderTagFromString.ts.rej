@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/Tags/util/renderTagFromString.ts b/backend/src/plugins/Tags/util/renderTagFromString.ts	(rejected hunks)
+@@ -20 +20 @@ export async function renderTagFromString(
+-  const tagArgs = parseArguments(variableStr).map((v) => v.value);
++  const tagArgs = parseArguments(variableStr).map(v => v.value);

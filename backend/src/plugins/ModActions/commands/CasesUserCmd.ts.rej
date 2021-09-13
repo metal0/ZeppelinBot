@@ -1,0 +1,15 @@
+diff a/backend/src/plugins/ModActions/commands/CasesUserCmd.ts b/backend/src/plugins/ModActions/commands/CasesUserCmd.ts	(rejected hunks)
+@@ -56 +56 @@ export const CasesUserCmd = modActionsCmd({
+-      if (args.reverseFilters) cases = cases.filter((c) => !typesToShow.includes(c.type));
++      if (args.reverseFilters) cases = cases.filter(c => !typesToShow.includes(c.type));
+@@ -58 +58 @@ export const CasesUserCmd = modActionsCmd({
+-      else cases = cases.filter((c) => typesToShow.includes(c.type));
++      else cases = cases.filter(c => typesToShow.includes(c.type));
+@@ -61,2 +61,2 @@ export const CasesUserCmd = modActionsCmd({
+-    const normalCases = cases.filter((c) => !c.is_hidden);
+-    const hiddenCases = cases.filter((c) => c.is_hidden);
++    const normalCases = cases.filter(c => !c.is_hidden);
++    const hiddenCases = cases.filter(c => c.is_hidden);
+@@ -86 +86 @@ export const CasesUserCmd = modActionsCmd({
+-        const lines = await asyncMap(casesToDisplay, (c) => casesPlugin.getCaseSummary(c, true, msg.author.id));
++        const lines = await asyncMap(casesToDisplay, c => casesPlugin.getCaseSummary(c, true, msg.author.id));

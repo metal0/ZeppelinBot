@@ -1,0 +1,6 @@
+diff a/backend/src/plugins/Automod/actions/warn.ts b/backend/src/plugins/Automod/actions/warn.ts	(rejected hunks)
+@@ -34,2 +34,2 @@ export const WarnAction = automodAction({
+-    const userIdsToWarn = unique(contexts.map((c) => c.user?.id).filter(nonNullish));
+-    const membersToWarn = await asyncMap(userIdsToWarn, (id) => resolveMember(pluginData.client, pluginData.guild, id));
++    const userIdsToWarn = unique(contexts.map(c => c.user?.id).filter(nonNullish));
++    const membersToWarn = await asyncMap(userIdsToWarn, id => resolveMember(pluginData.client, pluginData.guild, id));

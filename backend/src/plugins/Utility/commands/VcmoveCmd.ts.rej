@@ -1,0 +1,7 @@
+diff a/backend/src/plugins/Utility/commands/VcmoveCmd.ts b/backend/src/plugins/Utility/commands/VcmoveCmd.ts	(rejected hunks)
+@@ -53 +53 @@ export const VcmoveCmd = utilityCmd({
+-      const closestMatch = simpleClosestStringMatch(args.channel, voiceChannels, (ch) => ch.name);
++      const closestMatch = simpleClosestStringMatch(args.channel, voiceChannels, ch => ch.name);
+@@ -132 +132 @@ export const VcmoveAllCmd = utilityCmd({
+-      const closestMatch = simpleClosestStringMatch(args.channel, voiceChannels, (ch) => ch.name);
++      const closestMatch = simpleClosestStringMatch(args.channel, voiceChannels, ch => ch.name);

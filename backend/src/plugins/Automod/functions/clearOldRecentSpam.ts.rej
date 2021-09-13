@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/Automod/functions/clearOldRecentSpam.ts b/backend/src/plugins/Automod/functions/clearOldRecentSpam.ts	(rejected hunks)
+@@ -7 +7 @@ export function clearOldRecentSpam(pluginData: GuildPluginData<AutomodPluginType
+-  pluginData.state.recentSpam = pluginData.state.recentSpam.filter((spam) => {
++  pluginData.state.recentSpam = pluginData.state.recentSpam.filter(spam => {

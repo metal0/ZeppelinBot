@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/BotControl/commands/PerformanceCmd.ts b/backend/src/plugins/BotControl/commands/PerformanceCmd.ts	(rejected hunks)
+@@ -16 +16 @@ export const PerformanceCmd = botControlCmd({
+-    averageLoadTimeEntries.sort(sorter((v) => v[1].time, "DESC"));
++    averageLoadTimeEntries.sort(sorter(v => v[1].time, "DESC"));

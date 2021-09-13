@@ -1,0 +1,7 @@
+diff a/backend/src/plugins/CompanionChannels/functions/getCompanionChannelOptsForVoiceChannelId.ts b/backend/src/plugins/CompanionChannels/functions/getCompanionChannelOptsForVoiceChannelId.ts	(rejected hunks)
+@@ -17 +17 @@ export async function getCompanionChannelOptsForVoiceChannelId(
+-      (opts) =>
++      opts =>
+@@ -21 +21 @@ export async function getCompanionChannelOptsForVoiceChannelId(
+-    .map((opts) => Object.assign({}, defaultCompanionChannelOpts, opts));
++    .map(opts => Object.assign({}, defaultCompanionChannelOpts, opts));

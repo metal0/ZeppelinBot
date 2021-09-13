@@ -1,0 +1,10 @@
+diff a/backend/src/plugins/Logs/LogsPlugin.ts b/backend/src/plugins/Logs/LogsPlugin.ts	(rejected hunks)
+@@ -180 +180 @@ export const LogsPlugin = zeppelinGuildPlugin<LogsPluginType>()({
+-    getLogMessage: (pluginData) => {
++    getLogMessage: pluginData => {
+@@ -281 +281 @@ export const LogsPlugin = zeppelinGuildPlugin<LogsPluginType>()({
+-    state.onMessageDeleteFn = (msg) => onMessageDelete(pluginData, msg);
++    state.onMessageDeleteFn = msg => onMessageDelete(pluginData, msg);
+@@ -284 +284 @@ export const LogsPlugin = zeppelinGuildPlugin<LogsPluginType>()({
+-    state.onMessageDeleteBulkFn = (msg) => onMessageDeleteBulk(pluginData, msg);
++    state.onMessageDeleteBulkFn = msg => onMessageDeleteBulk(pluginData, msg);

@@ -1,0 +1,7 @@
+diff a/backend/src/plugins/Logs/util/log.ts b/backend/src/plugins/Logs/util/log.ts	(rejected hunks)
+@@ -105 +105 @@ export async function log<TLogType extends keyof ILogTypeData>(
+-          consume: (part) => {
++          consume: part => {
+@@ -114 +114 @@ export async function log<TLogType extends keyof ILogTypeData>(
+-            promise.catch((err) => {
++            promise.catch(err => {

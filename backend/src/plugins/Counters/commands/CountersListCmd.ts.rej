@@ -1,0 +1,7 @@
+diff a/backend/src/plugins/Counters/commands/CountersListCmd.ts b/backend/src/plugins/Counters/commands/CountersListCmd.ts	(rejected hunks)
+@@ -16 +16 @@ export const CountersListCmd = typedGuildCommand<CountersPluginType>()({
+-    const countersToShow = Array.from(Object.values(config.counters)).filter((c) => c.can_view !== false);
++    const countersToShow = Array.from(Object.values(config.counters)).filter(c => c.can_view !== false);
+@@ -22 +22 @@ export const CountersListCmd = typedGuildCommand<CountersPluginType>()({
+-    const counterLines = countersToShow.map((counter) => {
++    const counterLines = countersToShow.map(counter => {

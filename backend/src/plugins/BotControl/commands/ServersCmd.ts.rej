@@ -1,0 +1,22 @@
+diff a/backend/src/plugins/BotControl/commands/ServersCmd.ts b/backend/src/plugins/BotControl/commands/ServersCmd.ts	(rejected hunks)
+@@ -25 +25 @@ export const ServersCmd = botControlCmd({
+-    const search = args.search ? new RegExp([...args.search].map((s) => escapeStringRegexp(s)).join(".*"), "i") : null;
++    const search = args.search ? new RegExp([...args.search].map(s => escapeStringRegexp(s)).join(".*"), "i") : null;
+@@ -35 +35 @@ export const ServersCmd = botControlCmd({
+-        filteredGuilds = filteredGuilds.filter((g) => loadedGuildsMap.has(g.id));
++        filteredGuilds = filteredGuilds.filter(g => loadedGuildsMap.has(g.id));
+@@ -39 +39 @@ export const ServersCmd = botControlCmd({
+-        filteredGuilds = filteredGuilds.filter((g) => !loadedGuildsMap.has(g.id));
++        filteredGuilds = filteredGuilds.filter(g => !loadedGuildsMap.has(g.id));
+@@ -43 +43 @@ export const ServersCmd = botControlCmd({
+-        filteredGuilds = filteredGuilds.filter((g) => search!.test(`${g.id} ${g.name}`));
++        filteredGuilds = filteredGuilds.filter(g => search!.test(`${g.id} ${g.name}`));
+@@ -47 +47 @@ export const ServersCmd = botControlCmd({
+-        filteredGuilds.sort(sorter((g) => g.name.toLowerCase()));
++        filteredGuilds.sort(sorter(g => g.name.toLowerCase()));
+@@ -49 +49 @@ export const ServersCmd = botControlCmd({
+-        const lines = filteredGuilds.map((g) => {
++        const lines = filteredGuilds.map(g => {
+@@ -60 +60 @@ export const ServersCmd = botControlCmd({
+-      const initialized = joinedGuilds.filter((g) => loadedGuildsMap.has(g.id)).length;
++      const initialized = joinedGuilds.filter(g => loadedGuildsMap.has(g.id)).length;

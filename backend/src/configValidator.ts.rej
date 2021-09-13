@@ -1,0 +1,4 @@
+diff a/backend/src/configValidator.ts b/backend/src/configValidator.ts	(rejected hunks)
+@@ -39 +39 @@ export async function validateGuildConfig(config: any): Promise<string | null> {
+-        await plugin.configPreprocessor?.(mergedOptions as unknown as PluginOptions<any>, true);
++        await plugin.configPreprocessor?.((mergedOptions as unknown) as PluginOptions<any>, true);

@@ -1,0 +1,9 @@
+diff a/backend/src/plugins/Automod/actions/reply.ts b/backend/src/plugins/Automod/actions/reply.ts	(rejected hunks)
+@@ -35,2 +35,2 @@ export const ReplyAction = automodAction({
+-      .filter((c) => c.message?.channel_id)
+-      .filter((c) => {
++      .filter(c => c.message?.channel_id)
++      .filter(c => {
+@@ -51 +51 @@ export const ReplyAction = automodAction({
+-      const users = unique(Array.from(new Set(_contexts.map((c) => c.user).filter(Boolean)))) as User[];
++      const users = unique(Array.from(new Set(_contexts.map(c => c.user).filter(Boolean)))) as User[];

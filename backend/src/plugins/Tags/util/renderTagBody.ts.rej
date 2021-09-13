@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/Tags/util/renderTagBody.ts b/backend/src/plugins/Tags/util/renderTagBody.ts	(rejected hunks)
+@@ -68 +68 @@ export async function renderTagBody(
+-    return renderRecursively(body, (str) => renderTemplate(str, data));
++    return renderRecursively(body, str => renderTemplate(str, data));

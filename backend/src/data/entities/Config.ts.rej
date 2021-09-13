@@ -1,0 +1,4 @@
+diff a/backend/src/data/entities/Config.ts b/backend/src/data/entities/Config.ts	(rejected hunks)
+@@ -25 +25 @@ export class Config {
+-  @ManyToOne((type) => ApiUserInfo)
++  @ManyToOne(type => ApiUserInfo)

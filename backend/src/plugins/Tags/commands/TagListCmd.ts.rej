@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/Tags/commands/TagListCmd.ts b/backend/src/plugins/Tags/commands/TagListCmd.ts	(rejected hunks)
+@@ -16 +16 @@ export const TagListCmd = tagsCmd({
+-    const tagNames = tags.map((tag) => tag.tag).sort();
++    const tagNames = tags.map(tag => tag.tag).sort();

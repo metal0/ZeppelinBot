@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/LocateUser/utils/sendAlerts.ts b/backend/src/plugins/LocateUser/utils/sendAlerts.ts	(rejected hunks)
+@@ -13 +13 @@ export async function sendAlerts(pluginData: GuildPluginData<LocateUserPluginTyp
+-  triggeredAlerts.forEach((alert) => {
++  triggeredAlerts.forEach(alert => {

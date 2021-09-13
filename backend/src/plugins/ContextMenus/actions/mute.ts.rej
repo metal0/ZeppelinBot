@@ -1,0 +1,7 @@
+diff a/backend/src/plugins/ContextMenus/actions/mute.ts b/backend/src/plugins/ContextMenus/actions/mute.ts	(rejected hunks)
+@@ -51,3 +51,2 @@ export async function muteAction(
+-    } (Case #${result.case.case_number}) (user notified via ${
+-      result.notifyResult.method ?? "dm"
+-    })\nPlease update the new case with the \`update\` command`;
++    } (Case #${result.case.case_number}) (user notified via ${result.notifyResult.method ??
++      "dm"})\nPlease update the new case with the \`update\` command`;

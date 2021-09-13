@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/Slowmode/SlowmodePlugin.ts b/backend/src/plugins/Slowmode/SlowmodePlugin.ts	(rejected hunks)
+@@ -72 +72 @@ export const SlowmodePlugin = zeppelinGuildPlugin<SlowmodePluginType>()({
+-    state.onMessageCreateFn = (msg) => onMessageCreate(pluginData, msg);
++    state.onMessageCreateFn = msg => onMessageCreate(pluginData, msg);

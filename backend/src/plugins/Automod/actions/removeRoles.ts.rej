@@ -1,0 +1,10 @@
+diff a/backend/src/plugins/Automod/actions/removeRoles.ts b/backend/src/plugins/Automod/actions/removeRoles.ts	(rejected hunks)
+@@ -20 +20 @@ export const RemoveRolesAction = automodAction({
+-    const members = unique(contexts.map((c) => c.member).filter(nonNullish));
++    const members = unique(contexts.map(c => c.member).filter(nonNullish));
+@@ -44 +44 @@ export const RemoveRolesAction = automodAction({
+-        (roleId) => pluginData.guild.roles.cache.get(roleId as Snowflake)?.name || roleId,
++        roleId => pluginData.guild.roles.cache.get(roleId as Snowflake)?.name || roleId,
+@@ -56 +56 @@ export const RemoveRolesAction = automodAction({
+-      members.map(async (member) => {
++      members.map(async member => {

@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/Roles/commands/MassRemoveRoleCmd.ts b/backend/src/plugins/Roles/commands/MassRemoveRoleCmd.ts	(rejected hunks)
+@@ -63 +63 @@ export const MassRemoveRoleCmd = rolesCmd({
+-    const membersWithTheRole = members.filter((m) => m.roles.cache.has(roleId));
++    const membersWithTheRole = members.filter(m => m.roles.cache.has(roleId));

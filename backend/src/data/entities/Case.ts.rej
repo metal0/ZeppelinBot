@@ -1,0 +1,7 @@
+diff a/backend/src/data/entities/Case.ts b/backend/src/data/entities/Case.ts	(rejected hunks)
+@@ -38 +38,4 @@ export class Case {
+-  @OneToMany((type) => CaseNote, (note) => note.case)
++  @OneToMany(
++    type => CaseNote,
++    note => note.case,
++  )

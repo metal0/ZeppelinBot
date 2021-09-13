@@ -1,0 +1,7 @@
+diff a/backend/src/data/entities/CaseNote.ts b/backend/src/data/entities/CaseNote.ts	(rejected hunks)
+@@ -18 +18,4 @@ export class CaseNote {
+-  @ManyToOne((type) => Case, (theCase) => theCase.notes)
++  @ManyToOne(
++    type => Case,
++    theCase => theCase.notes,
++  )

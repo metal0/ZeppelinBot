@@ -1,0 +1,7 @@
+diff a/backend/src/plugins/Starboard/util/createStarboardEmbedFromMessage.ts b/backend/src/plugins/Starboard/util/createStarboardEmbedFromMessage.ts	(rejected hunks)
+@@ -62 +62,4 @@ export function createStarboardEmbedFromMessage(
+-      const ext = path.extname(attachment[1].name!).slice(1).toLowerCase();
++      const ext = path
++        .extname(attachment[1].name!)
++        .slice(1)
++        .toLowerCase();

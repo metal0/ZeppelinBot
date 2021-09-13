@@ -1,0 +1,7 @@
+diff a/backend/src/templateFormatter.ts b/backend/src/templateFormatter.ts	(rejected hunks)
+@@ -54 +54 @@ function isTemplateSafeValue(value: unknown): value is TemplateSafeValue {
+-    (Array.isArray(value) && value.every((v) => isTemplateSafeValue(v))) ||
++    (Array.isArray(value) && value.every(v => isTemplateSafeValue(v))) ||
+@@ -92 +92 @@ function cleanUpParseResult(arr) {
+-  arr.forEach((item) => {
++  arr.forEach(item => {

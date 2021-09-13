@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/Utility/functions/getEmojiInfoEmbed.ts b/backend/src/plugins/Utility/functions/getEmojiInfoEmbed.ts	(rejected hunks)
+@@ -10 +10 @@ export async function getEmojiInfoEmbed(
+-  const emoji = pluginData.guild.emojis.cache.find((e) => e.id === emojiId);
++  const emoji = pluginData.guild.emojis.cache.find(e => e.id === emojiId);

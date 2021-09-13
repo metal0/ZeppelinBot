@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/LocateUser/events/BanRemoveAlertsEvt.ts b/backend/src/plugins/LocateUser/events/BanRemoveAlertsEvt.ts	(rejected hunks)
+@@ -8 +8 @@ export const GuildBanRemoveAlertsEvt = locateUserEvt({
+-    alerts.forEach((alert) => {
++    alerts.forEach(alert => {

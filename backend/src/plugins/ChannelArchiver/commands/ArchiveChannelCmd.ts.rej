@@ -1,0 +1,8 @@
+diff a/backend/src/plugins/ChannelArchiver/commands/ArchiveChannelCmd.ts b/backend/src/plugins/ChannelArchiver/commands/ArchiveChannelCmd.ts	(rejected hunks)
+@@ -71,3 +71,3 @@ export const ArchiveChannelCmd = channelArchiverCmd({
+-        let content = `[${ts}] [${message.author.id}] [${message.author.username}#${message.author.discriminator}]: ${
+-          message.content || "<no text content>"
+-        }`;
++        let content = `[${ts}] [${message.author.id}] [${message.author.username}#${
++          message.author.discriminator
++        }]: ${message.content || "<no text content>"}`;

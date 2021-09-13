@@ -1,0 +1,7 @@
+diff a/backend/src/plugins/Censor/util/applyFiltersToMsg.ts b/backend/src/plugins/Censor/util/applyFiltersToMsg.ts	(rejected hunks)
+@@ -22 +22 @@ export async function applyFiltersToMsg(
+-    const embeds = (savedMessage.data.embeds as MessageEmbed[]).map((e) => cloneDeep(e));
++    const embeds = (savedMessage.data.embeds as MessageEmbed[]).map(e => cloneDeep(e));
+@@ -55 +55 @@ export async function applyFiltersToMsg(
+-      inviteCodes.map((code) => resolveInvite(pluginData.client, code)),
++      inviteCodes.map(code => resolveInvite(pluginData.client, code)),

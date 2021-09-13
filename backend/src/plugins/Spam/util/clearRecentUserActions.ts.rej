@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/Spam/util/clearRecentUserActions.ts b/backend/src/plugins/Spam/util/clearRecentUserActions.ts	(rejected hunks)
+@@ -10 +10 @@ export function clearRecentUserActions(
+-  pluginData.state.recentActions = pluginData.state.recentActions.filter((action) => {
++  pluginData.state.recentActions = pluginData.state.recentActions.filter(action => {

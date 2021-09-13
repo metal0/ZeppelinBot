@@ -1,0 +1,16 @@
+diff a/backend/src/api/docs.ts b/backend/src/api/docs.ts	(rejected hunks)
+@@ -25 +25 @@ function formatConfigSchema(schema) {
+-      return schema.types.map((t) => formatConfigSchema(t)).join(" | ");
++      return schema.types.map(t => formatConfigSchema(t)).join(" | ");
+@@ -28 +28 @@ function formatConfigSchema(schema) {
+-    return schema.types.map((t) => formatConfigSchema(t)).join(" & ");
++    return schema.types.map(t => formatConfigSchema(t)).join(" & ");
+@@ -35 +35 @@ export function initDocs(app: express.Express) {
+-  const docsPlugins = guildPlugins.filter((plugin) => plugin.showInDocs);
++  const docsPlugins = guildPlugins.filter(plugin => plugin.showInDocs);
+@@ -39 +39 @@ export function initDocs(app: express.Express) {
+-      docsPlugins.map((plugin) => {
++      docsPlugins.map(plugin => {
+@@ -59 +59 @@ export function initDocs(app: express.Express) {
+-    const commands = (plugin.commands || []).map((cmd) => ({
++    const commands = (plugin.commands || []).map(cmd => ({

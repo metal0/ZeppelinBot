@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/Roles/commands/MassAddRoleCmd.ts b/backend/src/plugins/Roles/commands/MassAddRoleCmd.ts	(rejected hunks)
+@@ -63 +63 @@ export const MassAddRoleCmd = rolesCmd({
+-    const membersWithoutTheRole = members.filter((m) => !m.roles.cache.has(roleId));
++    const membersWithoutTheRole = members.filter(m => !m.roles.cache.has(roleId));

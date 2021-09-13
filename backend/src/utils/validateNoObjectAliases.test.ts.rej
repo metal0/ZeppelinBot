@@ -1,0 +1,10 @@
+diff a/backend/src/utils/validateNoObjectAliases.test.ts b/backend/src/utils/validateNoObjectAliases.test.ts	(rejected hunks)
+@@ -4 +4 @@ import { ObjectAliasError, validateNoObjectAliases } from "./validateNoObjectAli
+-test("validateNoObjectAliases() disallows object aliases at top level", (t) => {
++test("validateNoObjectAliases() disallows object aliases at top level", t => {
+@@ -15 +15 @@ test("validateNoObjectAliases() disallows object aliases at top level", (t) => {
+-test("validateNoObjectAliases() disallows aliases to nested objects", (t) => {
++test("validateNoObjectAliases() disallows aliases to nested objects", t => {
+@@ -28 +28 @@ test("validateNoObjectAliases() disallows aliases to nested objects", (t) => {
+-test("validateNoObjectAliases() disallows nested object aliases", (t) => {
++test("validateNoObjectAliases() disallows nested object aliases", t => {

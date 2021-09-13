@@ -1,0 +1,6 @@
+diff a/backend/src/plugins/Logs/logFunctions/logMemberRoleChanges.ts b/backend/src/plugins/Logs/logFunctions/logMemberRoleChanges.ts	(rejected hunks)
+@@ -24,2 +24,2 @@ export function logMemberRoleChanges(pluginData: GuildPluginData<LogsPluginType>
+-      addedRoles: data.addedRoles.map((r) => r.name).join(", "),
+-      removedRoles: data.removedRoles.map((r) => r.name).join(", "),
++      addedRoles: data.addedRoles.map(r => r.name).join(", "),
++      removedRoles: data.removedRoles.map(r => r.name).join(", "),

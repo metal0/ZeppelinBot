@@ -1,0 +1,15 @@
+diff a/backend/src/plugins/ModActions/commands/MassUnbanCmd.ts b/backend/src/plugins/ModActions/commands/MassUnbanCmd.ts	(rejected hunks)
+@@ -45 +45 @@ export const MassunbanCmd = modActionsCmd({
+-    args.userIds.forEach((userId) => {
++    args.userIds.forEach(userId => {
+@@ -94,2 +94,2 @@ export const MassunbanCmd = modActionsCmd({
+-        const notBanned = failedUnbans.filter((x) => x.reason === UnbanFailReasons.NOT_BANNED);
+-        const unbanFailed = failedUnbans.filter((x) => x.reason === UnbanFailReasons.UNBAN_FAILED);
++        const notBanned = failedUnbans.filter(x => x.reason === UnbanFailReasons.NOT_BANNED);
++        const unbanFailed = failedUnbans.filter(x => x.reason === UnbanFailReasons.UNBAN_FAILED);
+@@ -100 +100 @@ export const MassunbanCmd = modActionsCmd({
+-          notBanned.forEach((fail) => {
++          notBanned.forEach(fail => {
+@@ -106 +106 @@ export const MassunbanCmd = modActionsCmd({
+-          unbanFailed.forEach((fail) => {
++          unbanFailed.forEach(fail => {

@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/Starboard/StarboardPlugin.ts b/backend/src/plugins/Starboard/StarboardPlugin.ts	(rejected hunks)
+@@ -160 +160 @@ export const StarboardPlugin = zeppelinGuildPlugin<StarboardPluginType>()({
+-    state.onMessageDeleteFn = (msg) => onMessageDelete(pluginData, msg);
++    state.onMessageDeleteFn = msg => onMessageDelete(pluginData, msg);

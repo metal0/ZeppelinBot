@@ -1,0 +1,7 @@
+diff a/backend/src/plugins/Logs/types.ts b/backend/src/plugins/Logs/types.ts	(rejected hunks)
+@@ -404 +404,4 @@ export const LogTypeData = z.object({
+-    mod: z.instanceof(TemplateSafeUser).or(z.instanceof(TemplateSafeUnknownUser)).or(z.null()),
++    mod: z
++      .instanceof(TemplateSafeUser)
++      .or(z.instanceof(TemplateSafeUnknownUser))
++      .or(z.null()),

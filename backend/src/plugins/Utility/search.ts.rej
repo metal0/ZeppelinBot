@@ -1,0 +1,53 @@
+diff a/backend/src/plugins/Utility/search.ts b/backend/src/plugins/Utility/search.ts	(rejected hunks)
+@@ -93 +93 @@ export async function displaySearch(
+-  const loadSearchPage = async (page) => {
++  const loadSearchPage = async page => {
+@@ -104 +104 @@ export async function displaySearch(
+-      searchMsgPromise.then((m) => (originalSearchMsg = m));
++      searchMsgPromise.then(m => (originalSearchMsg = m));
+@@ -185 +185,4 @@ export async function displaySearch(
+-        new MessageButton().setStyle("SECONDARY").setEmoji("🔄").setCustomId(`reloadButton:${idMod}`),
++        new MessageButton()
++          .setStyle("SECONDARY")
++          .setEmoji("🔄")
++          .setCustomId(`reloadButton:${idMod}`),
+@@ -308 +311 @@ async function performMemberSearch(
+-    matchingMembers = matchingMembers.filter((member) => {
++    matchingMembers = matchingMembers.filter(member => {
+@@ -318 +321 @@ async function performMemberSearch(
+-    matchingMembers = matchingMembers.filter((m) => m.voice.channelId);
++    matchingMembers = matchingMembers.filter(m => m.voice.channelId);
+@@ -322 +325 @@ async function performMemberSearch(
+-    matchingMembers = matchingMembers.filter((m) => m.user.bot);
++    matchingMembers = matchingMembers.filter(m => m.user.bot);
+@@ -379 +382 @@ async function performMemberSearch(
+-    matchingMembers = await asyncFilter(matchingMembers, async (member) => {
++    matchingMembers = await asyncFilter(matchingMembers, async member => {
+@@ -396 +399 @@ async function performMemberSearch(
+-    matchingMembers.sort(sorter((m) => BigInt(m.id), realSortDir));
++    matchingMembers.sort(sorter(m => BigInt(m.id), realSortDir));
+@@ -400,2 +403,2 @@ async function performMemberSearch(
+-        [(m) => m.user.username.toLowerCase(), realSortDir],
+-        [(m) => m.discriminator, realSortDir],
++        [m => m.user.username.toLowerCase(), realSortDir],
++        [m => m.discriminator, realSortDir],
+@@ -435 +438 @@ async function performBanSearch(
+-  let matchingBans = (await pluginData.guild.bans.fetch({ cache: false })).map((x) => x.user);
++  let matchingBans = (await pluginData.guild.bans.fetch({ cache: false })).map(x => x.user);
+@@ -450 +453 @@ async function performBanSearch(
+-    matchingBans = await asyncFilter(matchingBans, async (user) => {
++    matchingBans = await asyncFilter(matchingBans, async user => {
+@@ -461 +464 @@ async function performBanSearch(
+-    matchingBans.sort(sorter((m) => BigInt(m.id), realSortDir));
++    matchingBans.sort(sorter(m => BigInt(m.id), realSortDir));
+@@ -465,2 +468,2 @@ async function performBanSearch(
+-        [(m) => m.username.toLowerCase(), realSortDir],
+-        [(m) => m.discriminator, realSortDir],
++        [m => m.username.toLowerCase(), realSortDir],
++        [m => m.discriminator, realSortDir],
+@@ -491 +494 @@ function formatSearchResultList(members: Array<GuildMember | User>): string {
+-  const lines = members.map((member) => {
++  const lines = members.map(member => {
+@@ -506 +509 @@ function formatSearchResultIdList(members: Array<GuildMember | User>): string {
+-  return members.map((m) => m.id).join(" ");
++  return members.map(m => m.id).join(" ");
