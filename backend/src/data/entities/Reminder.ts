@@ -17,4 +17,6 @@ export class Reminder {
   @Column() body: string;
 
   @Column() created_at: string;
+
+  @Column() source_message_id: string;
 }
