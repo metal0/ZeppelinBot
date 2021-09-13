@@ -1,11 +1,12 @@
-import { MessageEmbed, MessageMentionTypes, MessageOptions, Snowflake, TextChannel } from "discord.js";
+import { MessageEmbedOptions, MessageMentionTypes, Snowflake, TextChannel } from "discord.js";
 import { GuildPluginData } from "knub";
 import { allowTimeout } from "../../../RegExpRunner";
-import { createChunkedEmbedMessage, createChunkedMessage, noop } from "../../../utils";
-import { ILogTypeData, LogsPluginType, ParsedMessageType, TLogChannelMap } from "../types";
+import { ILogTypeData, LogsPluginType, TLogChannel, TLogChannelMap } from "../types";
 import { getLogMessage } from "./getLogMessage";
 import { TypedTemplateSafeValueContainer } from "../../../templateFormatter";
 import { LogType } from "../../../data/LogType";
+import { MessageBuffer } from "../../../utils/MessageBuffer";
+import { createChunkedMessage, isDiscordAPIError, MINUTES } from "../../../utils";
 
 const excludedUserProps = ["user", "member", "mod"];
 const excludedRoleProps = ["message.member.roles", "member.roles"];
@@ -23,6 +24,53 @@ interface ExclusionData {
   messageTextContent?: string | null;
 }
 
+const DEFAULT_BATCH_TIME = 1000;
+const MIN_BATCH_TIME = 250;
+const MAX_BATCH_TIME = 5000;
+
+async function shouldExclude(
+  pluginData: GuildPluginData<LogsPluginType>,
+  opts: TLogChannel,
+  exclusionData: ExclusionData,
+): Promise<boolean> {
+  if (opts.excluded_users && exclusionData.userId && opts.excluded_users.includes(exclusionData.userId)) {
+    return true;
+  }
+
+  if (opts.exclude_bots && exclusionData.bot) {
+    return true;
+  }
+
+  if (opts.excluded_roles && exclusionData.roles) {
+    for (const role of exclusionData.roles) {
+      if (opts.excluded_roles.includes(role)) {
+        return true;
+      }
+    }
+  }
+
+  if (opts.excluded_channels && exclusionData.channel && opts.excluded_channels.includes(exclusionData.channel)) {
+    return true;
+  }
+
+  if (opts.excluded_categories && exclusionData.category && opts.excluded_categories.includes(exclusionData.category)) {
+    return true;
+  }
+
+  if (opts.excluded_message_regexes && exclusionData.messageTextContent) {
+    for (const regex of opts.excluded_message_regexes) {
+      const matches = await pluginData.state.regexRunner
+        .exec(regex, exclusionData.messageTextContent)
+        .catch(allowTimeout);
+      if (matches) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
 export async function log<TLogType extends keyof ILogTypeData>(
   pluginData: GuildPluginData<LogsPluginType>,
   type: TLogType,
@@ -35,114 +83,57 @@ export async function log<TLogType extends keyof ILogTypeData>(
   logChannelLoop: for (const [channelId, opts] of Object.entries(logChannels)) {
     const channel = pluginData.guild.channels.cache.get(channelId as Snowflake);
     if (!channel || !(channel instanceof TextChannel)) continue;
+    if (pluginData.state.channelCooldowns.isOnCooldown(channelId)) continue;
+    if (opts.include?.length && !opts.include.includes(typeStr)) continue;
+    if (opts.exclude && opts.exclude.includes(typeStr)) continue;
+    if (await shouldExclude(pluginData, opts, exclusionData)) continue;
 
-    if ((opts.include && opts.include.includes(typeStr)) || (opts.exclude && !opts.exclude.includes(typeStr))) {
-      // If this log entry is about an excluded user, skip it
-      // TODO: Quick and dirty solution, look into changing at some point
-      if (opts.excluded_users && exclusionData.userId && opts.excluded_users.includes(exclusionData.userId)) {
-        continue;
-      }
+    const message = await getLogMessage(pluginData, type, data, {
+      format: opts.format,
+      include_embed_timestamp: opts.include_embed_timestamp,
+      timestamp_format: opts.timestamp_format,
+    });
+    if (!message) return;
 
-      // If we're excluding bots and the logged user is a bot, skip it
-      if (opts.exclude_bots && exclusionData.bot) {
-        continue;
-      }
-
-      if (opts.excluded_roles && exclusionData.roles) {
-        for (const role of exclusionData.roles) {
-          if (opts.excluded_roles.includes(role)) {
-            continue logChannelLoop;
-          }
-        }
-      }
-
-      if (opts.excluded_channels && exclusionData.channel && opts.excluded_channels.includes(exclusionData.channel)) {
-        continue;
-      }
-
-      if (
-        opts.excluded_categories &&
-        exclusionData.category &&
-        opts.excluded_categories.includes(exclusionData.category)
-      ) {
-        continue;
-      }
-
-      if (opts.excluded_message_regexes && exclusionData.messageTextContent) {
-        for (const regex of opts.excluded_message_regexes) {
-          const matches = await pluginData.state.regexRunner
-            .exec(regex, exclusionData.messageTextContent)
-            .catch(allowTimeout);
-          if (matches) {
-            continue logChannelLoop;
-          }
-        }
-      }
-      const message = await getLogMessage(pluginData, type, data, {
-        format: opts.format,
-        include_embed_timestamp: opts.include_embed_timestamp,
-        timestamp_format: opts.timestamp_format,
-      });
-
-      if (message) {
-        // Default to batched unless explicitly disabled
-        const batched = opts.batched ?? true;
-        const batchTime = opts.batch_time ?? 1000;
-        const cfg = pluginData.config.get();
-        const parse: MessageMentionTypes[] = cfg.allow_user_mentions ? ["users"] : [];
-
-        if (batched) {
-          // If we're batching log messages, gather all log messages within the set batch_time into a single message
-          if (!pluginData.state.batches.has(channel.id)) {
-            pluginData.state.batches.set(channel.id, []);
-            setTimeout(async () => {
-              const batch = pluginData.state.batches.get(channel.id);
-              if (!batch) return;
-
-              const chunks: ParsedMessageType[] = [];
-              for (const msg of batch) {
-                if (typeof msg === "string") {
-                  // check if the latest chunk is a string, if not, make it one
-                  if (typeof chunks[chunks.length - 1] === "string") {
-                    chunks[chunks.length - 1] += `\n${msg}`;
-                  } else {
-                    chunks.push(msg);
-                  }
-                } else {
-                  const msgEmbeds = msg.embeds;
-                  const lastEntry = chunks.length > 0 ? chunks[chunks.length - 1] : null;
-
-                  if (!msgEmbeds || msgEmbeds.length === 0) continue;
-                  // check if the latest chunk is an embed, if not, make it one
-                  if (typeof lastEntry !== "string" && lastEntry?.embeds) {
-                    (chunks[chunks.length - 1] as MessageOptions).embeds!.push(...msgEmbeds);
-                  } else {
-                    chunks.push({ embeds: msgEmbeds });
-                  }
-                }
-              }
-              for (const chunk of chunks) {
-                if (typeof chunk === "string") {
-                  await createChunkedMessage(channel, chunk, { parse });
-                } else if (chunk.embeds) {
-                  await createChunkedEmbedMessage(channel, chunk.embeds, { parse });
+    // Initialize message buffer for this channel
+    if (!pluginData.state.buffers.has(channelId)) {
+      const batchTime = Math.min(Math.max(opts.batch_time ?? DEFAULT_BATCH_TIME, MIN_BATCH_TIME), MAX_BATCH_TIME);
+      pluginData.state.buffers.set(
+        channelId,
+        new MessageBuffer({
+          timeout: batchTime,
+          consume: part => {
+            const parse: MessageMentionTypes[] = pluginData.config.get().allow_user_mentions ? ["users"] : [];
+            const promise =
+              part.content && !part.embeds?.length
+                ? createChunkedMessage(channel, part.content, { parse })
+                : channel.send({
+                    ...part,
+                    allowedMentions: { parse },
+                  });
+            promise.catch(err => {
+              if (isDiscordAPIError(err)) {
+                // Missing Access / Missing Permissions
+                // TODO: Show/log this somewhere
+                if (err.code === 50001 || err.code === 50013) {
+                  pluginData.state.channelCooldowns.setCooldown(channelId, 2 * MINUTES);
+                  return;
                 }
               }
 
-              pluginData.state.batches.delete(channel.id);
-            }, batchTime);
-          }
-
-          pluginData.state.batches.get(channel.id)!.push(message);
-        } else {
-          // If we're not batching log messages, just send them immediately
-          if (typeof message === "string") {
-            await createChunkedMessage(channel, message, { parse }).catch(noop);
-          } else {
-            await channel.send({ embeds: message.embeds, allowedMentions: { parse } });
-          }
-        }
-      }
+              // tslint:disable-next-line:no-console
+              console.warn(`Error while sending ${typeStr} log to ${pluginData.guild.id}/${channelId}: ${err.message}`);
+            });
+          },
+        }),
+      );
     }
+
+    // Add log message to buffer
+    const buffer = pluginData.state.buffers.get(channelId)!;
+    buffer.push({
+      content: typeof message === "string" ? message : message.content || "",
+      embeds: typeof message === "string" ? [] : ((message.embeds || []) as MessageEmbedOptions[]),
+    });
   }
 }

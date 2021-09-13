@@ -25,10 +25,7 @@ export async function cleanupConfigs() {
   /*
 
   // >1 month old: 1 config retained per month
-  const oneMonthCutoff = moment
-    .utc()
-    .subtract(30, "days")
-    .format(DBDateFormat);
+  const oneMonthCutoff = moment.utc().subtract(30, "days").format(DBDateFormat);
   do {
     rows = await connection.query(
       `
@@ -58,7 +55,7 @@ export async function cleanupConfigs() {
 
     if (rows.length > 0) {
       await configRepository.delete({
-        id: In(rows.map(r => r.id)),
+        id: In(rows.map((r) => r.id)),
       });
     }
 
@@ -66,10 +63,7 @@ export async function cleanupConfigs() {
   } while (rows.length === CLEAN_PER_LOOP);
 
   // >2 weeks old: 1 config retained per day
-  const twoWeekCutoff = moment
-    .utc()
-    .subtract(2, "weeks")
-    .format(DBDateFormat);
+  const twoWeekCutoff = moment.utc().subtract(2, "weeks").format(DBDateFormat);
   do {
     rows = await connection.query(
       `
@@ -99,7 +93,7 @@ export async function cleanupConfigs() {
 
     if (rows.length > 0) {
       await configRepository.delete({
-        id: In(rows.map(r => r.id)),
+        id: In(rows.map((r) => r.id)),
       });
     }
 

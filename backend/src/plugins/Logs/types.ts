@@ -1,6 +1,6 @@
 import * as t from "io-ts";
 import { z } from "zod";
-import { BasePluginType, typedGuildEventListener } from "knub";
+import { BasePluginType, CooldownManager, typedGuildEventListener } from "knub";
 import { GuildArchives } from "../../data/GuildArchives";
 import { GuildCases } from "../../data/GuildCases";
 import { GuildLogs } from "../../data/GuildLogs";
@@ -22,12 +22,10 @@ import {
   TemplateSafeUnknownUser,
   TemplateSafeUser,
 } from "../../utils/templateSafeObjects";
-import { MessageOptions } from "discord.js";
+import { MessageBuffer } from "../../utils/MessageBuffer";
 
 export const tLogFormats = t.record(t.string, t.union([t.string, tMessageContent]));
 export type TLogFormats = t.TypeOf<typeof tLogFormats>;
-
-export type ParsedMessageType = MessageOptions | string;
 
 const LogChannel = t.partial({
   include: t.array(t.string),
@@ -82,7 +80,8 @@ export interface LogsPluginType extends BasePluginType {
 
     logListener;
 
-    batches: Map<string, ParsedMessageType[]>;
+    buffers: Map<string, MessageBuffer>;
+    channelCooldowns: CooldownManager;
 
     onMessageDeleteFn;
     onMessageDeleteBulkFn;

@@ -4,16 +4,16 @@
   "description": "",
   "private": true,
   "scripts": {
-    "format": "prettier --write \"./{backend,dashboard}/{,!(node_modules)/**/}/*.ts\"",
+    "format": "prettier --write './**/*.{css,html,js,json,ts,tsx}'",
     "lint": "tslint \"./{backend,dashboard}/{,!(node_modules)/**/}/*.ts\"",
-    "codestyle-check": "prettier --check \"./{backend,dashboard}/{,!(node_modules)/**/}/*.ts\"",
     "modules": "cd backend && npm i --production=false && cd ../dashboard && npm i --production=false",
-    "update": "git reset --hard && git pull && cd backend && npm ci && npm run migrate-prod && npm run build && pm2 restart all && cd .."
+    "update": "git reset --hard && git pull && cd backend && npm ci && npm run migrate-prod && npm run build && pm2 restart all && cd ..",
+    "codestyle-check": "prettier --check './**/*.{css,html,js,json,ts,tsx}'"
   },
   "devDependencies": {
     "husky": "^3.0.9",
     "lint-staged": "^9.4.2",
-    "prettier": "^1.19.1",
+    "prettier": "^2.4.0",
     "tslint": "^5.13.1",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^4.3.4"
