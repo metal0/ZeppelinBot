@@ -9,6 +9,7 @@ import { MessageAction } from "./actions/messageAction";
 import { MoveToVoiceChannelAction } from "./actions/moveToVoiceChannelAction";
 import { SetChannelPermissionOverridesAction } from "./actions/setChannelPermissionOverrides";
 import { AddToCounterAction } from "./actions/addToCounter";
+import { SetCounterAction } from "./actions/setCounter";
 
 // Triggers
 const CommandTrigger = t.type({
@@ -32,6 +33,7 @@ const AnyAction = t.union([
   MakeRoleMentionableAction,
   MakeRoleUnmentionableAction,
   SetChannelPermissionOverridesAction,
+  SetCounterAction,
 ]);
 type TAnyAction = t.TypeOf<typeof AnyAction>;
 

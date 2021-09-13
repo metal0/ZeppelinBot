@@ -13,6 +13,7 @@ import { setChannelPermissionOverridesAction } from "../actions/setChannelPermis
 import { CustomEventsPluginType, TCustomEvent } from "../types";
 import { TemplateSafeValueContainer } from "../../../templateFormatter";
 import { addToCounterAction } from "../actions/addToCounter";
+import { setCounterAction } from "../actions/setCounter";
 
 export async function runEvent(
   pluginData: GuildPluginData<CustomEventsPluginType>,
@@ -40,6 +41,8 @@ export async function runEvent(
         await setChannelPermissionOverridesAction(pluginData, action, values, event, eventData);
       } else if (action.type === "add_to_counter") {
         await addToCounterAction(pluginData, action, values, event, eventData);
+      } else if (action.type === "set_counter") {
+        await setCounterAction(pluginData, action, values, event, eventData);
       }
     }
   } catch (e) {

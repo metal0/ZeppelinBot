@@ -6,17 +6,17 @@ import { resolveMember } from "../../../utils";
 import { ActionError } from "../ActionError";
 import { CustomEventsPluginType, TCustomEvent } from "../types";
 
-export const AddToCounterAction = t.type({
-  type: t.literal("add_to_counter"),
+export const SetCounterAction = t.type({
+  type: t.literal("set_counter"),
   counter: t.string,
-  amount: t.number,
+  value: t.number,
   target: t.string,
 });
-export type TAddToCounterAction = t.TypeOf<typeof AddToCounterAction>;
+export type TSetCounterAction = t.TypeOf<typeof SetCounterAction>;
 
-export async function addToCounterAction(
+export async function setCounterAction(
   pluginData: GuildPluginData<CustomEventsPluginType>,
-  action: TAddToCounterAction,
+  action: TSetCounterAction,
   values: TemplateSafeValueContainer,
   event: TCustomEvent,
   eventData: any,
@@ -29,10 +29,10 @@ export async function addToCounterAction(
   const target = await resolveMember(pluginData.client, pluginData.guild, targetId);
   if (!target && action.target) throw new ActionError(`Unknown target member: ${targetId}`);
 
-  countersPlugin.changeCounterValue(
+  countersPlugin.setCounterValue(
     action.counter,
     eventData.msg?.channelId || null,
     target ? targetId : null,
-    action.amount,
+    action.value,
   );
 }
