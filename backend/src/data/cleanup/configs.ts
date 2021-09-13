@@ -16,7 +16,7 @@ export async function cleanupConfigs() {
     rows = await connection.query(`SELECT * FROM configs WHERE is_active = 0;`);
     if (rows.length > 0) {
       await configRepository.delete({
-        id: In(rows.map(r => r.id)),
+        id: In(rows.map((r) => r.id)),
       });
     }
 

@@ -28,7 +28,7 @@ export async function removeRoleAction(
   if (event.trigger.type === "command" && !canActOn(pluginData, eventData.msg.member, target)) {
     throw new ActionError("Missing permissions");
   }
-  const rolesToRemove = (Array.isArray(action.role) ? action.role : [action.role]).filter(id =>
+  const rolesToRemove = (Array.isArray(action.role) ? action.role : [action.role]).filter((id) =>
     target.roles.cache.has(id),
   );
   if (rolesToRemove.length === 0) {

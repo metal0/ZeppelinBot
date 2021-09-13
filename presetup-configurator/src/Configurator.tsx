@@ -131,7 +131,7 @@ export function Configurator() {
           <label>
             Bot prefix
             <br />
-            <input value={prefix} onChange={e => setPrefix(e.target.value)} />
+            <input value={prefix} onChange={(e) => setPrefix(e.target.value)} />
           </label>
         </div>
 
@@ -143,7 +143,7 @@ export function Configurator() {
         <h2>Mod commands</h2>
         <div className="control">
           <label>
-            <input type="checkbox" checked={withModCommands} onChange={e => setWithModCommands(e.target.checked)} />
+            <input type="checkbox" checked={withModCommands} onChange={(e) => setWithModCommands(e.target.checked)} />
             Start with a basic mod command setup
           </label>
 
@@ -152,20 +152,20 @@ export function Configurator() {
               <label>
                 Mute role ID
                 <br />
-                <input value={muteRoleId} onChange={e => setMuteRoleId(e.target.value)} />
+                <input value={muteRoleId} onChange={(e) => setMuteRoleId(e.target.value)} />
               </label>
 
               <label>
                 Case channel ID
                 <br />
-                <input value={caseChannelId} onChange={e => setCaseChannelId(e.target.value)} />
+                <input value={caseChannelId} onChange={(e) => setCaseChannelId(e.target.value)} />
               </label>
 
               <label>
                 <input
                   type="checkbox"
                   checked={dmModActionReasons}
-                  onChange={e => setDmModActionReasons(e.target.checked)}
+                  onChange={(e) => setDmModActionReasons(e.target.checked)}
                 />
                 DM reason with mod actions
               </label>
@@ -176,7 +176,7 @@ export function Configurator() {
         <h2>Logs</h2>
         <div className="control">
           <label>
-            <input type="checkbox" checked={withLogs} onChange={e => setWithLogs(e.target.checked)} />
+            <input type="checkbox" checked={withLogs} onChange={(e) => setWithLogs(e.target.checked)} />
             Start with a basic logging setup
           </label>
 
@@ -190,7 +190,7 @@ export function Configurator() {
         rows={resultRows}
         readOnly={true}
         value={formattedResult}
-        onClick={e => copyResultText(e.target as HTMLTextAreaElement)}
+        onClick={(e) => copyResultText(e.target as HTMLTextAreaElement)}
       />
       {copied ? <em>Copied!</em> : <em>Click textarea to copy</em>}
     </div>

@@ -14,10 +14,10 @@ export const RunAutomodOnThreadCreate = typedGuildEventListener<AutomodPluginTyp
       },
       user,
     };
-    const sourceChannel = pluginData.client.channels.cache.find(c => c.id === thread.parentId);
+    const sourceChannel = pluginData.client.channels.cache.find((c) => c.id === thread.parentId);
     if (sourceChannel?.isText()) {
       const sourceMessage = sourceChannel.messages.cache.find(
-        m => m.thread?.id === thread.id || m.reference?.channelId === thread.id,
+        (m) => m.thread?.id === thread.id || m.reference?.channelId === thread.id,
       );
       if (sourceMessage) {
         const message = await pluginData.state.savedMessages.find(sourceMessage.id);

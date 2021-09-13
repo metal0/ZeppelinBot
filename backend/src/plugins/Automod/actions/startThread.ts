@@ -22,7 +22,7 @@ export const StartThreadAction = automodAction({
 
   async apply({ pluginData, contexts, actionConfig, ruleName }) {
     // check if the message still exists, we don't want to create threads for deleted messages
-    const threads = contexts.filter(c => {
+    const threads = contexts.filter((c) => {
       if (!c.message || !c.user) return false;
       const channel = pluginData.guild.channels.cache.get(c.message.channel_id);
       if (channel?.type !== "GUILD_TEXT" || !channel.isText()) return false; // for some reason the typing here for channel.type defaults to ThreadChannelTypes (?)
@@ -31,7 +31,7 @@ export const StartThreadAction = automodAction({
         const threadCount = [
           ...channel.threads.cache
             .filter(
-              tr =>
+              (tr) =>
                 tr.ownerId === pluginData.client.application!.id &&
                 !tr.deleted &&
                 !tr.archived &&
@@ -58,7 +58,7 @@ export const StartThreadAction = automodAction({
 
     for (const c of threads) {
       const channel = pluginData.guild.channels.cache.get(c.message!.channel_id) as TextChannel;
-      const renderThreadName = async str =>
+      const renderThreadName = async (str) =>
         renderTemplate(
           str,
           new TemplateSafeValueContainer({

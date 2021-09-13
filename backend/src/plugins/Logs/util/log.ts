@@ -103,7 +103,7 @@ export async function log<TLogType extends keyof ILogTypeData>(
         new MessageBuffer({
           timeout: batchTime,
           textSeparator: "\n",
-          consume: part => {
+          consume: (part) => {
             const parse: MessageMentionTypes[] = pluginData.config.get().allow_user_mentions ? ["users"] : [];
             const promise =
               part.content && !part.embeds?.length
@@ -112,7 +112,7 @@ export async function log<TLogType extends keyof ILogTypeData>(
                     ...part,
                     allowedMentions: { parse },
                   });
-            promise.catch(err => {
+            promise.catch((err) => {
               if (isDiscordAPIError(err)) {
                 // Missing Access / Missing Permissions
                 // TODO: Show/log this somewhere

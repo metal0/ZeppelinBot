@@ -88,7 +88,7 @@ let config = {
             loader: "postcss-loader",
             options: {
               ident: "postcss",
-              plugins: loader => {
+              plugins: (loader) => {
                 const plugins = [
                   require("postcss-import")({
                     resolve(id, base, options) {

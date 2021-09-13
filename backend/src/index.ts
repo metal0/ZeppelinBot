@@ -146,8 +146,8 @@ if (process.env.NODE_ENV === "production") {
 
 // Verify required Node.js version
 const REQUIRED_NODE_VERSION = "14.0.0";
-const requiredParts = REQUIRED_NODE_VERSION.split(".").map(v => parseInt(v, 10));
-const actualVersionParts = process.versions.node.split(".").map(v => parseInt(v, 10));
+const requiredParts = REQUIRED_NODE_VERSION.split(".").map((v) => parseInt(v, 10));
+const actualVersionParts = process.versions.node.split(".").map((v) => parseInt(v, 10));
 for (const [i, part] of actualVersionParts.entries()) {
   if (part > requiredParts[i]) break;
   if (part === requiredParts[i]) continue;
@@ -161,7 +161,7 @@ connect().then(async () => {
   const RequestHandler = require("discord.js/src/rest/RequestHandler.js");
   const originalPush = RequestHandler.prototype.push;
   // tslint:disable-next-line:only-arrow-functions
-  RequestHandler.prototype.push = function(...args) {
+  RequestHandler.prototype.push = function (...args) {
     const request = args[0];
     logRestCall(request.method, request.path);
     return originalPush.call(this, ...args);
@@ -177,8 +177,8 @@ connect().then(async () => {
         sweepInterval: 600,
         sweepFilter: LimitedCollection.filterByLifetime({
           lifetime: 48 * 60 * 60,
-          getComparisonTimestamp: e => e.editedTimestamp ?? e.createdTimestamp,
-          excludeFromSweep: e => e.pinned,
+          getComparisonTimestamp: (e) => e.editedTimestamp ?? e.createdTimestamp,
+          excludeFromSweep: (e) => e.pinned,
         }),
       },
     }),
@@ -212,7 +212,7 @@ connect().then(async () => {
   });
   client.setMaxListeners(200);
 
-  client.on(Constants.Events.RATE_LIMIT, data => {
+  client.on(Constants.Events.RATE_LIMIT, (data) => {
     // tslint:disable-next-line:no-console
     // console.log(`[DEBUG] [RATE_LIMIT] ${JSON.stringify(data)}`);
   });
@@ -220,7 +220,7 @@ connect().then(async () => {
   const safe429DecayInterval = 5 * SECONDS;
   const safe429MaxCount = 5;
   const safe429Counter = new DecayingCounter(safe429DecayInterval);
-  client.on(Constants.Events.DEBUG, errorText => {
+  client.on(Constants.Events.DEBUG, (errorText) => {
     if (!errorText.includes("429")) {
       return;
     }
@@ -236,7 +236,7 @@ connect().then(async () => {
     }
   });
 
-  client.on("error", err => {
+  client.on("error", (err) => {
     errorHandler(new DiscordJSError(err.message, (err as any).code, 0));
   });
 
@@ -264,9 +264,9 @@ connect().then(async () => {
         }
 
         const configuredPlugins = ctx.config.plugins;
-        const basePluginNames = baseGuildPlugins.map(p => p.name);
+        const basePluginNames = baseGuildPlugins.map((p) => p.name);
 
-        return Array.from(plugins.keys()).filter(pluginName => {
+        return Array.from(plugins.keys()).filter((pluginName) => {
           if (basePluginNames.includes(pluginName)) return true;
           return configuredPlugins[pluginName] && configuredPlugins[pluginName].enabled !== false;
         });
@@ -331,7 +331,7 @@ connect().then(async () => {
     startUptimeCounter();
   });
 
-  client.on(Constants.Events.RATE_LIMIT, data => {
+  client.on(Constants.Events.RATE_LIMIT, (data) => {
     logRateLimit(data);
   });
 
