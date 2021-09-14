@@ -27,6 +27,7 @@ import { RoleAddedTrigger } from "./roleAdded";
 import { RoleRemovedTrigger } from "./roleRemoved";
 import { StickerSpamTrigger } from "./stickerSpam";
 import { ThreadCreateTrigger } from "./threadCreate";
+import { ThreadCreateSpamTrigger } from "./threadCreateSpam";
 import { ThreadDeleteTrigger } from "./threadDelete";
 import { UnbanTrigger } from "./unban";
 import { UnmuteTrigger } from "./unmute";
