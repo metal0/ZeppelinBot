@@ -30,6 +30,12 @@ export const ThreadArchiveTrigger = automodTrigger<ThreadArchiveResult>()({
       return;
     }
 
+    if (triggerConfig.locked && !context.threadChange.locked) {
+      return;
+    } else if (triggerConfig.locked === false && !context.threadChange.unlocked) {
+      return;
+    }
+
     const thread = context.threadChange.archived;
 
     if (triggerConfig.parent) {
