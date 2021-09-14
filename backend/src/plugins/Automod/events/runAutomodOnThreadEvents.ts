@@ -9,6 +9,7 @@ export const RunAutomodOnThreadCreate = typedGuildEventListener<AutomodPluginTyp
     const user = thread.ownerId ? await pluginData.client.users.fetch(thread.ownerId).catch(() => void 0) : void 0;
     const context: AutomodContext = {
       timestamp: Date.now(),
+      thread,
       threadChange: {
         created: thread,
       },
@@ -41,6 +42,7 @@ export const RunAutomodOnThreadDelete = typedGuildEventListener<AutomodPluginTyp
 
     const context: AutomodContext = {
       timestamp: Date.now(),
+      thread,
       threadChange: {
         deleted: thread,
       },
@@ -68,10 +70,11 @@ export const RunAutomodOnThreadUpdate = typedGuildEventListener<AutomodPluginTyp
     }
 
     if (Object.keys(changes).length === 0) return;
-
+    console.log("got thread changes!");
     const context: AutomodContext = {
       timestamp: Date.now(),
       threadChange: changes,
+      thread,
       user,
     };
 
