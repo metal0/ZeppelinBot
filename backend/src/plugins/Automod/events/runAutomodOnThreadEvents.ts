@@ -17,10 +17,10 @@ export const RunAutomodOnThreadCreate = typedGuildEventListener<AutomodPluginTyp
     };
 
     // This is a hack to make this trigger compatible with the reply action
-    const sourceChannel = thread.parent ?? pluginData.client.channels.cache.find(c => c.id === thread.parentId);
+    const sourceChannel = thread.parent ?? pluginData.client.channels.cache.find((c) => c.id === thread.parentId);
     if (sourceChannel?.isText()) {
       const sourceMessage = sourceChannel.messages.cache.find(
-        m => m.thread?.id === thread.id || m.reference?.channelId === thread.id,
+        (m) => m.thread?.id === thread.id || m.reference?.channelId === thread.id,
       );
       if (sourceMessage) {
         const savedMessage = pluginData.state.savedMessages.msgToSavedMessage(sourceMessage);

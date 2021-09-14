@@ -13,8 +13,8 @@ export const UnArchiveThreadAction = automodAction({
 
   async apply({ pluginData, contexts, actionConfig }) {
     const threads = contexts
-      .filter(c => c.thread?.id)
-      .map(c => pluginData.guild.channels.cache.get(c.thread!.id))
+      .filter((c) => c.thread?.id)
+      .map((c) => pluginData.guild.channels.cache.get(c.thread!.id))
       .filter((c): c is ThreadChannel => c?.isThread() ?? false);
 
     for (const thread of threads) {
