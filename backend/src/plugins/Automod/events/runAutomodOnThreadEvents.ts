@@ -64,6 +64,7 @@ export const RunAutomodOnThreadDelete = typedGuildEventListener<AutomodPluginTyp
 export const RunAutomodOnThreadUpdate = typedGuildEventListener<AutomodPluginType>()({
   event: "threadUpdate",
   async listener({ pluginData, args: { oldThread, newThread: thread } }) {
+    console.log("threadUpdate");
     const user = thread.ownerId ? await pluginData.client.users.fetch(thread.ownerId).catch(() => void 0) : void 0;
     const changes: AutomodContext["threadChange"] = {};
     if (oldThread.archived !== thread.archived) {
@@ -74,7 +75,7 @@ export const RunAutomodOnThreadUpdate = typedGuildEventListener<AutomodPluginTyp
       changes.locked = thread.locked ? thread : void 0;
       changes.unlocked = !thread.locked ? thread : void 0;
     }
-
+    console.log("changes", changes);
     if (Object.keys(changes).length === 0) return;
 
     const context: AutomodContext = {

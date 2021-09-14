@@ -15,6 +15,7 @@ interface ThreadLockResult {
 export const ThreadLockTrigger = automodTrigger<ThreadLockResult>()({
   configType: t.type({
     parent: tNullable(t.union([t.string, t.array(t.string)])),
+    locked: tNullable(t.boolean),
   }),
 
   defaultConfig: {},

@@ -15,12 +15,18 @@ interface ThreadArchiveResult {
 export const ThreadArchiveTrigger = automodTrigger<ThreadArchiveResult>()({
   configType: t.type({
     parent: tNullable(t.union([t.string, t.array(t.string)])),
+    locked: tNullable(t.boolean),
   }),
 
   defaultConfig: {},
 
   async match({ context, triggerConfig }) {
     if (!context.threadChange?.archived) {
+      return;
+    }
+    if (triggerConfig.locked && !context.threadChange.locked) {
+      return;
+    } else if (!triggerConfig.locked && context.threadChange.unlocked) {
       return;
     }
 
