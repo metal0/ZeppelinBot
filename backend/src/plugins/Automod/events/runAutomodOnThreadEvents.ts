@@ -1,6 +1,5 @@
 import { typedGuildEventListener } from "knub";
 import { runAutomod } from "../functions/runAutomod";
-import diff from "lodash.difference";
 import { AutomodContext, AutomodPluginType } from "../types";
 
 export const RunAutomodOnThreadCreate = typedGuildEventListener<AutomodPluginType>()({
