@@ -24,7 +24,11 @@ import { RunAutomodOnJoinEvt, RunAutomodOnLeaveEvt } from "./events/RunAutomodOn
 import { RunAutomodOnMemberUpdate } from "./events/RunAutomodOnMemberUpdate";
 import { runAutomodOnMessage } from "./events/runAutomodOnMessage";
 import { runAutomodOnModAction } from "./events/runAutomodOnModAction";
-import { RunAutomodOnThreadCreate, RunAutomodOnThreadDelete } from "./events/runAutomodOnThreadEvents";
+import {
+  RunAutomodOnThreadCreate,
+  RunAutomodOnThreadDelete,
+  RunAutomodOnThreadUpdate,
+} from "./events/runAutomodOnThreadEvents";
 import { clearOldRecentNicknameChanges } from "./functions/clearOldNicknameChanges";
 import { clearOldRecentActions } from "./functions/clearOldRecentActions";
 import { clearOldRecentSpam } from "./functions/clearOldRecentSpam";
@@ -58,7 +62,7 @@ const defaultOptions = {
 /**
  * Config preprocessor to set default values for triggers and perform extra validation
  */
-const configPreprocessor: ConfigPreprocessorFn<AutomodPluginType> = (options) => {
+const configPreprocessor: ConfigPreprocessorFn<AutomodPluginType> = options => {
   if (options.config?.rules) {
     // Loop through each rule
     for (const [name, rule] of Object.entries(options.config.rules)) {
@@ -214,6 +218,7 @@ export const AutomodPlugin = zeppelinGuildPlugin<AutomodPluginType>()({
     RunAutomodOnLeaveEvt,
     RunAutomodOnThreadCreate,
     RunAutomodOnThreadDelete,
+    RunAutomodOnThreadUpdate
     // Messages use message events from SavedMessages, see onLoad below
   ],
 
@@ -250,10 +255,10 @@ export const AutomodPlugin = zeppelinGuildPlugin<AutomodPluginType>()({
       30 * SECONDS,
     );
 
-    pluginData.state.onMessageCreateFn = (message) => runAutomodOnMessage(pluginData, message, false);
+    pluginData.state.onMessageCreateFn = message => runAutomodOnMessage(pluginData, message, false);
     pluginData.state.savedMessages.events.on("create", pluginData.state.onMessageCreateFn);
 
-    pluginData.state.onMessageUpdateFn = (message) => runAutomodOnMessage(pluginData, message, true);
+    pluginData.state.onMessageUpdateFn = message => runAutomodOnMessage(pluginData, message, true);
     pluginData.state.savedMessages.events.on("update", pluginData.state.onMessageUpdateFn);
 
     const countersPlugin = pluginData.getPlugin(CountersPlugin);

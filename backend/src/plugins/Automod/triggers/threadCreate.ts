@@ -1,5 +1,5 @@
 import { Snowflake } from "discord-api-types";
-import { ThreadChannel, User, Util } from "discord.js";
+import { User, Util } from "discord.js";
 import * as t from "io-ts";
 import { tNullable } from "../../../utils";
 import { automodTrigger } from "../helpers";

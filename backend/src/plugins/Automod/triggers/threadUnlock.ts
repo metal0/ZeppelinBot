@@ -4,7 +4,7 @@ import * as t from "io-ts";
 import { tNullable } from "../../../utils";
 import { automodTrigger } from "../helpers";
 
-interface ThreadDeleteResult {
+interface ThreadUnlockResult {
   matchedThreadId: Snowflake;
   matchedThreadName: string;
   matchedThreadParentId: Snowflake;
@@ -12,7 +12,7 @@ interface ThreadDeleteResult {
   matchedThreadOwner: User | undefined;
 }
 
-export const ThreadDeleteTrigger = automodTrigger<ThreadDeleteResult>()({
+export const ThreadUnlockTrigger = automodTrigger<ThreadUnlockResult>()({
   configType: t.type({
     parent: tNullable(t.union([t.string, t.array(t.string)])),
   }),
@@ -20,11 +20,11 @@ export const ThreadDeleteTrigger = automodTrigger<ThreadDeleteResult>()({
   defaultConfig: {},
 
   async match({ context, triggerConfig }) {
-    if (!context.threadChange?.deleted) {
+    if (!context.threadChange?.unlocked) {
       return;
     }
 
-    const thread = context.threadChange.deleted;
+    const thread = context.threadChange.unlocked;
 
     if (triggerConfig.parent) {
       const parentIds = Array.isArray(triggerConfig.parent) ? triggerConfig.parent : [triggerConfig.parent];
@@ -42,18 +42,16 @@ export const ThreadDeleteTrigger = automodTrigger<ThreadDeleteResult>()({
     };
   },
 
-  renderMatchInformation({ matchResult }) {
+  async renderMatchInformation({ matchResult }) {
     const threadId = matchResult.extra.matchedThreadId;
-    const threadOwner = matchResult.extra.matchedThreadOwner;
     const threadName = matchResult.extra.matchedThreadName;
+    const threadOwner = matchResult.extra.matchedThreadOwner;
     const parentId = matchResult.extra.matchedThreadParentId;
     const parentName = matchResult.extra.matchedThreadParentName;
+    const base = `Thread **#${threadName}** (\`${threadId}\`) has been locked in the **#${parentName}** (\`${parentId}\`) channel`;
     if (threadOwner) {
-      return `Thread **#${threadName ?? "Unknown"}** (\`${threadId}\`) created by **${Util.escapeBold(
-        threadOwner.tag,
-      )}** (\`${threadOwner.id}\`) in the **#${parentName}** (\`${parentId}\`) channel has been deleted`;
+      return `${base} by **${Util.escapeBold(threadOwner.tag)}** (\`${threadOwner.id}\`)`;
     }
-    return `Thread **#${threadName ??
-      "Unknown"}** (\`${threadId}\`) from the **#${parentName}** (\`${parentId}\`) channel has been deleted`;
+    return base;
   },
 });
