@@ -9,6 +9,7 @@ export const RunAutomodOnThreadCreate = typedGuildEventListener<AutomodPluginTyp
     const user = thread.ownerId ? await pluginData.client.users.fetch(thread.ownerId).catch(() => void 0) : void 0;
     const context: AutomodContext = {
       timestamp: Date.now(),
+      thread,
       threadChange: {
         created: thread,
       },
@@ -16,10 +17,10 @@ export const RunAutomodOnThreadCreate = typedGuildEventListener<AutomodPluginTyp
     };
 
     // This is a hack to make this trigger compatible with the reply action
-    const sourceChannel = thread.parent ?? pluginData.client.channels.cache.find(c => c.id === thread.parentId);
+    const sourceChannel = thread.parent ?? pluginData.client.channels.cache.find((c) => c.id === thread.parentId);
     if (sourceChannel?.isText()) {
       const sourceMessage = sourceChannel.messages.cache.find(
-        m => m.thread?.id === thread.id || m.reference?.channelId === thread.id,
+        (m) => m.thread?.id === thread.id || m.reference?.channelId === thread.id,
       );
       if (sourceMessage) {
         const savedMessage = pluginData.state.savedMessages.msgToSavedMessage(sourceMessage);
@@ -41,6 +42,7 @@ export const RunAutomodOnThreadDelete = typedGuildEventListener<AutomodPluginTyp
 
     const context: AutomodContext = {
       timestamp: Date.now(),
+      thread,
       threadChange: {
         deleted: thread,
       },
@@ -68,10 +70,11 @@ export const RunAutomodOnThreadUpdate = typedGuildEventListener<AutomodPluginTyp
     }
 
     if (Object.keys(changes).length === 0) return;
-
+    console.log("got thread changes!");
     const context: AutomodContext = {
       timestamp: Date.now(),
       threadChange: changes,
+      thread,
       user,
     };
 
