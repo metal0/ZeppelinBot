@@ -133,6 +133,10 @@ export interface AutomodContext {
   threadChange?: {
     created?: ThreadChannel;
     deleted?: ThreadChannel;
+    archived?: ThreadChannel;
+    unarchived?: ThreadChannel;
+    locked?: ThreadChannel;
+    unlocked?: ThreadChannel;
   };
 }
 

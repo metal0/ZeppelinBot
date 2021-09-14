@@ -4,7 +4,7 @@ import * as t from "io-ts";
 import { tNullable } from "../../../utils";
 import { automodTrigger } from "../helpers";
 
-interface ThreadCreateResult {
+interface ThreadUnlockResult {
   matchedThreadId: Snowflake;
   matchedThreadName: string;
   matchedThreadParentId: Snowflake;
@@ -12,7 +12,7 @@ interface ThreadCreateResult {
   matchedThreadOwner: User | undefined;
 }
 
-export const ThreadCreateTrigger = automodTrigger<ThreadCreateResult>()({
+export const ThreadUnlockTrigger = automodTrigger<ThreadUnlockResult>()({
   configType: t.type({
     parent: tNullable(t.union([t.string, t.array(t.string)])),
   }),
@@ -20,11 +20,11 @@ export const ThreadCreateTrigger = automodTrigger<ThreadCreateResult>()({
   defaultConfig: {},
 
   async match({ context, triggerConfig }) {
-    if (!context.threadChange?.created) {
+    if (!context.threadChange?.unlocked) {
       return;
     }
 
-    const thread = context.threadChange.created;
+    const thread = context.threadChange.unlocked;
 
     if (triggerConfig.parent) {
       const parentIds = Array.isArray(triggerConfig.parent) ? triggerConfig.parent : [triggerConfig.parent];
@@ -48,7 +48,7 @@ export const ThreadCreateTrigger = automodTrigger<ThreadCreateResult>()({
     const threadOwner = matchResult.extra.matchedThreadOwner;
     const parentId = matchResult.extra.matchedThreadParentId;
     const parentName = matchResult.extra.matchedThreadParentName;
-    const base = `Thread **#${threadName}** (\`${threadId}\`) has been created in the **#${parentName}** (\`${parentId}\`) channel`;
+    const base = `Thread **#${threadName}** (\`${threadId}\`) has been locked in the **#${parentName}** (\`${parentId}\`) channel`;
     if (threadOwner) {
       return `${base} by **${Util.escapeBold(threadOwner.tag)}** (\`${threadOwner.id}\`)`;
     }
