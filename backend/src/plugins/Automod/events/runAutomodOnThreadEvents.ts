@@ -1,7 +1,6 @@
 import { typedGuildEventListener } from "knub";
 import { RecentActionType } from "../constants";
 import { runAutomod } from "../functions/runAutomod";
-import diff from "lodash.difference";
 import { AutomodContext, AutomodPluginType } from "../types";
 
 export const RunAutomodOnThreadCreate = typedGuildEventListener<AutomodPluginType>()({
@@ -79,7 +78,7 @@ export const RunAutomodOnThreadUpdate = typedGuildEventListener<AutomodPluginTyp
     }
     console.log("changes", changes);
     if (Object.keys(changes).length === 0) return;
-    console.log("got thread changes!");
+
     const context: AutomodContext = {
       timestamp: Date.now(),
       threadChange: changes,
