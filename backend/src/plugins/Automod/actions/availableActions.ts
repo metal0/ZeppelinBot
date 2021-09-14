@@ -18,6 +18,7 @@ import { SetAntiraidLevelAction } from "./setAntiraidLevel";
 import { SetCounterAction } from "./setCounter";
 import { SetSlowmodeAction } from "./setSlowmode";
 import { StartThreadAction } from "./startThread";
+import { UnArchiveThreadAction } from "./unArchiveThread";
 import { WarnAction } from "./warn";
 
 export const availableActions: Record<string, AutomodActionBlueprint<any>> = {
@@ -40,6 +41,7 @@ export const availableActions: Record<string, AutomodActionBlueprint<any>> = {
   start_thread: StartThreadAction,
   crosspost_message: CrosspostMessageAction,
   change_roles: ChangeRolesAction,
+  unarchive_thread: UnArchiveThreadAction,
 };
 
 export const AvailableActions = t.type({
@@ -62,4 +64,5 @@ export const AvailableActions = t.type({
   start_thread: StartThreadAction.configType,
   crosspost_message: CrosspostMessageAction.configType,
   change_roles: ChangeRolesAction.configType,
+  unarchive_thread: UnArchiveThreadAction.configType,
 });
