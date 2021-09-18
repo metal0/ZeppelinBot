@@ -1,14 +1,11 @@
 import { Snowflake, TextChannel } from "discord.js";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
-import { isOwnerPreFilter, sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
+import { sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
 import { botControlCmd } from "../types";
 
 export const LeaveServerCmd = botControlCmd({
   trigger: ["leave_server", "leave_guild"],
-  permission: null,
-  config: {
-    preFilters: [isOwnerPreFilter],
-  },
+  permission: "can_admin",
 
   signature: {
     guildId: ct.string(),

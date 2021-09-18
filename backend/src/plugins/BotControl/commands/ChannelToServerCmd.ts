@@ -1,16 +1,11 @@
 import { Guild, GuildChannel, TextChannel } from "discord.js";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
-import { isOwnerPreFilter, sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
-import { GuildInvite, isGuildInvite, resolveInvite, verboseUserMention } from "../../../utils";
+import { sendErrorMessage } from "../../../pluginUtils";
 import { botControlCmd } from "../types";
-import { isEligible } from "../functions/isEligible";
 
 export const ChannelToServerCmd = botControlCmd({
   trigger: ["channel_to_server", "channel2server"],
-  permission: null,
-  config: {
-    preFilters: [isOwnerPreFilter],
-  },
+  permission: "can_admin",
 
   signature: {
     channelId: ct.string(),

@@ -1,16 +1,12 @@
 import { TextChannel } from "discord.js";
 import escapeStringRegexp from "escape-string-regexp";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
-import { isOwnerPreFilter } from "../../../pluginUtils";
 import { createChunkedMessage, getUser, sorter } from "../../../utils";
 import { botControlCmd } from "../types";
 
 export const ServersCmd = botControlCmd({
   trigger: ["servers", "guilds"],
-  permission: null,
-  config: {
-    preFilters: [isOwnerPreFilter],
-  },
+  permission: "can_admin",
 
   signature: {
     search: ct.string({ catchAll: true, required: false }),

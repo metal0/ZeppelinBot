@@ -1,17 +1,14 @@
 import { ApiPermissions } from "@shared/apiPermissions";
 import { TextChannel } from "discord.js";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
-import { isOwnerPreFilter, sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
+import { sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
 import { DBDateFormat, isSnowflake } from "../../../utils";
 import { botControlCmd } from "../types";
 import moment from "moment-timezone";
 
 export const AllowServerCmd = botControlCmd({
   trigger: ["allow_server", "allowserver", "add_server", "addserver"],
-  permission: null,
-  config: {
-    preFilters: [isOwnerPreFilter],
-  },
+  permission: "can_admin",
 
   signature: {
     guildId: ct.string(),

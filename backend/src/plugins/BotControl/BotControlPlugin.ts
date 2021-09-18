@@ -27,6 +27,7 @@ import { RateLimitPerformanceCmd } from "./commands/RateLimitPerformanceCmd";
 const defaultOptions = {
   config: {
     can_use: false,
+    can_admin: false,
     can_eligible: false,
     can_performance: false,
     can_add_server_from_invite: false,

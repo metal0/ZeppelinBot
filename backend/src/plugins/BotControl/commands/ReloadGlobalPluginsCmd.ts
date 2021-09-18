@@ -1,14 +1,10 @@
 import { TextChannel } from "discord.js";
-import { isOwnerPreFilter } from "../../../pluginUtils";
 import { getActiveReload, setActiveReload } from "../activeReload";
 import { botControlCmd } from "../types";
 
 export const ReloadGlobalPluginsCmd = botControlCmd({
   trigger: "bot_reload_global_plugins",
-  permission: null,
-  config: {
-    preFilters: [isOwnerPreFilter],
-  },
+  permission: "can_admin",
 
   async run({ pluginData, message }) {
     if (getActiveReload()) return;
