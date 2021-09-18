@@ -3,7 +3,7 @@ import { BotControlPluginType } from "../types";
 import { GlobalPluginData } from "knub";
 import { GuildInvite } from "../../../utils";
 
-const REQUIRED_MEMBER_COUNT = 10;
+const REQUIRED_MEMBER_COUNT = 100;
 
 export async function isEligible(
   pluginData: GlobalPluginData<BotControlPluginType>,
