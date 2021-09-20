@@ -101,12 +101,12 @@ export async function handleModifyRole(
     const newRoles = oldMemberRoles.filter((r) => !matchedRoles.includes(r) || r === pluginData.guild.id); // lol
     if (member.roles.cache.has(role.id)) {
       if (roleGroup?.role_type === RoleManageTypes.add) {
-        await int.reply({ content: `You cannot remove the **${role.name}** role`, ephemeral: true });
+        await int.reply({ content: `You cannot remove the <@&${role.id}> role`, ephemeral: true });
         return;
       }
     } else {
       if (roleGroup?.role_type === RoleManageTypes.remove) {
-        await int.reply({ content: `You cannot add the **${role.name}** role`, ephemeral: true });
+        await int.reply({ content: `You cannot add the <@&${role.id}> role`, ephemeral: true });
         return;
       }
     }
@@ -120,7 +120,9 @@ export async function handleModifyRole(
     } else {
       if (member.roles.cache.has(role.id)) {
         await member.roles.remove(role, `Button Roles on message ${int.message.id}`);
+        if (newRoles.includes(role.id)) newRoles.splice(newRoles.indexOf(role.id), 1);
       } else {
+        newRoles.push(role.id);
         await member.roles.add(role, `Button Roles on message ${int.message.id}`);
       }
     }
