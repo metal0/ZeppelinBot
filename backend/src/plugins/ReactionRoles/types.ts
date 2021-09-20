@@ -34,6 +34,7 @@ export type TButtonOpts = t.TypeOf<typeof ButtonOpts>;
 
 const ButtonPairOpts = t.type({
   message: t.string,
+  exclusive_roles: tNullable(t.boolean),
   default_buttons: t.record(t.string, ButtonOpts),
   button_menus: tNullable(t.record(t.string, t.record(t.string, ButtonOpts))),
 });
