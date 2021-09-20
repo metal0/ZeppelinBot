@@ -2,7 +2,7 @@ import { MessageButton, MessageComponentInteraction, Snowflake } from "discord.j
 import { GuildPluginData } from "knub";
 import { LogType } from "../../../data/LogType";
 import { LogsPlugin } from "../../../plugins/Logs/LogsPlugin";
-import { ReactionRolesPluginType, TButtonPairOpts } from "../types";
+import { ReactionRolesPluginType, RoleManageTypes, TButtonOpts, TButtonPairOpts } from "../types";
 import { generateStatelessCustomId } from "./buttonCustomIdFunctions";
 import { splitButtonsIntoRows } from "./splitButtonsIntoRows";
 
@@ -74,11 +74,35 @@ export async function handleModifyRole(
   }
 
   const member = await pluginData.guild.members.fetch(int.user.id);
+  let roleGroup: TButtonOpts | undefined;
+  for (const keyName in group.default_buttons) {
+    const obj = group.default_buttons[keyName];
+    if (!obj.role_or_menu || obj.role_or_menu !== context.roleOrMenu) continue;
+    roleGroup = obj;
+  }
+  if (group.button_menus && !roleGroup) {
+    for (const keyName in group.button_menus) {
+      const obj = group.button_menus[keyName];
+      for (const menuName in obj) {
+        const obj2 = obj[menuName];
+        if (!obj2.role_or_menu || obj2.role_or_menu !== context.roleOrMenu) continue;
+        roleGroup = obj2;
+      }
+    }
+  }
   try {
     if (member.roles.cache.has(role.id)) {
+      if (roleGroup?.role_type === RoleManageTypes.add) {
+        await int.reply({ content: `You cannot remove the **${role.name}** role`, ephemeral: true });
+        return;
+      }
       await member.roles.remove(role, `Button Roles on message ${int.message.id}`);
       await int.reply({ content: `Role **${role.name}** removed`, ephemeral: true });
     } else {
+      if (roleGroup?.role_type === RoleManageTypes.remove) {
+        await int.reply({ content: `You cannot add the **${role.name}** role`, ephemeral: true });
+        return;
+      }
       await member.roles.add(role, `Button Roles on message ${int.message.id}`);
       await int.reply({ content: `Role **${role.name}** added`, ephemeral: true });
     }

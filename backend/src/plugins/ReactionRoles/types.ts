@@ -16,10 +16,16 @@ enum ButtonStyles {
   // LINK = 5, We do not want users to create link buttons, but it would be style 5
 }
 
+export enum RoleManageTypes {
+  add = "add",
+  remove = "remove",
+}
+
 const ButtonOpts = t.type({
   label: tNullable(t.string),
   emoji: tNullable(t.string),
   role_or_menu: t.string,
+  role_type: tNullable(t.keyof(RoleManageTypes)),
   style: tNullable(t.keyof(ButtonStyles)), // https://discord.js.org/#/docs/main/master/typedef/MessageButtonStyle
   disabled: tNullable(t.boolean),
   end_row: tNullable(t.boolean),
