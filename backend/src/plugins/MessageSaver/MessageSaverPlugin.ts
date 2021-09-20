@@ -23,7 +23,10 @@ const defaultOptions: PluginOptions<MessageSaverPluginType> = {
 
 export const MessageSaverPlugin = zeppelinGuildPlugin<MessageSaverPluginType>()({
   name: "message_saver",
-  showInDocs: false,
+  showInDocs: true,
+  info: {
+    prettyName: "Message Saver",
+  },
 
   configSchema: ConfigSchema,
   defaultOptions,
