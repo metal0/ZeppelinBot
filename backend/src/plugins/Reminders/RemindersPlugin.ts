@@ -51,7 +51,7 @@ export const RemindersPlugin = zeppelinGuildPlugin<RemindersPluginType>()({
   },
 
   afterLoad(pluginData) {
-    // postDueRemindersLoop(pluginData);
+    postDueRemindersLoop(pluginData);
   },
 
   beforeUnload(pluginData) {
