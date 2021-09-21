@@ -24,6 +24,7 @@ export async function postDueRemindersLoop(pluginData: GuildPluginData<Reminders
             content: disableLinkPreviews(
               `Reminder for <@!${reminder.user_id}>: ${reminder.body} \n\`Set at ${reminder.created_at} (${result} ago)\``,
             ),
+            reply: { messageReference: reminder.source_message_id, failIfNotExists: false },
             allowedMentions: {
               users: [reminder.user_id as Snowflake],
             },
@@ -31,6 +32,7 @@ export async function postDueRemindersLoop(pluginData: GuildPluginData<Reminders
         } else {
           await channel.send({
             content: disableLinkPreviews(`Reminder for <@!${reminder.user_id}>: ${reminder.body}`),
+            reply: { messageReference: reminder.source_message_id, failIfNotExists: false },
             allowedMentions: {
               users: [reminder.user_id as Snowflake],
             },

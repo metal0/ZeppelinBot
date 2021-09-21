@@ -56,6 +56,7 @@ export const RemindCmd = remindersCmd({
       reminderTime.clone().tz("Etc/UTC").format("YYYY-MM-DD HH:mm:ss"),
       reminderBody,
       moment.utc().format("YYYY-MM-DD HH:mm:ss"),
+      args.reminder ? msg.id : undefined,
     );
 
     const msUntilReminder = reminderTime.diff(now);
