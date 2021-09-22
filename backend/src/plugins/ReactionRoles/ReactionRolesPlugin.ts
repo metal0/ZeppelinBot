@@ -117,13 +117,13 @@ export const ReactionRolesPlugin = zeppelinGuildPlugin<ReactionRolesPluginType>(
     RefreshReactionRolesCmd,
     ClearReactionRolesCmd,
     InitReactionRolesCmd,
-    // PostButtonRolesCmd,
+    PostButtonRolesCmd,
   ],
 
   // prettier-ignore
   events: [
     AddReactionRoleEvt,
-    // ButtonInteractionEvt,
+    ButtonInteractionEvt,
     MessageDeletedEvt,
   ],
   configPreprocessor,
@@ -141,11 +141,11 @@ export const ReactionRolesPlugin = zeppelinGuildPlugin<ReactionRolesPluginType>(
   },
 
   afterLoad(pluginData) {
-    // let autoRefreshInterval = pluginData.config.get().auto_refresh_interval;
-    // if (autoRefreshInterval != null) {
-    //   autoRefreshInterval = Math.max(MIN_AUTO_REFRESH, autoRefreshInterval);
-    //   autoRefreshLoop(pluginData, autoRefreshInterval);
-    // }
+    let autoRefreshInterval = pluginData.config.get().auto_refresh_interval;
+    if (autoRefreshInterval != null) {
+      autoRefreshInterval = Math.max(MIN_AUTO_REFRESH, autoRefreshInterval);
+      autoRefreshLoop(pluginData, autoRefreshInterval);
+    }
   },
 
   beforeUnload(pluginData) {
