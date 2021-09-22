@@ -97,7 +97,7 @@ export async function handleModifyRole(
   }
   try {
     const oldMemberRoles = [...member.roles.cache.keys()];
-    const matchedRoles = intersection(oldMemberRoles, [...allRoles]);
+    const matchedRoles = intersection(oldMemberRoles, group.exclusive_roles ? [...allRoles] : [role.id]);
     const newRoles = oldMemberRoles.filter((r) => !matchedRoles.includes(r) || r === pluginData.guild.id); // lol
     if (member.roles.cache.has(role.id)) {
       if (roleGroup?.role_type === RoleManageTypes.add) {
