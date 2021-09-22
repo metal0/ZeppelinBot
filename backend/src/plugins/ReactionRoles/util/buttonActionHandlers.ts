@@ -1,8 +1,10 @@
 import { MessageButton, MessageComponentInteraction, Snowflake } from "discord.js";
 import { GuildPluginData } from "knub";
-import { LogType } from "../../../data/LogType";
+import diff from "lodash.difference";
+import { intersection } from "lodash";
+import { isValidSnowflake } from "src/utils";
 import { LogsPlugin } from "../../../plugins/Logs/LogsPlugin";
-import { ReactionRolesPluginType, TButtonPairOpts } from "../types";
+import { ReactionRolesPluginType, RoleManageTypes, TButtonOpts, TButtonPairOpts } from "../types";
 import { generateStatelessCustomId } from "./buttonCustomIdFunctions";
 import { splitButtonsIntoRows } from "./splitButtonsIntoRows";
 
@@ -74,13 +76,68 @@ export async function handleModifyRole(
   }
 
   const member = await pluginData.guild.members.fetch(int.user.id);
+  let roleGroup: TButtonOpts | undefined;
+  const allRoles: Set<string> = new Set();
+  for (const keyName in group.default_buttons) {
+    const obj = group.default_buttons[keyName];
+    if (obj.role_or_menu && isValidSnowflake(obj.role_or_menu)) allRoles.add(obj.role_or_menu);
+    if (!obj.role_or_menu || obj.role_or_menu !== context.roleOrMenu) continue;
+    roleGroup = obj;
+  }
+  if (group.button_menus && !roleGroup) {
+    for (const keyName in group.button_menus) {
+      const obj = group.button_menus[keyName];
+      for (const menuName in obj) {
+        const obj2 = obj[menuName];
+        if (obj2.role_or_menu && isValidSnowflake(obj2.role_or_menu)) allRoles.add(obj2.role_or_menu);
+        if (!obj2.role_or_menu || obj2.role_or_menu !== context.roleOrMenu) continue;
+        roleGroup = obj2;
+      }
+    }
+  }
   try {
+    const oldMemberRoles = [...member.roles.cache.keys()];
+    const matchedRoles = intersection(oldMemberRoles, [...allRoles]);
+    const newRoles = oldMemberRoles.filter((r) => !matchedRoles.includes(r) || r === pluginData.guild.id); // lol
     if (member.roles.cache.has(role.id)) {
-      await member.roles.remove(role, `Button Roles on message ${int.message.id}`);
-      await int.reply({ content: `Role **${role.name}** removed`, ephemeral: true });
+      if (roleGroup?.role_type === RoleManageTypes.add) {
+        await int.reply({ content: `You cannot remove the <@&${role.id}> role`, ephemeral: true });
+        return;
+      }
     } else {
-      await member.roles.add(role, `Button Roles on message ${int.message.id}`);
-      await int.reply({ content: `Role **${role.name}** added`, ephemeral: true });
+      if (roleGroup?.role_type === RoleManageTypes.remove) {
+        await int.reply({ content: `You cannot add the <@&${role.id}> role`, ephemeral: true });
+        return;
+      }
+    }
+    if (group.exclusive_roles) {
+      if (member.roles.cache.has(role.id)) {
+        await member.edit({ roles: newRoles }, `Button Roles on message ${int.message.id}`);
+      } else {
+        newRoles.push(role.id);
+        await member.edit({ roles: [...new Set(newRoles)] }, `Button Roles on message ${int.message.id}`);
+      }
+    } else {
+      if (member.roles.cache.has(role.id)) {
+        await member.roles.remove(role, `Button Roles on message ${int.message.id}`);
+        if (newRoles.includes(role.id)) newRoles.splice(newRoles.indexOf(role.id), 1);
+      } else {
+        newRoles.push(role.id);
+        await member.roles.add(role, `Button Roles on message ${int.message.id}`);
+      }
+    }
+
+    const added = diff(newRoles, oldMemberRoles).map((g) => `<@&${g}>`);
+    const removed = diff(oldMemberRoles, newRoles).map((g) => `<@&${g}>`);
+    if (added.length > 0 || removed.length > 0) {
+      await int.reply({
+        content: `${added.length > 0 ? `Role(s) added: ${added.join(" ")}\n` : ""}${
+          removed.length > 0 ? `Role(s) removed: ${removed.join(" ")}` : ""
+        }`,
+        ephemeral: true,
+      });
+    } else {
+      await int.deferUpdate();
     }
   } catch (e) {
     await int.reply({
