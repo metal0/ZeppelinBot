@@ -501,16 +501,11 @@ export class GuildCounters extends BaseGuildRepository {
     return value?.value;
   }
 
-  async getAllValues(counterId: number, channelId: string | null, userId: string | null): Promise<CounterValue[]> {
-    const values = await this.counterValues.find({
-      where: {
-        counter_id: counterId,
-        channel_id: channelId ? channelId : undefined,
-        user_id: userId ? userId : undefined,
-      },
-    });
-
-    return values;
+  async getAllValues(counterId: number): Promise<CounterValue[]> {
+    return this.counterValues
+      .createQueryBuilder("counter_values")
+      .where("counter_id = :counter_id", { counter_id: counterId })
+      .getMany();
   }
 
   async resetAllCounterValues(counterId: number): Promise<void> {

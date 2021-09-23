@@ -392,6 +392,10 @@ const baseValues = {
     if (typeof arg !== "string") return 0;
     return [...arg].length;
   },
+  arrlen(arg) {
+    if (!Array.isArray(arg)) return 0;
+    return arg.length;
+  },
   rand(from, to, seed = null) {
     if (isNaN(from)) return 0;
 
@@ -441,6 +445,10 @@ const baseValues = {
       return result / parseFloat(arg);
     }, args[0]);
   },
+  exp(arg1, arg2) {
+    if (isNaN(arg1) || isNaN(arg2)) return 0;
+    return Math.pow(arg1, arg2);
+  },
   cases(mod, ...cases) {
     if (cases.length === 0) return "";
     if (isNaN(mod)) return "";
@@ -451,22 +459,32 @@ const baseValues = {
     const mod = Math.floor(Math.random() * cases.length) + 1;
     return baseValues.cases(mod, ...cases);
   },
-  lb_map(arr, keys, sep = "-") {
+  map(obj, key) {
+    if (Array.isArray(obj)) {
+      return obj.map((tobj) => tobj[key]);
+    }
+    return obj[key];
+  },
+  lb_map(arr, sep = "-", ...keys) {
     if (!Array.isArray(arr) || !Array.isArray(keys) || arr.length === 0 || keys.length === 0) return "";
     return arr
       .map((item) => {
         const str: any[] = [];
-        for (const key in keys) {
-          if (!item.hasOwnProperty(keys)) continue;
-          str.push(item[key]);
-        }
+        keys.forEach((key) => {
+          if (item[key]) str.push(item[key]);
+        });
         return str.join(` ${sep} `);
       })
-      .join("");
+      .join("\n");
   },
-  f_ind(arr, key) {
+  find_i(arr, key) {
     if (!Array.isArray(arr) || arr.length === 0 || !key) return "";
-    return arr.findIndex((obj) => obj === key) ?? "";
+    const _index = arr.findIndex((obj) => obj === key);
+    return _index !== -1 ? _index : "";
+  },
+  get_snowflake(str) {
+    if (!str || typeof str !== "string") return "";
+    return str.replaceAll(/[^\d]+/g, "");
   },
 };
 

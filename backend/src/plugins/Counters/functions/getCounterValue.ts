@@ -32,8 +32,6 @@ export async function getCounterValue(
 export async function getAllCounterValues(
   pluginData: GuildPluginData<CountersPluginType>,
   counterName: string,
-  channelId: string | null,
-  userId: string | null,
 ): Promise<CounterValue[] | undefined> {
   const config = pluginData.config.get();
   const counter = config.counters[counterName];
@@ -43,7 +41,7 @@ export async function getAllCounterValues(
 
   const counterId = pluginData.state.counterIds[counterName];
 
-  const vl = await pluginData.state.counters.getAllValues(counterId, channelId, userId);
+  const vl = await pluginData.state.counters.getAllValues(counterId);
 
   return vl;
 }
