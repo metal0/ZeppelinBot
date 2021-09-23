@@ -392,6 +392,10 @@ const baseValues = {
     if (typeof arg !== "string") return 0;
     return [...arg].length;
   },
+  arrlen(arg) {
+    if (!Array.isArray(arg)) return 0;
+    return arg.length;
+  },
   rand(from, to, seed = null) {
     if (isNaN(from)) return 0;
 
@@ -413,6 +417,14 @@ const baseValues = {
   round(arg, decimals = 0) {
     if (isNaN(arg)) return 0;
     return decimals === 0 ? Math.round(arg) : arg.toFixed(decimals);
+  },
+  floor(arg) {
+    if (isNaN(arg)) return 0;
+    return Math.floor(arg);
+  },
+  ceil(arg) {
+    if (isNaN(arg)) return 0;
+    return Math.ceil(arg);
   },
   add(...args) {
     return args.reduce((result, arg) => {
@@ -441,6 +453,10 @@ const baseValues = {
       return result / parseFloat(arg);
     }, args[0]);
   },
+  exp(base, power) {
+    if (isNaN(base) || isNaN(power)) return 0;
+    return Math.pow(parseFloat(base), parseFloat(power));
+  },
   cases(mod, ...cases) {
     if (cases.length === 0) return "";
     if (isNaN(mod)) return "";
@@ -450,6 +466,33 @@ const baseValues = {
   choose(...cases) {
     const mod = Math.floor(Math.random() * cases.length) + 1;
     return baseValues.cases(mod, ...cases);
+  },
+  map(obj, key) {
+    if (Array.isArray(obj)) {
+      return obj.map((tobj) => tobj[key]);
+    }
+    return obj[key];
+  },
+  lb_map(arr, sep = "-", ...keys) {
+    if (!Array.isArray(arr) || !Array.isArray(keys) || arr.length === 0 || keys.length === 0) return "";
+    return arr
+      .map((item) => {
+        const str: any[] = [];
+        keys.forEach((key) => {
+          if (item[key]) str.push(item[key]);
+        });
+        return str.join(` ${sep} `);
+      })
+      .join("\n");
+  },
+  find_i(arr, key) {
+    if (!Array.isArray(arr) || arr.length === 0 || !key) return "";
+    const _index = arr.findIndex((obj) => obj === key);
+    return _index !== -1 ? _index : "";
+  },
+  get_snowflake(str) {
+    if (!str || typeof str !== "string") return "";
+    return str.replaceAll(/[^\d]+/g, "");
   },
 };
 

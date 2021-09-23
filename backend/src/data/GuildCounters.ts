@@ -501,6 +501,13 @@ export class GuildCounters extends BaseGuildRepository {
     return value?.value;
   }
 
+  async getAllValues(counterId: number): Promise<CounterValue[]> {
+    return this.counterValues
+      .createQueryBuilder("counter_values")
+      .where("counter_id = :counter_id", { counter_id: counterId })
+      .getMany();
+  }
+
   async resetAllCounterValues(counterId: number): Promise<void> {
     // Foreign keys will remove any related triggers and counter values
     await this.counters.delete({
