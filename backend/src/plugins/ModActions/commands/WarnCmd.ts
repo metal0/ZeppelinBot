@@ -64,7 +64,7 @@ export const WarnCmd = modActionsCmd({
     }
 
     const config = pluginData.config.get();
-    const reason = parseReason(config, formatReasonWithAttachments(args.reason, [...msg.attachments.values()]))!;
+    const reason = parseReason(config, formatReasonWithAttachments(args.reason, [...msg.attachments.values()]));
     if (!reason) {
       sendErrorMessage(pluginData, msg.channel, "You must include a reason in your warning");
       return;
