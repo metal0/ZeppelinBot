@@ -6,6 +6,7 @@ import { renderRecursively, StrictMessageContent } from "../../../utils";
 import { CountersPlugin } from "../../Counters/CountersPlugin";
 import { TagsPluginType, TTag } from "../types";
 import { findTagByName } from "./findTagByName";
+import { counterValueToTemplateSafeCounterValue, TemplateSafeCounterValue } from "../../../utils/templateSafeObjects";
 
 const MAX_TAG_FN_CALLS = 25;
 
@@ -42,10 +43,11 @@ export async function renderTagBody(
       const cData = await countersPlugin.getCounterValue(counter, channelId, userId);
       return cData?.toString() ?? "";
     },
-    async get_all_counter_values(counter?, userId?, channelId?): Promise<CounterValue[] | undefined> {
-      const cData = await countersPlugin.getAllCounterValues(counter, channelId, userId);
-      console.log("cData", cData);
-      return cData?.sort((a, b) => a.value - b.value) ?? [];
+    async get_all_counter_values(counter): Promise<TemplateSafeCounterValue[] | undefined> {
+      const cData = (await countersPlugin.getAllCounterValues(counter))?.map((cd) =>
+        counterValueToTemplateSafeCounterValue(cd),
+      );
+      return cData?.sort((a, b) => b.value - a.value) ?? [];
     },
     tag: async (name, ...subTagArgs) => {
       if (++tagFnCallsObj.calls > MAX_TAG_FN_CALLS) return "";

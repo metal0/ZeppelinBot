@@ -23,6 +23,7 @@ import {
   SavedMessage,
 } from "../data/entities/SavedMessage";
 import { Case } from "../data/entities/Case";
+import { CounterValue } from "../data/entities/CounterValue";
 
 type InputProps<T> = Omit<
   {
@@ -196,6 +197,18 @@ export class TemplateSafeCase extends TemplateSafeValueContainer {
   log_message_id: string | null;
 
   constructor(data: InputProps<TemplateSafeCase>) {
+    super(data);
+  }
+}
+
+export class TemplateSafeCounterValue extends TemplateSafeValueContainer {
+  id: number;
+  counter_id: string;
+  user_id: string;
+  channel_id: string;
+  value: number;
+
+  constructor(data: InputProps<TemplateSafeCounterValue>) {
     super(data);
   }
 }
@@ -440,6 +453,16 @@ export function caseToTemplateSafeCase(theCase: Case): TemplateSafeCase {
     pp_id: theCase.pp_id,
     pp_name: theCase.pp_name,
     log_message_id: theCase.log_message_id,
+  });
+}
+
+export function counterValueToTemplateSafeCounterValue(theCounterValue: CounterValue): TemplateSafeCounterValue {
+  return new TemplateSafeCounterValue({
+    id: theCounterValue.id,
+    counter_id: theCounterValue.counter_id,
+    channel_id: theCounterValue.channel_id,
+    user_id: theCounterValue.user_id,
+    value: theCounterValue.value,
   });
 }
 
