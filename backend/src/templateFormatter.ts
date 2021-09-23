@@ -451,6 +451,23 @@ const baseValues = {
     const mod = Math.floor(Math.random() * cases.length) + 1;
     return baseValues.cases(mod, ...cases);
   },
+  lb_map(arr, keys, sep = "-") {
+    if (!Array.isArray(arr) || !Array.isArray(keys) || arr.length === 0 || keys.length === 0) return "";
+    return arr
+      .map((item) => {
+        const str: any[] = [];
+        for (const key in keys) {
+          if (!item.hasOwnProperty(keys)) continue;
+          str.push(item[key]);
+        }
+        return str.join(` ${sep} `);
+      })
+      .join("");
+  },
+  f_ind(arr, key) {
+    if (!Array.isArray(arr) || arr.length === 0 || !key) return "";
+    return arr.findIndex((obj) => obj === key) ?? "";
+  },
 };
 
 export async function renderTemplate(

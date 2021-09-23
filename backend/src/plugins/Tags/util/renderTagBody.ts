@@ -1,7 +1,9 @@
 import { GuildPluginData } from "knub";
 import { ExtendedMatchParams } from "knub/dist/config/PluginConfigManager";
+import { CounterValue } from "../../../data/entities/CounterValue";
 import { renderTemplate, TemplateSafeValue, TemplateSafeValueContainer } from "../../../templateFormatter";
 import { renderRecursively, StrictMessageContent } from "../../../utils";
+import { CountersPlugin } from "../../Counters/CountersPlugin";
 import { TagsPluginType, TTag } from "../types";
 import { findTagByName } from "./findTagByName";
 
@@ -16,6 +18,8 @@ export async function renderTagBody(
   tagFnCallsObj = { calls: 0 },
 ): Promise<StrictMessageContent> {
   const dynamicVars = {};
+
+  const countersPlugin = pluginData.getPlugin(CountersPlugin);
 
   const data = new TemplateSafeValueContainer({
     args,
@@ -32,6 +36,16 @@ export async function renderTagBody(
     },
     get(name) {
       return dynamicVars[name] == null ? "" : dynamicVars[name];
+    },
+    async get_counter_value(counter, userId?, channelId?) {
+      if (!userId && !channelId) return "";
+      const cData = await countersPlugin.getCounterValue(counter, channelId, userId);
+      return cData?.toString() ?? "";
+    },
+    async get_all_counter_values(counter?, userId?, channelId?): Promise<CounterValue[] | undefined> {
+      const cData = await countersPlugin.getAllCounterValues(counter, channelId, userId);
+      console.log("cData", cData);
+      return cData?.sort((a, b) => a.value - b.value) ?? [];
     },
     tag: async (name, ...subTagArgs) => {
       if (++tagFnCallsObj.calls > MAX_TAG_FN_CALLS) return "";

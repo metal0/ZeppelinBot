@@ -501,6 +501,18 @@ export class GuildCounters extends BaseGuildRepository {
     return value?.value;
   }
 
+  async getAllValues(counterId: number, channelId: string | null, userId: string | null): Promise<CounterValue[]> {
+    const values = await this.counterValues.find({
+      where: {
+        counter_id: counterId,
+        channel_id: channelId ? channelId : undefined,
+        user_id: userId ? userId : undefined,
+      },
+    });
+
+    return values;
+  }
+
   async resetAllCounterValues(counterId: number): Promise<void> {
     // Foreign keys will remove any related triggers and counter values
     await this.counters.delete({
