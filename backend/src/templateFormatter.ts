@@ -466,9 +466,12 @@ const baseValues = {
     return obj[key];
   },
   lb_map(arr, sep = "-", ...keys) {
-    if (!Array.isArray(arr) || !Array.isArray(keys) || arr.length === 0 || keys.length === 0) return "";
+    if (!Array.isArray(arr) || arr.length === 0) return "";
     return arr
       .map((item) => {
+        if (!keys && typeof item === "string") {
+          return item;
+        }
         const str: any[] = [];
         keys.forEach((key) => {
           if (item[key]) str.push(item[key]);

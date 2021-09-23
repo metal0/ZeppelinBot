@@ -67,6 +67,7 @@ export interface TemplateFunction {
   returnValue: string;
   signature?: string;
   examples?: string[];
+  plugin?: string;
 }
 
 export const tagsCmd = typedGuildCommand<TagsPluginType>();
