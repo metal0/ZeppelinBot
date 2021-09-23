@@ -445,9 +445,9 @@ const baseValues = {
       return result / parseFloat(arg);
     }, args[0]);
   },
-  exp(arg1, arg2) {
-    if (isNaN(arg1) || isNaN(arg2)) return 0;
-    return Math.pow(arg1, arg2);
+  exp(base, power) {
+    if (isNaN(base) || isNaN(power)) return 0;
+    return Math.pow(parseFloat(base), parseFloat(power));
   },
   cases(mod, ...cases) {
     if (cases.length === 0) return "";
