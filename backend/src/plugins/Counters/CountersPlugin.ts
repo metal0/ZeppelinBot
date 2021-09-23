@@ -21,6 +21,7 @@ import { ViewCounterCmd } from "./commands/ViewCounterCmd";
 import { changeCounterValue } from "./functions/changeCounterValue";
 import { counterExists } from "./functions/counterExists";
 import { decayCounter } from "./functions/decayCounter";
+import { getAllCounterValues, getCounterValue } from "./functions/getCounterValue";
 import { getPrettyNameForCounter } from "./functions/getPrettyNameForCounter";
 import { getPrettyNameForCounterTrigger } from "./functions/getPrettyNameForCounterTrigger";
 import { offCounterEvent } from "./functions/offCounterEvent";
@@ -124,6 +125,10 @@ export const CountersPlugin = zeppelinGuildPlugin<CountersPluginType>()({
 
     // Change a counter's value by a relative amount, e.g. +5
     changeCounterValue: mapToPublicFn(changeCounterValue),
+
+    // Gets a counter's value
+    getCounterValue: mapToPublicFn(getCounterValue),
+    getAllCounterValues: mapToPublicFn(getAllCounterValues),
 
     // Set a counter's value to an absolute value
     setCounterValue: mapToPublicFn(setCounterValue),
