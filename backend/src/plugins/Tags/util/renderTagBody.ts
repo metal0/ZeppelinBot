@@ -38,12 +38,13 @@ export async function renderTagBody(
       return dynamicVars[name] == null ? "" : dynamicVars[name];
     },
     async get_counter_value(counter, userId?, channelId?) {
-      if (!userId || !channelId) return "";
-      const cData = await countersPlugin.getCounterValue(counter, userId, channelId);
+      if (!userId && !channelId) return "";
+      const cData = await countersPlugin.getCounterValue(counter, channelId, userId);
       return cData?.toString() ?? "";
     },
     async get_all_counter_values(counter?, userId?, channelId?): Promise<CounterValue[] | undefined> {
-      const cData = await countersPlugin.getAllCounterValues(counter, userId, channelId);
+      const cData = await countersPlugin.getAllCounterValues(counter, channelId, userId);
+      console.log("cData", cData);
       return cData?.sort((a, b) => a.value - b.value) ?? [];
     },
     tag: async (name, ...subTagArgs) => {

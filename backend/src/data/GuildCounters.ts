@@ -505,8 +505,8 @@ export class GuildCounters extends BaseGuildRepository {
     const values = await this.counterValues.find({
       where: {
         counter_id: counterId,
-        channel_id: channelId || "0",
-        user_id: userId || "0",
+        channel_id: channelId ? channelId : undefined,
+        user_id: userId ? userId : undefined
       },
     });
 
