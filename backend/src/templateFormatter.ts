@@ -478,6 +478,10 @@ const baseValues = {
     const _index = arr.findIndex((obj) => obj === key);
     return _index !== -1 ? _index : "";
   },
+  get_snowflake(str) {
+    if (!str || typeof str !== "string") return "";
+    return str.replaceAll(/[^\d]+/g, "");
+  },
 };
 
 export async function renderTemplate(
