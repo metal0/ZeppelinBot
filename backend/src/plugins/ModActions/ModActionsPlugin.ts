@@ -34,7 +34,6 @@ import { UnmuteCmd } from "./commands/UnmuteCmd";
 import { UpdateCmd } from "./commands/UpdateCmd";
 import { WarnCmd } from "./commands/WarnCmd";
 import { CreateBanCaseOnManualBanEvt } from "./events/CreateBanCaseOnManualBanEvt";
-import { CreateKickCaseOnManualKickEvt } from "./events/CreateKickCaseOnManualKickEvt";
 import { CreateUnbanCaseOnManualUnbanEvt } from "./events/CreateUnbanCaseOnManualUnbanEvt";
 import { PostAlertOnMemberJoinEvt } from "./events/PostAlertOnMemberJoinEvt";
 import { banUserId } from "./functions/banUserId";
@@ -85,6 +84,7 @@ const defaultOptions = {
     can_act_as_other: false,
     create_cases_for_manual_actions: true,
     require_reason: ["warn"],
+    reason_aliases: {},
   },
   overrides: [
     {

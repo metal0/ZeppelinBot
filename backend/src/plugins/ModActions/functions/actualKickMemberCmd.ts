@@ -9,6 +9,7 @@ import { formatReasonWithAttachments } from "./formatReasonWithAttachments";
 import { ignoreEvent } from "./ignoreEvent";
 import { isBanned } from "./isBanned";
 import { kickMember } from "./kickMember";
+import { parseReason } from "./parseReason";
 import { readContactMethodsFromArgs } from "./readContactMethodsFromArgs";
 
 export async function actualKickMemberCmd(
@@ -68,7 +69,7 @@ export async function actualKickMemberCmd(
   }
 
   const config = pluginData.config.get();
-  const reason = formatReasonWithAttachments(args.reason, msg.attachments);
+  const reason = parseReason(config, formatReasonWithAttachments(args.reason, msg.attachments));
   if (!reason && config.require_reason.includes("kick")) {
     sendErrorMessage(pluginData, msg.channel, "You must include a reason in your kick");
     return;

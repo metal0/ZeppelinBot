@@ -9,6 +9,7 @@ import { MutesPlugin } from "../../Mutes/MutesPlugin";
 import { MuteResult } from "../../Mutes/types";
 import { ModActionsPluginType } from "../types";
 import { formatReasonWithAttachments } from "./formatReasonWithAttachments";
+import { parseReason } from "./parseReason";
 import { readContactMethodsFromArgs } from "./readContactMethodsFromArgs";
 
 /**
@@ -43,7 +44,9 @@ export async function actualMuteUserCmd(
 
   const timeUntilUnmute = args.time && humanizeDuration(args.time);
   const config = pluginData.config.get();
-  const reason = args.reason ? formatReasonWithAttachments(args.reason, [...msg.attachments.values()]) : undefined;
+  const reason = args.reason
+    ? parseReason(config, formatReasonWithAttachments(args.reason, [...msg.attachments.values()]))
+    : undefined;
   if (!reason && config.require_reason.includes("mute")) {
     sendErrorMessage(pluginData, msg.channel as TextChannel, "You must include a reason in your mute");
     return;

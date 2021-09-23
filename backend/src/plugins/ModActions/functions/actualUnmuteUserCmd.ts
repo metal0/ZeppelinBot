@@ -6,6 +6,7 @@ import { hasPermission, sendErrorMessage, sendSuccessMessage } from "../../../pl
 import { asSingleLine, UnknownUser } from "../../../utils";
 import { ModActionsPluginType } from "../types";
 import { formatReasonWithAttachments } from "./formatReasonWithAttachments";
+import { parseReason } from "./parseReason";
 
 export async function actualUnmuteCmd(
   pluginData: GuildPluginData<ModActionsPluginType>,
@@ -28,7 +29,9 @@ export async function actualUnmuteCmd(
   }
 
   const config = pluginData.config.get();
-  const reason = args.reason ? formatReasonWithAttachments(args.reason, [...msg.attachments.values()]) : undefined;
+  const reason = args.reason
+    ? parseReason(config, formatReasonWithAttachments(args.reason, [...msg.attachments.values()]))
+    : undefined;
   if (!reason && config.require_reason.includes("unmute")) {
     sendErrorMessage(pluginData, msg.channel as TextChannel, "You must include a reason in your unmute");
     return;

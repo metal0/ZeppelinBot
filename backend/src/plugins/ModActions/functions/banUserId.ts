@@ -15,6 +15,7 @@ import { LogsPlugin } from "../../Logs/LogsPlugin";
 import { clearTempBan } from "./outdatedTempbansLoop";
 import moment from "moment";
 import { addTimer, removeTimer } from "src/utils/timers";
+import { parseReason } from "./parseReason";
 
 /**
  * Ban the specified user id, whether or not they're actually on the server at the time. Generates a case.
@@ -34,6 +35,7 @@ export async function banUserId(
       error: "Invalid user",
     };
   }
+  if (reason) reason = parseReason(config, reason);
 
   // Attempt to message the user *before* banning them, as doing it after may not be possible
   let notifyResult: UserNotificationResult = { method: null, success: true };

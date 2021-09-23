@@ -1,5 +1,4 @@
 import { Snowflake } from "discord.js";
-import { userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { CaseTypes } from "../../../data/CaseTypes";
 import { LogType } from "../../../data/LogType";
@@ -11,6 +10,7 @@ import { ignoreEvent } from "../functions/ignoreEvent";
 import { IgnoredEventType, modActionsCmd } from "../types";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
 import { removeTimerByUserId } from "src/utils/timers";
+import { parseReason } from "../functions/parseReason";
 
 const opts = {
   mod: ct.member({ option: true }),
@@ -50,7 +50,7 @@ export const UnbanCmd = modActionsCmd({
 
     pluginData.state.serverLogs.ignoreLog(LogType.MEMBER_UNBAN, user.id);
     const config = pluginData.config.get();
-    const reason = formatReasonWithAttachments(args.reason, [...msg.attachments.values()]);
+    const reason = parseReason(config, formatReasonWithAttachments(args.reason, [...msg.attachments.values()]));
     if (!reason && config.require_reason.includes("unban")) {
       sendErrorMessage(pluginData, msg.channel, "You must include a reason in your unban");
       return;

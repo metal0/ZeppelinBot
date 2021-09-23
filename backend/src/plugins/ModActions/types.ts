@@ -48,6 +48,7 @@ export const ConfigSchema = t.type({
   can_act_as_other: t.boolean,
   create_cases_for_manual_actions: t.boolean,
   require_reason: t.array(t.string),
+  reason_aliases: tNullable(t.record(t.string, t.string)),
 });
 export type TConfigSchema = t.TypeOf<typeof ConfigSchema>;
 
