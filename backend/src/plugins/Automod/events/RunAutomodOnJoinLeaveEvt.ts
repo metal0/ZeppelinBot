@@ -32,7 +32,7 @@ export const RunAutomodOnLeaveEvt = typedGuildEventListener<AutomodPluginType>()
     const context: AutomodContext = {
       timestamp: Date.now(),
       partialMember: member,
-      joined: true,
+      joined: false,
     };
 
     pluginData.state.queue.add(() => {
