@@ -35,7 +35,6 @@ export const RunAutomodOnLeaveEvt = typedGuildEventListener<AutomodPluginType>()
       user: member.user ?? undefined,
       joined: false,
     };
-    console.log("guildMemberRemove event", context);
 
     pluginData.state.queue.add(() => {
       pluginData.state.recentActions.push({
