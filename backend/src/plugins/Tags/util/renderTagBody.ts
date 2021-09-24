@@ -63,7 +63,7 @@ export async function renderTagBody(
     async get_user(str) {
       if (!str || typeof str !== "string") return "";
       const resolved = await resolveUser(client, str);
-      if (resolved instanceof UnknownUser) return null;
+      if (resolved instanceof UnknownUser) return "";
       return userToTemplateSafeUser(resolved);
     },
     tag: async (name, ...subTagArgs) => {
