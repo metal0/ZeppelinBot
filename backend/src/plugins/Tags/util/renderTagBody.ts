@@ -20,7 +20,12 @@ export async function renderTagBody(
 ): Promise<StrictMessageContent> {
   const dynamicVars = {};
 
-  const countersPlugin = pluginData.getPlugin(CountersPlugin);
+  let countersPlugin: any;
+  try {
+    countersPlugin = pluginData.getPlugin(CountersPlugin);
+  } catch (_) {
+    // no counters plugin
+  }
 
   const data = new TemplateSafeValueContainer({
     args,
@@ -39,11 +44,13 @@ export async function renderTagBody(
       return dynamicVars[name] == null ? "" : dynamicVars[name];
     },
     async get_counter_value(counter, userId?, channelId?) {
+      if (!countersPlugin) return "";
       if (!userId && !channelId) return "";
       const cData = await countersPlugin.getCounterValue(counter, channelId, userId);
       return cData?.toString() ?? "";
     },
-    async get_all_counter_values(counter): Promise<TemplateSafeCounterValue[] | undefined> {
+    async get_all_counter_values(counter) {
+      if (!countersPlugin) return "";
       const cData = (await countersPlugin.getAllCounterValues(counter))?.map((cd) =>
         counterValueToTemplateSafeCounterValue(cd),
       );
