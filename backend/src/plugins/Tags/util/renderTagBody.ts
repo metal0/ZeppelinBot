@@ -2,11 +2,15 @@ import { GuildPluginData } from "knub";
 import { ExtendedMatchParams } from "knub/dist/config/PluginConfigManager";
 import { CounterValue } from "../../../data/entities/CounterValue";
 import { renderTemplate, TemplateSafeValue, TemplateSafeValueContainer } from "../../../templateFormatter";
-import { renderRecursively, StrictMessageContent } from "../../../utils";
+import { renderRecursively, resolveUser, StrictMessageContent, UnknownUser } from "../../../utils";
 import { CountersPlugin } from "../../Counters/CountersPlugin";
 import { TagsPluginType, TTag } from "../types";
 import { findTagByName } from "./findTagByName";
-import { counterValueToTemplateSafeCounterValue, TemplateSafeCounterValue } from "../../../utils/templateSafeObjects";
+import {
+  counterValueToTemplateSafeCounterValue,
+  TemplateSafeCounterValue,
+  userToTemplateSafeUser,
+} from "../../../utils/templateSafeObjects";
 
 const MAX_TAG_FN_CALLS = 25;
 
@@ -19,8 +23,13 @@ export async function renderTagBody(
   tagFnCallsObj = { calls: 0 },
 ): Promise<StrictMessageContent> {
   const dynamicVars = {};
-
-  const countersPlugin = pluginData.getPlugin(CountersPlugin);
+  const client = pluginData.client;
+  let countersPlugin: any;
+  try {
+    countersPlugin = pluginData.getPlugin(CountersPlugin);
+  } catch (_) {
+    // no counters plugin
+  }
 
   const data = new TemplateSafeValueContainer({
     args,
@@ -39,15 +48,23 @@ export async function renderTagBody(
       return dynamicVars[name] == null ? "" : dynamicVars[name];
     },
     async get_counter_value(counter, userId?, channelId?) {
+      if (!countersPlugin) return "";
       if (!userId && !channelId) return "";
       const cData = await countersPlugin.getCounterValue(counter, channelId, userId);
       return cData?.toString() ?? "";
     },
-    async get_all_counter_values(counter): Promise<TemplateSafeCounterValue[] | undefined> {
+    async get_all_counter_values(counter) {
+      if (!countersPlugin) return "";
       const cData = (await countersPlugin.getAllCounterValues(counter))?.map((cd) =>
         counterValueToTemplateSafeCounterValue(cd),
       );
       return cData?.sort((a, b) => b.value - a.value) ?? [];
+    },
+    async get_user(str) {
+      if (!str || typeof str !== "string") return "";
+      const resolved = await resolveUser(client, str);
+      if (resolved instanceof UnknownUser) return null;
+      return userToTemplateSafeUser(resolved);
     },
     tag: async (name, ...subTagArgs) => {
       if (++tagFnCallsObj.calls > MAX_TAG_FN_CALLS) return "";
