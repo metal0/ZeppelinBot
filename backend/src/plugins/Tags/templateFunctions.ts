@@ -136,6 +136,20 @@ export const TemplateFunctions: TemplateFunction[] = [
     examples: ["round(1.2345, 2)"],
   },
   {
+    name: "ceil",
+    description: "Rounds a number up to the next integer",
+    returnValue: "number",
+    arguments: ["number"],
+    examples: ["ceil(1.2345)"],
+  },
+  {
+    name: "floor",
+    description: "Rounds a number down to the next integer",
+    returnValue: "number",
+    arguments: ["number"],
+    examples: ["floor(1.2345)"],
+  },
+  {
     name: "add",
     description: "Adds two or more numbers",
     returnValue: "number",
