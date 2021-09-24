@@ -172,7 +172,10 @@ connect().then(async () => {
 
     makeCache: Options.cacheWithLimits({
       ...Options.defaultMakeCacheSettings,
-      GuildMemberManager: {},
+      GuildMemberManager: {
+        maxSize: 200000,
+        sweepInterval: 600,
+      },
       MessageManager: {
         sweepInterval: 600,
         sweepFilter: LimitedCollection.filterByLifetime({

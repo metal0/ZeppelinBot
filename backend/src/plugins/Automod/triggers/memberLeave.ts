@@ -8,8 +8,10 @@ export const MemberLeaveTrigger = automodTrigger<unknown>()({
 
   async match({ pluginData, context, triggerConfig }) {
     if (context.joined || !context.partialMember) {
+      console.log("didnt pass memberLeaveTrigger", context);
       return;
     }
+    console.log("passed memberLeaveTrigger");
 
     return {};
   },
