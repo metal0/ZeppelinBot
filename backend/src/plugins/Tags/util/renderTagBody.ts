@@ -48,13 +48,14 @@ export async function renderTagBody(
       return dynamicVars[name] == null ? "" : dynamicVars[name];
     },
     async get_counter_value(counter, userId?, channelId?) {
-      if (!countersPlugin) return "";
+      if (!countersPlugin || !countersPlugin.counterExists(counter)) return "";
       if (!userId && !channelId) return "";
       const cData = await countersPlugin.getCounterValue(counter, channelId, userId);
       return cData?.toString() ?? "";
     },
     async get_all_counter_values(counter) {
-      if (!countersPlugin) return "";
+      if (!countersPlugin || !countersPlugin.counterExists(counter)) return "";
+
       const cData = (await countersPlugin.getAllCounterValues(counter))?.map((cd) =>
         counterValueToTemplateSafeCounterValue(cd),
       );

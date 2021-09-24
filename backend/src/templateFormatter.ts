@@ -368,6 +368,9 @@ const baseValues = {
     return arg1 <= arg2;
   },
   slice(arg1, start, end) {
+    if (Array.isArray(arg1)) {
+      return arg1.slice(start, end);
+    }
     if (typeof arg1 !== "string") return "";
     if (isNaN(start)) return "";
     if (end != null && isNaN(end)) return "";
@@ -461,6 +464,7 @@ const baseValues = {
     if (cases.length === 0) return "";
     if (isNaN(mod)) return "";
     mod = parseInt(mod, 10) - 1;
+    if (cases.length === 1 && Array.isArray(cases[0])) return cases[0][Math.max(0, mod % cases[0].length)];
     return cases[Math.max(0, mod % cases.length)];
   },
   choose(...cases) {
