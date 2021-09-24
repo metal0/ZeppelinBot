@@ -218,7 +218,7 @@ connect().then(async () => {
   });
 
   const safe429DecayInterval = 5 * SECONDS;
-  const safe429MaxCount = 5;
+  const safe429MaxCount = 15;
   const safe429Counter = new DecayingCounter(safe429DecayInterval);
   client.on(Constants.Events.DEBUG, (errorText) => {
     if (!errorText.includes("429")) {
