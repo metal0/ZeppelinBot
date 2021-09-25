@@ -9,8 +9,7 @@ import { formatReasonWithAttachments } from "../functions/formatReasonWithAttach
 import { ignoreEvent } from "../functions/ignoreEvent";
 import { IgnoredEventType, modActionsCmd } from "../types";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
-import { removeTimerByUserId } from "src/utils/timers";
-import { parseReason } from "../functions/parseReason";
+import { removeTimerByUserId } from "../functions/outdatedTempbansLoop";
 
 const opts = {
   mod: ct.member({ option: true }),
