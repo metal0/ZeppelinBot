@@ -1,4 +1,5 @@
 import moment from "moment-timezone";
+import { sql_escape_string } from "src/utils/escapeString";
 import { FindConditions, getRepository, In, IsNull, Not, Repository } from "typeorm";
 import { Queue } from "../Queue";
 import { DAYS, DBDateFormat, HOURS, MINUTES } from "../utils";
@@ -515,14 +516,15 @@ export class GuildCounters extends BaseGuildRepository {
     limit?: number,
     userId?: string,
   ) {
-    return this.counterValues.query(`
-    SELECT 
-      *,
-      DENSE_RANK() OVER (ORDER BY ${rankedField} DESC) ${outputRankField}
-    WHERE counter_id=${counterId}${userId ? ` AND user_id='${userId}` : ""}${
-      limit && limit > 0 ? ` LIMIT ${limit}` : ""
-    };'};
-  `);
+    return this.counterValues.query(`WITH t AS (
+        SELECT 
+          *,
+          DENSE_RANK() OVER (ORDER BY ${sql_escape_string(rankedField)} DESC) ${sql_escape_string(outputRankField)}
+        FROM counter_values
+        WHERE counter_id=${counterId}
+      )
+      SELECT * FROM t${userId ? ` WHERE user_id="${sql_escape_string(userId)}"` : ""}
+      ${limit && limit > 0 ? ` LIMIT ${limit}` : ""};`);
   }
 
   async resetAllCounterValues(counterId: number): Promise<void> {
