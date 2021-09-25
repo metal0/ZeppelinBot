@@ -258,7 +258,7 @@ export type GroupDMInvite = Invite & {
 };
 
 /**
- * Mirrors EmbedOptions from Eris
+ * Mirrors MessageEmbed from Discord.js
  */
 export const tEmbed = t.type({
   title: tNullable(t.string),
@@ -266,17 +266,25 @@ export const tEmbed = t.type({
   url: tNullable(t.string),
   timestamp: tNullable(t.string),
   color: tNullable(t.number),
+  author: tNullable(
+    t.type({
+      name: t.string,
+      url: tNullable(t.string),
+      iconURL: tNullable(t.string),
+      proxyIconURL: tNullable(t.string),
+    }),
+  ),
   footer: tNullable(
     t.type({
       text: t.string,
-      icon_url: tNullable(t.string),
-      proxy_icon_url: tNullable(t.string),
+      iconURL: tNullable(t.string),
+      proxyIconURL: tNullable(t.string),
     }),
   ),
   image: tNullable(
     t.type({
       url: tNullable(t.string),
-      proxy_url: tNullable(t.string),
+      proxyURL: tNullable(t.string),
       width: tNullable(t.number),
       height: tNullable(t.number),
     }),
@@ -284,7 +292,7 @@ export const tEmbed = t.type({
   thumbnail: tNullable(
     t.type({
       url: tNullable(t.string),
-      proxy_url: tNullable(t.string),
+      proxyURL: tNullable(t.string),
       width: tNullable(t.number),
       height: tNullable(t.number),
     }),
@@ -292,14 +300,17 @@ export const tEmbed = t.type({
   video: tNullable(
     t.type({
       url: tNullable(t.string),
+      proxyURL: tNullable(t.string),
       width: tNullable(t.number),
       height: tNullable(t.number),
     }),
   ),
   provider: tNullable(
     t.type({
-      name: t.string,
       url: tNullable(t.string),
+      proxyURL: tNullable(t.string),
+      width: tNullable(t.number),
+      height: tNullable(t.number),
     }),
   ),
   fields: tNullable(
@@ -310,14 +321,6 @@ export const tEmbed = t.type({
         inline: tNullable(t.boolean),
       }),
     ),
-  ),
-  author: tNullable(
-    t.type({
-      name: t.string,
-      url: tNullable(t.string),
-      width: tNullable(t.number),
-      height: tNullable(t.number),
-    }),
   ),
 });
 
