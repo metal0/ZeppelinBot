@@ -46,7 +46,6 @@ export class GuildReminders extends BaseGuildRepository {
       remind_at: remindAt,
       body,
       created_at,
-      source_message_id: source_id,
     });
 
     return (await this.find(result.identifiers[0].id))!;
