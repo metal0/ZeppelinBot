@@ -26,12 +26,12 @@ function broadcastExpiredVCAlert(alert: VCAlert, tries = 0) {
 }
 
 export async function runExpiringVCAlertsLoop() {
-  console.log("[EXPIRING VCALERTS LOOP] Clearing old timeouts");
+  // console.log("[EXPIRING VCALERTS LOOP] Clearing old timeouts");
   for (const timeout of timeouts.values()) {
     clearTimeout(timeout);
   }
 
-  console.log("[EXPIRING VCALERTS LOOP] Setting timeouts for expiring vcalerts");
+  // console.log("[EXPIRING VCALERTS LOOP] Setting timeouts for expiring vcalerts");
   const expiringVCAlerts = await getVCAlertsRepository().getSoonExpiringAlerts(LOOP_INTERVAL);
   for (const alert of expiringVCAlerts) {
     const remaining = Math.max(0, moment.utc(alert.expires_at!).diff(moment.utc()));
@@ -41,7 +41,7 @@ export async function runExpiringVCAlertsLoop() {
     );
   }
 
-  console.log("[EXPIRING VCALERTS LOOP] Scheduling next loop");
+  // console.log("[EXPIRING VCALERTS LOOP] Scheduling next loop");
   setTimeout(() => runExpiringVCAlertsLoop(), LOOP_INTERVAL);
 }
 

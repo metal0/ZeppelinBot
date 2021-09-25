@@ -25,12 +25,12 @@ function broadcastReminder(reminder: Reminder, tries = 0) {
 }
 
 export async function runUpcomingRemindersLoop() {
-  console.log("[REMINDERS LOOP] Clearing old timeouts");
+  // console.log("[REMINDERS LOOP] Clearing old timeouts");
   for (const timeout of timeouts.values()) {
     clearTimeout(timeout);
   }
 
-  console.log("[REMINDERS LOOP] Setting timeouts for upcoming reminders");
+  // console.log("[REMINDERS LOOP] Setting timeouts for upcoming reminders");
   const remindersDueSoon = await getRemindersRepository().getRemindersDueSoon(LOOP_INTERVAL);
   for (const reminder of remindersDueSoon) {
     const remaining = Math.max(0, moment.utc(reminder.remind_at!).diff(moment.utc()));
@@ -40,7 +40,7 @@ export async function runUpcomingRemindersLoop() {
     );
   }
 
-  console.log("[REMINDERS LOOP] Scheduling next loop");
+  // console.log("[REMINDERS LOOP] Scheduling next loop");
   setTimeout(() => runUpcomingRemindersLoop(), LOOP_INTERVAL);
 }
 

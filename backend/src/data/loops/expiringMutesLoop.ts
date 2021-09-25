@@ -30,12 +30,12 @@ function broadcastExpiredMute(mute: Mute, tries = 0) {
 }
 
 export async function runExpiringMutesLoop() {
-  console.log("[EXPIRING MUTES LOOP] Clearing old timeouts");
+  // console.log("[EXPIRING MUTES LOOP] Clearing old timeouts");
   for (const timeout of timeouts.values()) {
     clearTimeout(timeout);
   }
 
-  console.log("[EXPIRING MUTES LOOP] Setting timeouts for expiring mutes");
+  // console.log("[EXPIRING MUTES LOOP] Setting timeouts for expiring mutes");
   const expiringMutes = await getMutesRepository().getSoonExpiringMutes(LOOP_INTERVAL);
   for (const mute of expiringMutes) {
     const remaining = Math.max(0, moment.utc(mute.expires_at!).diff(moment.utc()));
@@ -45,7 +45,7 @@ export async function runExpiringMutesLoop() {
     );
   }
 
-  console.log("[EXPIRING MUTES LOOP] Scheduling next loop");
+  // console.log("[EXPIRING MUTES LOOP] Scheduling next loop");
   setTimeout(() => runExpiringMutesLoop(), LOOP_INTERVAL);
 }
 

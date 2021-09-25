@@ -30,12 +30,12 @@ function broadcastExpiredTempban(tempban: Tempban, tries = 0) {
 }
 
 export async function runExpiringTempbansLoop() {
-  console.log("[EXPIRING TEMPBANS LOOP] Clearing old timeouts");
+  // console.log("[EXPIRING TEMPBANS LOOP] Clearing old timeouts");
   for (const timeout of timeouts.values()) {
     clearTimeout(timeout);
   }
 
-  console.log("[EXPIRING TEMPBANS LOOP] Setting timeouts for expiring tempbans");
+  // console.log("[EXPIRING TEMPBANS LOOP] Setting timeouts for expiring tempbans");
   const expiringTempbans = await getBansRepository().getSoonExpiringTempbans(LOOP_INTERVAL);
   for (const tempban of expiringTempbans) {
     const remaining = Math.max(0, moment.utc(tempban.expires_at!).diff(moment.utc()));
@@ -45,7 +45,7 @@ export async function runExpiringTempbansLoop() {
     );
   }
 
-  console.log("[EXPIRING TEMPBANS LOOP] Scheduling next loop");
+  // console.log("[EXPIRING TEMPBANS LOOP] Scheduling next loop");
   setTimeout(() => runExpiringTempbansLoop(), LOOP_INTERVAL);
 }
 

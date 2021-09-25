@@ -25,12 +25,12 @@ function broadcastScheduledPost(post: ScheduledPost, tries = 0) {
 }
 
 export async function runUpcomingScheduledPostsLoop() {
-  console.log("[SCHEDULED POSTS LOOP] Clearing old timeouts");
+  // console.log("[SCHEDULED POSTS LOOP] Clearing old timeouts");
   for (const timeout of timeouts.values()) {
     clearTimeout(timeout);
   }
 
-  console.log("[SCHEDULED POSTS LOOP] Setting timeouts for upcoming scheduled posts");
+  // console.log("[SCHEDULED POSTS LOOP] Setting timeouts for upcoming scheduled posts");
   const postsDueSoon = await getScheduledPostsRepository().getScheduledPostsDueSoon(LOOP_INTERVAL);
   for (const post of postsDueSoon) {
     const remaining = Math.max(0, moment.utc(post.post_at!).diff(moment.utc()));
@@ -40,14 +40,14 @@ export async function runUpcomingScheduledPostsLoop() {
     );
   }
 
-  console.log("[SCHEDULED POSTS LOOP] Scheduling next loop");
+  // console.log("[SCHEDULED POSTS LOOP] Scheduling next loop");
   setTimeout(() => runUpcomingScheduledPostsLoop(), LOOP_INTERVAL);
 }
 
 export function registerUpcomingScheduledPost(post: ScheduledPost) {
   clearUpcomingScheduledPost(post);
 
-  console.log("[SCHEDULED POSTS LOOP] Registering new upcoming scheduled post");
+  // console.log("[SCHEDULED POSTS LOOP] Registering new upcoming scheduled post");
   const remaining = Math.max(0, moment.utc(post.post_at!).diff(moment.utc()));
   if (remaining > LOOP_INTERVAL) {
     return;
@@ -60,7 +60,7 @@ export function registerUpcomingScheduledPost(post: ScheduledPost) {
 }
 
 export function clearUpcomingScheduledPost(post: ScheduledPost) {
-  console.log("[SCHEDULED POSTS LOOP] Clearing upcoming scheduled post");
+  // console.log("[SCHEDULED POSTS LOOP] Clearing upcoming scheduled post");
   if (timeouts.has(post.id)) {
     clearTimeout(timeouts.get(post.id)!);
   }
