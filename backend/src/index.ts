@@ -17,12 +17,18 @@ import { RecoverablePluginError } from "./RecoverablePluginError";
 import { SimpleError } from "./SimpleError";
 import { ZeppelinGlobalConfig, ZeppelinGuildConfig } from "./types";
 import { startUptimeCounter } from "./uptime";
-import { errorMessage, isDiscordAPIError, isDiscordHTTPError, SECONDS, successMessage } from "./utils";
+import { errorMessage, isDiscordAPIError, isDiscordHTTPError, SECONDS, sleep, successMessage } from "./utils";
 import { loadYamlSafely } from "./utils/loadYamlSafely";
 import { DecayingCounter } from "./utils/DecayingCounter";
 import { PluginNotLoadedError } from "knub/dist/plugins/PluginNotLoadedError";
 import { logRestCall } from "./restCallStats";
 import { logRateLimit } from "./rateLimitStats";
+import { runExpiringMutesLoop } from "./data/loops/expiringMutesLoop";
+import { runUpcomingRemindersLoop } from "./data/loops/upcomingRemindersLoop";
+import { runUpcomingScheduledPostsLoop } from "./data/loops/upcomingScheduledPostsLoop";
+import { runExpiringTempbansLoop } from "./data/loops/expiringTempbansLoop";
+import { runExpiringVCAlertsLoop } from "./data/loops/expiringVCAlertsLoop";
+import { runExpiredArchiveDeletionLoop } from "./data/loops/expiredArchiveDeletionLoop";
 
 if (!process.env.KEY) {
   // tslint:disable-next-line:no-console
@@ -320,6 +326,20 @@ connect().then(async () => {
 
   client.on(Constants.Events.RATE_LIMIT, (data) => {
     logRateLimit(data);
+  });
+
+  bot.on("loadingFinished", async () => {
+    runExpiringMutesLoop();
+    await sleep(10 * SECONDS);
+    runExpiringTempbansLoop();
+    await sleep(10 * SECONDS);
+    runUpcomingScheduledPostsLoop();
+    await sleep(10 * SECONDS);
+    runUpcomingRemindersLoop();
+    await sleep(10 * SECONDS);
+    runExpiringVCAlertsLoop();
+    await sleep(10 * SECONDS);
+    runExpiredArchiveDeletionLoop();
   });
 
   bot.initialize();

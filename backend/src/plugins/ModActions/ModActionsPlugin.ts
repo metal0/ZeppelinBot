@@ -41,11 +41,12 @@ import { hasMutePermission } from "./functions/hasMutePerm";
 import { kickMember } from "./functions/kickMember";
 import { offModActionsEvent } from "./functions/offModActionsEvent";
 import { onModActionsEvent } from "./functions/onModActionsEvent";
-import { outdatedTempbansLoop } from "./functions/outdatedTempbansLoop";
 import { updateCase } from "./functions/updateCase";
 import { warnMember } from "./functions/warnMember";
 import { BanOptions, ConfigSchema, KickOptions, ModActionsPluginType, WarnOptions } from "./types";
 import { LogsPlugin } from "../Logs/LogsPlugin";
+import { onGuildEvent } from "../../data/GuildEvents";
+import { clearTempban } from "./functions/clearTempban";
 
 const defaultOptions = {
   config: {
@@ -200,7 +201,6 @@ export const ModActionsPlugin = zeppelinGuildPlugin<ModActionsPluginType>()({
     state.serverLogs = new GuildLogs(guild.id);
 
     state.unloaded = false;
-    state.outdatedTempbansTimeout = null;
     state.ignoredEvents = [];
     // Massbans can take a while depending on rate limits,
     // so we're giving each massban 15 minutes to complete before launching the next massban
@@ -210,11 +210,14 @@ export const ModActionsPlugin = zeppelinGuildPlugin<ModActionsPluginType>()({
   },
 
   afterLoad(pluginData) {
-    outdatedTempbansLoop(pluginData);
+    pluginData.state.unregisterGuildEventListener = onGuildEvent(pluginData.guild.id, "expiredTempban", (tempban) =>
+      clearTempban(pluginData, tempban),
+    );
   },
 
   beforeUnload(pluginData) {
     pluginData.state.unloaded = true;
+    pluginData.state.unregisterGuildEventListener();
     pluginData.state.events.removeAllListeners();
   },
 });
