@@ -45,3 +45,24 @@ export async function getAllCounterValues(
 
   return vl;
 }
+
+export async function getRankedCounterValues(
+  pluginData: GuildPluginData<CountersPluginType>,
+  counterName: string,
+  rankedField: string,
+  outputRankField: string,
+  limit?: number,
+  userId?: string,
+): Promise<CounterValue[] | undefined> {
+  const config = pluginData.config.get();
+  const counter = config.counters[counterName];
+  if (!counter) {
+    throw new Error(`Unknown counter: ${counterName}`);
+  }
+
+  const counterId = pluginData.state.counterIds[counterName];
+
+  const vl = await pluginData.state.counters.getCounterRank(counterId, rankedField, outputRankField, limit, userId);
+
+  return vl;
+}

@@ -53,12 +53,15 @@ export async function renderTagBody(
       const cData = await countersPlugin.getCounterValue(counter, channelId, userId);
       return cData?.toString() ?? "";
     },
-    async get_all_counter_values(counter) {
+    async get_all_counter_values(counter, field?, output?, limit?, userId?) {
       if (!countersPlugin) return "";
-      const cData = (await countersPlugin.getAllCounterValues(counter))?.map((cd) =>
-        counterValueToTemplateSafeCounterValue(cd),
-      );
-      return cData?.sort((a, b) => b.value - a.value) ?? [];
+
+      const cData = (
+        field && output
+          ? await countersPlugin.getRankedCounterValues(counter, field, output, limit, userId)
+          : await countersPlugin.getAllCounterValues(counter)
+      )?.map((cd) => counterValueToTemplateSafeCounterValue(cd));
+      return cData ?? [];
     },
     async get_user(str) {
       if (!str || typeof str !== "string") return "";
