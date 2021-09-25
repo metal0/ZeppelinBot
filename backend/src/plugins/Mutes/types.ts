@@ -2,7 +2,6 @@ import { GuildMember } from "discord.js";
 import { EventEmitter } from "events";
 import * as t from "io-ts";
 import { BasePluginType, typedGuildCommand, typedGuildEventListener } from "knub";
-import { ExpiringTimer } from "src/utils/timers";
 import { Case } from "../../data/entities/Case";
 import { Mute } from "../../data/entities/Mute";
 import { GuildArchives } from "../../data/GuildArchives";
@@ -54,8 +53,6 @@ export interface MutesPluginType extends BasePluginType {
     archives: GuildArchives;
 
     muteClearIntervalId: Timeout;
-
-    timers: ExpiringTimer[];
 
     events: MutesEventEmitter;
   };

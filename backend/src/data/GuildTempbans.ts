@@ -11,17 +11,9 @@ export class GuildTempbans extends BaseGuildRepository {
     this.tempbans = getRepository(Tempban);
   }
 
-  async getAllTempbans(): Promise<Tempban[]> {
-    return this.tempbans
-      .createQueryBuilder("tempbans")
-      .where("guild_id = :guild_id", { guild_id: this.guildId })
-      .andWhere("expires_at IS NOT NULL")
-      .getMany();
-  }
-
   async getExpiredTempbans(): Promise<Tempban[]> {
     return this.tempbans
-      .createQueryBuilder("tempbans")
+      .createQueryBuilder("mutes")
       .where("guild_id = :guild_id", { guild_id: this.guildId })
       .andWhere("expires_at IS NOT NULL")
       .andWhere("expires_at <= NOW()")

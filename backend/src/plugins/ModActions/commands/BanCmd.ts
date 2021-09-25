@@ -15,8 +15,6 @@ import { isBanned } from "../functions/isBanned";
 import { readContactMethodsFromArgs } from "../functions/readContactMethodsFromArgs";
 import { modActionsCmd } from "../types";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
-import moment from "moment";
-import { addTimer, removeTimer, removeTimerByUserId } from "../functions/outdatedTempbansLoop";
 
 const opts = {
   mod: ct.member({ option: true }),
@@ -101,18 +99,11 @@ export const BanCmd = modActionsCmd({
           if (time && time > 0) {
             if (existingTempban) {
               pluginData.state.tempbans.updateExpiryTime(user.id, time, mod.id);
-              removeTimer(pluginData, existingTempban);
-              addTimer(pluginData, {
-                ...existingTempban,
-                expires_at: moment().utc().add(time, "ms").format("YYYY-MM-DD HH:mm:ss"),
-              });
             } else {
-              const tempban = await pluginData.state.tempbans.addTempban(user.id, time, mod.id);
-              addTimer(pluginData, tempban);
+              pluginData.state.tempbans.addTempban(user.id, time, mod.id);
             }
           } else if (existingTempban) {
             pluginData.state.tempbans.clear(user.id);
-            removeTimerByUserId(pluginData, user.id);
           }
 
           // Create a new case for the updated ban since we never stored the old case id and log the action

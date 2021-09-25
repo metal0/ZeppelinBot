@@ -1,6 +1,5 @@
 import { GuildMember, Snowflake } from "discord.js";
 import { EventEmitter } from "events";
-import { MINUTES } from "src/utils";
 import { GuildArchives } from "../../data/GuildArchives";
 import { GuildCases } from "../../data/GuildCases";
 import { GuildLogs } from "../../data/GuildLogs";
@@ -16,7 +15,7 @@ import { MutesCmd } from "./commands/MutesCmd";
 import { ClearActiveMuteOnMemberBanEvt } from "./events/ClearActiveMuteOnMemberBanEvt";
 import { ClearActiveMuteOnRoleRemovalEvt } from "./events/ClearActiveMuteOnRoleRemovalEvt";
 import { ReapplyActiveMuteOnJoinEvt } from "./events/ReapplyActiveMuteOnJoinEvt";
-import { loadExpiringTimers } from "./functions/clearExpiredMutes";
+import { clearExpiredMutes } from "./functions/clearExpiredMutes";
 import { muteUser } from "./functions/muteUser";
 import { offMutesEvent } from "./functions/offMutesEvent";
 import { onMutesEvent } from "./functions/onMutesEvent";
@@ -59,7 +58,7 @@ const defaultOptions = {
   ],
 };
 
-const EXPIRED_MUTE_CHECK_INTERVAL = 30 * MINUTES;
+const EXPIRED_MUTE_CHECK_INTERVAL = 60 * 1000;
 
 export const MutesPlugin = zeppelinGuildPlugin<MutesPluginType>()({
   name: "mutes",
@@ -109,14 +108,14 @@ export const MutesPlugin = zeppelinGuildPlugin<MutesPluginType>()({
     pluginData.state.cases = GuildCases.getGuildInstance(pluginData.guild.id);
     pluginData.state.serverLogs = new GuildLogs(pluginData.guild.id);
     pluginData.state.archives = GuildArchives.getGuildInstance(pluginData.guild.id);
-    pluginData.state.timers = [];
+
     pluginData.state.events = new EventEmitter();
   },
 
   afterLoad(pluginData) {
-    loadExpiringTimers(pluginData);
+    clearExpiredMutes(pluginData);
     pluginData.state.muteClearIntervalId = setInterval(
-      () => loadExpiringTimers(pluginData),
+      () => clearExpiredMutes(pluginData),
       EXPIRED_MUTE_CHECK_INTERVAL,
     );
   },
@@ -124,6 +123,5 @@ export const MutesPlugin = zeppelinGuildPlugin<MutesPluginType>()({
   beforeUnload(pluginData) {
     clearInterval(pluginData.state.muteClearIntervalId);
     pluginData.state.events.removeAllListeners();
-    pluginData.state.timers = [];
   },
 });
