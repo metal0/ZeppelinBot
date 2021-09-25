@@ -19,6 +19,7 @@ import { BanOptions, BanResult, IgnoredEventType, ModActionsPluginType } from ".
 import { getDefaultContactMethods } from "./getDefaultContactMethods";
 import { ignoreEvent } from "./ignoreEvent";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
+import { parseReason } from "./parseReason";
 
 /**
  * Ban the specified user id, whether or not they're actually on the server at the time. Generates a case.
