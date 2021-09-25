@@ -508,6 +508,23 @@ export class GuildCounters extends BaseGuildRepository {
       .getMany();
   }
 
+  async getCounterRank(
+    counterId: number,
+    rankedField: string,
+    outputRankField: string,
+    limit?: number,
+    userId?: string,
+  ) {
+    return this.counterValues.query(`
+    SELECT 
+      *,
+      DENSE_RANK() OVER (ORDER BY ${rankedField} DESC) ${outputRankField}
+    WHERE counter_id=${counterId}${userId ? ` AND user_id='${userId}` : ""}${
+      limit && limit > 0 ? ` LIMIT ${limit}` : ""
+    };'};
+  `);
+  }
+
   async resetAllCounterValues(counterId: number): Promise<void> {
     // Foreign keys will remove any related triggers and counter values
     await this.counters.delete({
