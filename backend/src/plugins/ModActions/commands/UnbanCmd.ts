@@ -10,6 +10,7 @@ import { ignoreEvent } from "../functions/ignoreEvent";
 import { IgnoredEventType, modActionsCmd } from "../types";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
 import { parseReason } from "../functions/parseReason";
+import { clearExpiringTempban } from "../../../data/loops/expiringTempbansLoop";
 
 const opts = {
   mod: ct.member({ option: true }),
@@ -73,7 +74,11 @@ export const UnbanCmd = modActionsCmd({
       ppId: mod.id !== msg.author.id ? msg.author.id : undefined,
     });
     // Delete the tempban, if one exists
-    pluginData.state.tempbans.clear(user.id);
+    const tempban = await pluginData.state.tempbans.findExistingTempbanForUserId(user.id);
+    if (tempban) {
+      clearExpiringTempban(tempban);
+      await pluginData.state.tempbans.clear(user.id);
+    }
 
     // Confirm the action
     sendSuccessMessage(pluginData, msg.channel, `Member unbanned (Case #${createdCase.case_number})`);

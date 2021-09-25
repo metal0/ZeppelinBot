@@ -1549,7 +1549,7 @@ interface IMemoizedItem {
 }
 
 const memoizeCache: Map<any, IMemoizedItem> = new Map();
-export function memoize<T>(fn: (...args: any[]) => T, key?, time?): T {
+export function memoize<T>(fn: () => T, key?, time?): T {
   const realKey = key ?? fn;
 
   if (memoizeCache.has(realKey)) {
@@ -1568,6 +1568,12 @@ export function memoize<T>(fn: (...args: any[]) => T, key?, time?): T {
   });
 
   return value;
+}
+
+export function lazyMemoize<T extends () => unknown>(fn: T, key?: string, time?: number): T {
+  return (() => {
+    return memoize(fn, key, time);
+  }) as T;
 }
 
 type RecursiveRenderFn = (str: string) => string | Promise<string>;

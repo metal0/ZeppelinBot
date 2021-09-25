@@ -20,6 +20,7 @@ import { getDefaultContactMethods } from "./getDefaultContactMethods";
 import { ignoreEvent } from "./ignoreEvent";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
 import { parseReason } from "./parseReason";
+import { registerExpiringTempban } from "../../../data/loops/expiringTempbansLoop";
 
 /**
  * Ban the specified user id, whether or not they're actually on the server at the time. Generates a case.
@@ -114,6 +115,8 @@ export async function banUserId(
     } else {
       pluginData.state.tempbans.addTempban(user.id, banTime, banOptions.modId ?? selfId);
     }
+    const tempban = (await pluginData.state.tempbans.findExistingTempbanForUserId(user.id))!;
+    registerExpiringTempban(tempban);
   }
 
   // Create a case for this action

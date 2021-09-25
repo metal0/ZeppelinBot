@@ -5,6 +5,7 @@ import { sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
 import { convertDelayStringToMS, messageLink } from "../../../utils";
 import { TimeAndDatePlugin } from "../../TimeAndDate/TimeAndDatePlugin";
 import { remindersCmd } from "../types";
+import { registerUpcomingReminder } from "../../../data/loops/upcomingRemindersLoop";
 
 export const RemindCmd = remindersCmd({
   trigger: ["remind", "remindme", "reminder"],
@@ -50,7 +51,7 @@ export const RemindCmd = remindersCmd({
     }
 
     const reminderBody = args.reminder || messageLink(pluginData.guild.id, msg.channel.id, msg.id);
-    await pluginData.state.reminders.add(
+    const reminder = await pluginData.state.reminders.add(
       msg.author.id,
       msg.channel.id,
       reminderTime.clone().tz("Etc/UTC").format("YYYY-MM-DD HH:mm:ss"),
@@ -58,6 +59,8 @@ export const RemindCmd = remindersCmd({
       moment.utc().format("YYYY-MM-DD HH:mm:ss"),
       args.reminder ? msg.id : undefined,
     );
+
+    registerUpcomingReminder(reminder);
 
     const msUntilReminder = reminderTime.diff(now);
     const timeUntilReminder = humanizeDuration(msUntilReminder, { largest: 2, round: true });
