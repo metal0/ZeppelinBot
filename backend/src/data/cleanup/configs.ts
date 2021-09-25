@@ -12,18 +12,6 @@ export async function cleanupConfigs() {
   let cleaned = 0;
   let rows;
 
-  do {
-    rows = await connection.query(`SELECT * FROM configs WHERE is_active = 0;`);
-    if (rows.length > 0) {
-      await configRepository.delete({
-        id: In(rows.map((r) => r.id)),
-      });
-    }
-
-    cleaned += rows.length;
-  } while (rows.length === CLEAN_PER_LOOP);
-  /*
-
   // >1 month old: 1 config retained per month
   const oneMonthCutoff = moment.utc().subtract(30, "days").format(DBDateFormat);
   do {
@@ -99,6 +87,5 @@ export async function cleanupConfigs() {
 
     cleaned += rows.length;
   } while (rows.length === CLEAN_PER_LOOP);
-  */
   return cleaned;
 }
