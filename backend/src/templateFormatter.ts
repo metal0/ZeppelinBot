@@ -461,6 +461,7 @@ const baseValues = {
     if (cases.length === 0) return "";
     if (isNaN(mod)) return "";
     mod = parseInt(mod, 10) - 1;
+    if (cases.length === 1 && Array.isArray(cases[0])) return cases[0][Math.max(0, mod % cases[0].length)];
     return cases[Math.max(0, mod % cases.length)];
   },
   choose(...cases) {
