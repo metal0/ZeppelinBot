@@ -10,7 +10,7 @@ import { ConfigSchema, PersistPluginType } from "./types";
 
 const defaultOptions: PluginOptions<PersistPluginType> = {
   config: {
-    persisted_roles: [],
+    persisted_roles: ["role_id"],
     persist_nicknames: false,
     persist_voice_mutes: false,
   },

@@ -43,7 +43,13 @@ export const LoadDataEvt = persistEvt({
       return;
     }
 
-    const guildRoles = Array.from(pluginData.guild.roles.cache.keys());
+    const guildRoles = Array.from(
+      pluginData.guild.roles.cache
+        .filter(
+          (r) => r.id !== pluginData.guild.id && !r.managed && (canAssignRole(pluginData.guild, me, r.id) ?? false),
+        )
+        .keys(),
+    );
 
     // Check specific role permissions
     if (config.persisted_roles) {
@@ -58,8 +64,11 @@ export const LoadDataEvt = persistEvt({
     }
 
     const persistedRoles = config.persisted_roles;
-    if (persistedRoles.length) {
-      const rolesToRestore = intersection(persistedRoles, persistedData.roles, guildRoles);
+    if (persistedRoles.length >= 0) {
+      const rolesToRestore =
+        persistedRoles.length === 0
+          ? intersection(persistedData.roles, guildRoles)
+          : intersection(persistedRoles, persistedData.roles, guildRoles);
 
       if (rolesToRestore.length) {
         restoredData.push("roles");

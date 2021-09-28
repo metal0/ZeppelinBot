@@ -15,8 +15,11 @@ export const StoreDataEvt = persistEvt({
     const config = await pluginData.config.getForUser(member.user);
 
     const persistedRoles = config.persisted_roles;
-    if (persistedRoles.length && member.roles) {
-      const rolesToPersist = intersection(persistedRoles, [...member.roles.cache.keys()]);
+    if (persistedRoles.length >= 0 && member.roles) {
+      const rolesToPersist =
+        persistedRoles.length === 0
+          ? [...member.roles.cache.keys()]
+          : intersection(persistedRoles, [...member.roles.cache.keys()]);
       if (rolesToPersist.length) {
         persist = true;
         persistData.roles = rolesToPersist;
