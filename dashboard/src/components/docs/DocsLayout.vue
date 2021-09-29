@@ -100,10 +100,6 @@
         {
           to: '/docs/reference/argument-types',
           label: 'Argument types',
-        },
-        {
-          to: '/docs/reference/template-functions',
-          label: 'Template functions',
         }
       ],
     },
