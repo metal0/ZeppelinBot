@@ -227,6 +227,14 @@ export const TemplateFunctions: TemplateFunction[] = [
     examples: ['get_snowflake("<@!344837487526412300>")'],
   },
   {
+    name: "get_user",
+    description: "Tries to resolve a user from ID or mention",
+    returnValue: 'ResolvedUser || ""',
+    arguments: ["string"],
+    examples: ['get_user("<@!344837487526412300>")', "get_user(get_snowflake(args.0))"],
+    plugin: "tags",
+  },
+  {
     name: "get_counter_value",
     description: "Gets a counter's value, optional for a user and/or channel",
     returnValue: "number",
