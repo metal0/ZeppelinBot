@@ -46,10 +46,6 @@ export const router = new VueRouter({
           component: () => import("./components/docs/ArgumentTypes.vue"),
         },
         {
-          path: "reference/template-functions",
-          component: () => import("./components/docs/TemplateFunctions.vue"),
-        },
-        {
           path: "setup-guides/logs",
           component: () => import("./components/docs/WorkInProgress.vue"),
         },
