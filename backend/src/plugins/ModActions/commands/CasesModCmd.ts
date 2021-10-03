@@ -16,7 +16,7 @@ const opts = {
 const casesPerPage = 5;
 
 export const CasesModCmd = modActionsCmd({
-  trigger: ["cases", "modlogs", "infractions"],
+  trigger: ["cases", "modlogs", "infractions", "logs"],
   permission: "can_view",
   description: "Show the most recent 5 cases by the specified -mod",
 

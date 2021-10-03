@@ -22,7 +22,7 @@ const opts = {
 };
 
 export const CasesUserCmd = modActionsCmd({
-  trigger: ["cases", "modlogs"],
+  trigger: ["cases", "modlogs", "logs"],
   permission: "can_view",
   description: "Show a list of cases the specified user has",
 
