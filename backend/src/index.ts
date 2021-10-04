@@ -182,14 +182,9 @@ connect().then(async () => {
         maxSize: 200000,
         sweepInterval: 600,
       },
-      MessageManager: {
-        sweepInterval: 600,
-        sweepFilter: LimitedCollection.filterByLifetime({
-          lifetime: 48 * 60 * 60,
-          getComparisonTimestamp: (e) => e.editedTimestamp ?? e.createdTimestamp,
-          excludeFromSweep: (e) => e.pinned,
-        }),
-      },
+      MessageManager: 0,
+      BaseGuildEmojiManager: 1000,
+      GuildInviteManager: 0,
     }),
 
     restGlobalRateLimit: 50,
