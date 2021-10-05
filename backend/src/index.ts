@@ -178,10 +178,10 @@ connect().then(async () => {
 
     makeCache: Options.cacheWithLimits({
       ...Options.defaultMakeCacheSettings,
-      GuildMemberManager: -1,
-      UserManager: -1,
-      ReactionManager: -1,
-      ReactionUserManager: -1,
+      GuildMemberManager: {},
+      UserManager: {},
+      ReactionManager: {},
+      ReactionUserManager: {},
       MessageManager: 0,
       BaseGuildEmojiManager: 1000,
       PresenceManager: 0,
