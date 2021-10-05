@@ -44,7 +44,7 @@ export const PostSelectRolesCmd = selectRolesCmd({
       }
       const slm = new MessageSelectMenu()
         .setMinValues(menu.minValues ?? 1)
-        .setMaxValues(menu.maxValues ?? 1)
+        .setMaxValues(menu.maxValues ?? opts.length)
         .setCustomId(customId)
         .setDisabled(menu.disabled ?? false);
       if (menu.placeholder) slm.setPlaceholder(menu.placeholder);

@@ -57,9 +57,9 @@ const configPreprocessor: ConfigPreprocessorFn<SelectMenuRolesPluginType> = (opt
             `Invalid value for menus/${defaultSelectMenuNames[i]}/maxValues: Minimum Values Must be between 0 and 25`,
           ]);
         }
-        if (defMenu.items.length > 25) {
+        if (defMenu.items.length > 25 || defMenu.items.length === 0) {
           throw new StrictValidationError([
-            `Invalid values for menus/${defaultSelectMenuNames[i]}/items: Can only have up to 25 items per menu.`,
+            `Invalid values for menus/${defaultSelectMenuNames[i]}/items: Must have between 1 and 25 items configured`,
           ]);
         }
         for (let i2 = 0; i2 < defMenu.items.length; i2++) {
