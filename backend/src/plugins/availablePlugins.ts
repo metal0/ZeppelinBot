@@ -24,6 +24,7 @@ import { PostPlugin } from "./Post/PostPlugin";
 import { ReactionRolesPlugin } from "./ReactionRoles/ReactionRolesPlugin";
 import { RemindersPlugin } from "./Reminders/RemindersPlugin";
 import { RolesPlugin } from "./Roles/RolesPlugin";
+import { SelectMenuRolesPlugin } from "./SelectMenuRoles/SelectMenuRolesPlugin";
 import { SelfGrantableRolesPlugin } from "./SelfGrantableRoles/SelfGrantableRolesPlugin";
 import { SlowmodePlugin } from "./Slowmode/SlowmodePlugin";
 import { SpamPlugin } from "./Spam/SpamPlugin";
@@ -69,6 +70,7 @@ export const guildPlugins: Array<ZeppelinGuildPluginBlueprint<any>> = [
   TimeAndDatePlugin,
   CountersPlugin,
   ContextMenuPlugin,
+  SelectMenuRolesPlugin
 ];
 
 // prettier-ignore
