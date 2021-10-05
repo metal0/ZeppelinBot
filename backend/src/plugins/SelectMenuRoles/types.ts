@@ -20,7 +20,6 @@ const SelectMenuOpts = t.type({
   minValues: tNullable(t.number),
   maxValues: tNullable(t.number),
   disabled: tNullable(t.boolean),
-  end_row: tNullable(t.boolean),
 });
 export type TSelectMenuOpts = t.TypeOf<typeof SelectMenuOpts>;
 

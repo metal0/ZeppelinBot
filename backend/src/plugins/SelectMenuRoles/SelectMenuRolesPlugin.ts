@@ -10,7 +10,6 @@ import { zeppelinGuildPlugin } from "../ZeppelinPluginBlueprint";
 import { PostSelectRolesCmd } from "./commands/PostSelectRolesCmd";
 import { InteractionEvt } from "./events/ButtonInteractionEvt";
 import { ConfigSchema, SelectMenuRolesPluginType } from "./types";
-import { getRowCount } from "./util/splitMenusIntoRows";
 
 const defaultOptions: PluginOptions<SelectMenuRolesPluginType> = {
   config: {
@@ -38,10 +37,10 @@ const configPreprocessor: ConfigPreprocessorFn<SelectMenuRolesPluginType> = (opt
       const defaultMenus = Object.values(group.menus);
       const menuNames = Object.keys(group.menus ?? []);
 
-      const defaultMenuRowCount = getRowCount(defaultMenus);
+      const defaultMenuRowCount = defaultMenus.length;
       if (defaultMenuRowCount > MAXIMUM_COMPONENT_ROWS || defaultMenuRowCount === 0) {
         throw new StrictValidationError([
-          `Invalid row count for menus: You currently have ${defaultMenuRowCount}, the maximum is 5. A new row is started automatically each 5 consecutive menus.`,
+          `Invalid row count for menus: You currently have ${defaultMenuRowCount}, the maximum is 5. A new row is started automatically after each menu.`,
         ]);
       }
 
