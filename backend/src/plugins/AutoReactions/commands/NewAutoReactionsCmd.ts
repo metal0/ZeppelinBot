@@ -22,7 +22,7 @@ export const NewAutoReactionsCmd = autoReactionsCmd({
   async run({ message: msg, args, pluginData }) {
     const finalReactions: string[] = [];
 
-    const me = await pluginData.guild.members.fetch(pluginData.client.user!.id)!;
+    const me = pluginData.guild.me ?? (await pluginData.guild.members.fetch(pluginData.client.user!.id));
     const missingPermissions = getMissingChannelPermissions(me, args.channel as GuildChannel, requiredPermissions);
     if (missingPermissions) {
       sendErrorMessage(
