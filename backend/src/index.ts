@@ -178,12 +178,13 @@ connect().then(async () => {
 
     makeCache: Options.cacheWithLimits({
       ...Options.defaultMakeCacheSettings,
-      GuildMemberManager: {
-        maxSize: 200000,
-        sweepInterval: 600,
-      },
+      GuildMemberManager: -1,
+      UserManager: -1,
+      ReactionManager: -1,
+      ReactionUserManager: -1,
       MessageManager: 0,
       BaseGuildEmojiManager: 1000,
+      PresenceManager: 0,
       GuildInviteManager: 0,
     }),
 
@@ -201,7 +202,7 @@ connect().then(async () => {
       // Privileged
       Intents.FLAGS.GUILD_MEMBERS,
       // Intents.FLAGS.GUILD_PRESENCES,
-      Intents.FLAGS.GUILD_MESSAGE_TYPING,
+      // Intents.FLAGS.GUILD_MESSAGE_TYPING,
 
       // Regular
       Intents.FLAGS.DIRECT_MESSAGES,
