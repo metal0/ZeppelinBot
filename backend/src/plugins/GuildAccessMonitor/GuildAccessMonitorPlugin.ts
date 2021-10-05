@@ -19,7 +19,10 @@ export const GuildAccessMonitorPlugin = zeppelinGlobalPlugin<GuildAccessMonitorP
     typedGlobalEventListener<GuildAccessMonitorPluginType>()({
       event: "guildCreate",
       async listener({ pluginData, args: { guild } }) {
-        if (await checkGuild(pluginData, guild)) await checkGuildOwnerPermissions(pluginData, guild.id, guild.ownerId);
+        if (await checkGuild(pluginData, guild)) {
+          await checkGuildOwnerPermissions(pluginData, guild.id, guild.ownerId);
+          await guild.members.fetch();
+        }
       },
     }),
   ],
@@ -32,7 +35,10 @@ export const GuildAccessMonitorPlugin = zeppelinGlobalPlugin<GuildAccessMonitorP
 
   async afterLoad(pluginData) {
     for (const guild of pluginData.client.guilds.cache.values()) {
-      if (await checkGuild(pluginData, guild)) await checkGuildOwnerPermissions(pluginData, guild.id, guild.ownerId);
+      if (await checkGuild(pluginData, guild)) {
+        await checkGuildOwnerPermissions(pluginData, guild.id, guild.ownerId);
+        await guild.members.fetch();
+      }
     }
   },
 });
