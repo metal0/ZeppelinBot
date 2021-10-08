@@ -132,7 +132,7 @@ export async function getLogMessage<TLogType extends keyof ILogTypeData>(
   if (typeof formatted === "string") {
     formatted = formatted.trim();
     if (timestamp) {
-      formatted = `\${timestamp}\ ${formatted}`;
+      formatted = `\[${timestamp}]\ ${formatted}`;
     }
   } else if (formatted != null) {
     formatted = validateAndParseMessageContent(formatted);
