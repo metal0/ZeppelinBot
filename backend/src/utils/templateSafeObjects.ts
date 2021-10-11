@@ -202,6 +202,10 @@ export class TemplateSafeCase extends TemplateSafeValueContainer {
   }
 }
 
+export class RankedCounterValue extends CounterValue {
+  rank?: number;
+}
+
 export class TemplateSafeCounterValue extends TemplateSafeValueContainer {
   id: number;
   counter_id: string;
@@ -458,13 +462,14 @@ export function caseToTemplateSafeCase(theCase: Case): TemplateSafeCase {
   });
 }
 
-export function counterValueToTemplateSafeCounterValue(theCounterValue: CounterValue): TemplateSafeCounterValue {
+export function counterValueToTemplateSafeCounterValue(theCounterValue: RankedCounterValue): TemplateSafeCounterValue {
   return new TemplateSafeCounterValue({
     id: theCounterValue.id,
     counter_id: theCounterValue.counter_id,
     channel_id: theCounterValue.channel_id,
     user_id: theCounterValue.user_id,
     value: theCounterValue.value,
+    rank: theCounterValue.rank,
   });
 }
 
