@@ -509,17 +509,11 @@ export class GuildCounters extends BaseGuildRepository {
       .getMany();
   }
 
-  async getCounterRank(
-    counterId: number,
-    rankedField: string,
-    outputRankField: string,
-    limit?: number,
-    userId?: string,
-  ) {
+  async getCounterRank(counterId: number, rankedField: string, limit?: number, userId?: string) {
     const queryString = `WITH t AS (
       SELECT 
         *,
-        DENSE_RANK() OVER (ORDER BY ${sql_escape_string(rankedField)} DESC) ${sql_escape_string(outputRankField)}
+        DENSE_RANK() OVER (ORDER BY ${sql_escape_string(rankedField)} DESC) rank
       FROM counter_values
       WHERE counter_id=${counterId}
     )

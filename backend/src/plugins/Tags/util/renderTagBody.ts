@@ -54,12 +54,12 @@ export async function renderTagBody(
       const cData = await countersPlugin.getCounterValue(counter, channelId, userId);
       return cData?.toString() ?? "";
     },
-    async get_all_counter_values(counter, field?, output?, limit?, userId?) {
+    async get_all_counter_values(counter, field?, limit?, userId?) {
       if (!countersPlugin || !countersPlugin.counterExists(counter)) return "";
 
       const cData = (
         field
-          ? await countersPlugin.getRankedCounterValues(counter, field, output, limit, userId)
+          ? await countersPlugin.getRankedCounterValues(counter, field, limit, userId)
           : await countersPlugin.getAllCounterValues(counter)
       )?.map((cd) => counterValueToTemplateSafeCounterValue(cd));
 
