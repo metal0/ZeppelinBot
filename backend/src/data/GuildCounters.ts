@@ -516,15 +516,16 @@ export class GuildCounters extends BaseGuildRepository {
     limit?: number,
     userId?: string,
   ) {
-    return this.counterValues.query(`WITH t AS (
-        SELECT 
-          *,
-          DENSE_RANK() OVER (ORDER BY ${sql_escape_string(rankedField)} DESC) ${sql_escape_string(outputRankField)}
-        FROM counter_values
-        WHERE counter_id=${counterId}
-      )
-      SELECT * FROM t${userId ? ` WHERE user_id="${sql_escape_string(userId)}"` : ""}
-      ${limit && limit > 0 ? ` LIMIT ${limit}` : ""};`);
+    const queryString = `WITH t AS (
+      SELECT 
+        *,
+        DENSE_RANK() OVER (ORDER BY ${sql_escape_string(rankedField)} DESC) ${sql_escape_string(outputRankField)}
+      FROM counter_values
+      WHERE counter_id=${counterId}
+    )
+    SELECT * FROM t${userId && userId.length > 10 ? ` WHERE user_id="${sql_escape_string(userId)}"` : ""}
+    ${limit && limit > 0 ? ` LIMIT ${limit}` : ""};`;
+    return this.counterValues.query(queryString);
   }
 
   async resetAllCounterValues(counterId: number): Promise<void> {
