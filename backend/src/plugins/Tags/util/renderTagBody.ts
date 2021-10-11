@@ -55,15 +55,14 @@ export async function renderTagBody(
       return cData?.toString() ?? "";
     },
     async get_all_counter_values(counter, field?, output?, limit?, userId?) {
-      if (!countersPlugin) return "";
+      if (!countersPlugin || !countersPlugin.counterExists(counter)) return "";
 
-      const cData =
-        /*field && output
+      const cData = (
+        field
           ? await countersPlugin.getRankedCounterValues(counter, field, output, limit, userId)
           : await countersPlugin.getAllCounterValues(counter)
-      )?.map((cd) => counterValueToTemplateSafeCounterValue(cd));*/
+      )?.map((cd) => counterValueToTemplateSafeCounterValue(cd));
 
-        (await countersPlugin.getAllCounterValues(counter))?.map((cd) => counterValueToTemplateSafeCounterValue(cd));
       if (Array.isArray(cData) && cData.length === 1 && limit === 1) return cData[0];
       return cData ?? [];
     },
