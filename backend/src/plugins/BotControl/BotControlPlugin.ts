@@ -23,6 +23,7 @@ import { AddServerFromInviteCmd } from "./commands/AddServerFromInviteCmd";
 import { ChannelToServerCmd } from "./commands/ChannelToServerCmd";
 import { RestPerformanceCmd } from "./commands/RestPerformanceCmd";
 import { RateLimitPerformanceCmd } from "./commands/RateLimitPerformanceCmd";
+import { ToggleBlockDetectionCmd } from "./commands/ToggleBlockDetectionCmd";
 
 const defaultOptions = {
   config: {
@@ -65,6 +66,7 @@ export const BotControlPlugin = zeppelinGlobalPlugin<BotControlPluginType>()({
     RateLimitPerformanceCmd,
     AddServerFromInviteCmd,
     ChannelToServerCmd,
+    ToggleBlockDetectionCmd,
   ],
 
   async afterLoad(pluginData) {

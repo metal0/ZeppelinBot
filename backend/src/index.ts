@@ -29,6 +29,7 @@ import { runUpcomingScheduledPostsLoop } from "./data/loops/upcomingScheduledPos
 import { runExpiringTempbansLoop } from "./data/loops/expiringTempbansLoop";
 import { runExpiringVCAlertsLoop } from "./data/loops/expiringVCAlertsLoop";
 import { runExpiredArchiveDeletionLoop } from "./data/loops/expiredArchiveDeletionLoop";
+import { runSavedMessageCleanupLoop } from "./data/loops/savedMessageCleanupLoop";
 
 if (!process.env.KEY) {
   // tslint:disable-next-line:no-console
@@ -183,7 +184,6 @@ connect().then(async () => {
       ReactionManager: {},
       ReactionUserManager: {},
       MessageManager: 0,
-      BaseGuildEmojiManager: 1000,
       PresenceManager: 0,
       GuildInviteManager: 0,
     }),
@@ -352,6 +352,8 @@ connect().then(async () => {
     runExpiringVCAlertsLoop();
     await sleep(10 * SECONDS);
     runExpiredArchiveDeletionLoop();
+    await sleep(10 * SECONDS);
+    runSavedMessageCleanupLoop();
   });
 
   bot.initialize();
