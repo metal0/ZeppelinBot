@@ -2,6 +2,10 @@ import { GuildPluginData } from "knub";
 import { CounterValue } from "../../../data/entities/CounterValue";
 import { CountersPluginType } from "../types";
 
+export interface RankedCounterValues extends CounterValue {
+  rank?: number;
+}
+
 export async function getCounterValue(
   pluginData: GuildPluginData<CountersPluginType>,
   counterName: string,
@@ -43,5 +47,31 @@ export async function getAllCounterValues(
 
   const vl = await pluginData.state.counters.getAllValues(counterId);
 
+  return vl;
+}
+
+export async function getRankedCounterValues(
+  pluginData: GuildPluginData<CountersPluginType>,
+  counterName: string,
+  rankedField: string,
+  outputRankField: string,
+  limit?: number,
+  userId?: string,
+): Promise<RankedCounterValues[] | undefined> {
+  const config = pluginData.config.get();
+  const counter = config.counters[counterName];
+  if (!counter) {
+    throw new Error(`Unknown counter: ${counterName}`);
+  }
+
+  const counterId = pluginData.state.counterIds[counterName];
+
+  let vl = await pluginData.state.counters.getCounterRank(counterId, rankedField, outputRankField, limit, userId);
+  if (Array.isArray(vl)) {
+    vl = vl.map((v) => {
+      v.rank &= parseInt(v.rank, 10);
+      return v;
+    });
+  }
   return vl;
 }
