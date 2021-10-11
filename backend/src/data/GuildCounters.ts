@@ -525,6 +525,7 @@ export class GuildCounters extends BaseGuildRepository {
     )
     SELECT * FROM t${userId && userId.length > 10 ? ` WHERE user_id="${sql_escape_string(userId)}"` : ""}
     ${limit && limit > 0 ? ` LIMIT ${limit}` : ""};`;
+    console.log("queryString, ", queryString);
     return this.counterValues.query(queryString);
   }
 
