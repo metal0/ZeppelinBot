@@ -24,6 +24,7 @@ import {
 } from "../data/entities/SavedMessage";
 import { Case } from "../data/entities/Case";
 import { CounterValue } from "../data/entities/CounterValue";
+import { number } from "io-ts";
 
 type InputProps<T> = Omit<
   {
@@ -207,6 +208,7 @@ export class TemplateSafeCounterValue extends TemplateSafeValueContainer {
   user_id: string;
   channel_id: string;
   value: number;
+  rank?: number;
 
   constructor(data: InputProps<TemplateSafeCounterValue>) {
     super(data);
