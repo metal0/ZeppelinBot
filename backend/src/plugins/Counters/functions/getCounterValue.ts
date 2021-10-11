@@ -54,7 +54,6 @@ export async function getRankedCounterValues(
   pluginData: GuildPluginData<CountersPluginType>,
   counterName: string,
   rankedField: string,
-  outputRankField: string,
   limit?: number,
   userId?: string,
 ): Promise<RankedCounterValues[] | undefined> {
@@ -66,7 +65,7 @@ export async function getRankedCounterValues(
 
   const counterId = pluginData.state.counterIds[counterName];
 
-  let vl = await pluginData.state.counters.getCounterRank(counterId, rankedField, outputRankField, limit, userId);
+  let vl = await pluginData.state.counters.getCounterRank(counterId, rankedField, limit, userId);
   if (Array.isArray(vl)) {
     vl = vl.map((v) => {
       v.rank &= parseInt(v.rank, 10);
