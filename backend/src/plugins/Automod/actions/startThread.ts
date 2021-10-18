@@ -1,10 +1,11 @@
 import { GuildFeature, ThreadAutoArchiveDuration } from "discord-api-types";
 import { TextChannel } from "discord.js";
 import * as t from "io-ts";
-import { renderTemplate, TemplateSafeValueContainer } from "src/templateFormatter";
-import { convertDelayStringToMS, tDelayString, tNullable } from "src/utils";
-import { savedMessageToTemplateSafeSavedMessage, userToTemplateSafeUser } from "src/utils/templateSafeObjects";
-import { noop } from "../../../utils";
+import { noop } from "knub/dist/utils";
+import { renderTemplate, TemplateSafeValueContainer } from "../../../templateFormatter";
+import { ChannelTypeStrings } from "../../../types";
+import { convertDelayStringToMS, MINUTES, tDelayString, tNullable } from "../../../utils";
+import { savedMessageToTemplateSafeSavedMessage, userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
 import { automodAction } from "../helpers";
 
 export const StartThreadAction = automodAction({
@@ -28,23 +29,19 @@ export const StartThreadAction = automodAction({
       if (channel?.type !== "GUILD_TEXT" || !channel.isText()) return false; // for some reason the typing here for channel.type defaults to ThreadChannelTypes (?)
       // check against max threads per channel
       if (actionConfig.limit_per_channel && actionConfig.limit_per_channel > 0) {
-        const threadCount = [
-          ...channel.threads.cache
-            .filter(
-              (tr) =>
-                tr.ownerId === pluginData.client.application!.id &&
-                !tr.deleted &&
-                !tr.archived &&
-                tr.parentId === channel.id,
-            )
-            .keys(),
-        ].length; // very short line, yes yes
+        const threadCount = channel.threads.cache.filter(
+          (tr) =>
+            tr.ownerId === pluginData.client.user!.id && !tr.deleted && !tr.archived && tr.parentId === channel.id,
+        ).size;
         if (threadCount >= actionConfig.limit_per_channel) return false;
       }
-      return channel.messages.cache.has(c.message.id);
+      return true;
     });
 
-    const guild = await pluginData.guild;
+    const guild = pluginData.guild;
+    const archiveSet = actionConfig.auto_archive
+      ? Math.ceil(Math.max(convertDelayStringToMS(actionConfig.auto_archive) ?? 0, 0) / MINUTES)
+      : ThreadAutoArchiveDuration.OneDay;
     let autoArchive: ThreadAutoArchiveDuration;
     if (actionConfig.auto_archive === 1440) {
       autoArchive = ThreadAutoArchiveDuration.OneDay;
