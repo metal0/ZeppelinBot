@@ -14,7 +14,7 @@ export function checkAndUpdateCooldown(
       return true;
     }
 
-    const cooldownTime = convertDelayStringToMS(rule.cooldown, "s");
+    const cooldownTime = convertDelayStringToMS(rule.cooldown!, "s");
     if (cooldownTime) {
       pluginData.state.cooldownManager.setCooldown(cooldownKey, cooldownTime);
     }
