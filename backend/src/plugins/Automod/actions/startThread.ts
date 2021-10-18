@@ -105,6 +105,9 @@ export const StartThreadAction = automodAction({
       ) {
         opts.invitable = actionConfig.invitable;
       }
+      if (Object.keys(opts).length > 0) {
+        await thread.edit(opts).catch(noop);
+      }
     }
   },
 });
