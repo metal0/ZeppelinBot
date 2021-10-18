@@ -88,6 +88,11 @@ export const TagsPlugin = zeppelinGuildPlugin<TagsPluginType>()({
     TagCreateCmd,
   ],
 
+  // prettier-ignore
+  events: [
+    onMessageDelete,
+  ],
+
   public: {
     renderTagBody: mapToPublicFn(renderTagBody),
     findTagByName: mapToPublicFn(findTagByName),
@@ -131,9 +136,6 @@ export const TagsPlugin = zeppelinGuildPlugin<TagsPluginType>()({
 
     state.onMessageCreateFn = (msg) => onMessageCreate(pluginData, msg);
     state.savedMessages.events.on("create", state.onMessageCreateFn);
-
-    state.onMessageDeleteFn = (msg) => onMessageDelete(pluginData, msg);
-    state.savedMessages.events.on("delete", state.onMessageDeleteFn);
 
     const timeAndDate = pluginData.getPlugin(TimeAndDatePlugin);
 
@@ -278,6 +280,5 @@ export const TagsPlugin = zeppelinGuildPlugin<TagsPluginType>()({
 
   beforeUnload(pluginData) {
     pluginData.state.savedMessages.events.off("create", pluginData.state.onMessageCreateFn);
-    pluginData.state.savedMessages.events.off("delete", pluginData.state.onMessageDeleteFn);
   },
 });

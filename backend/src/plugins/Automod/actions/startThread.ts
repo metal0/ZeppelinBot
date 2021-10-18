@@ -11,7 +11,7 @@ import { automodAction } from "../helpers";
 export const StartThreadAction = automodAction({
   configType: t.type({
     name: tNullable(t.string),
-    auto_archive: tNullable(t.number),
+    auto_archive: tDelayString,
     private: tNullable(t.boolean),
     slowmode: tNullable(tDelayString),
     limit_per_channel: tNullable(t.number),
@@ -43,11 +43,17 @@ export const StartThreadAction = automodAction({
       ? Math.ceil(Math.max(convertDelayStringToMS(actionConfig.auto_archive) ?? 0, 0) / MINUTES)
       : ThreadAutoArchiveDuration.OneDay;
     let autoArchive: ThreadAutoArchiveDuration;
-    if (actionConfig.auto_archive === 1440) {
+    if (archiveSet === ThreadAutoArchiveDuration.OneDay) {
       autoArchive = ThreadAutoArchiveDuration.OneDay;
-    } else if (actionConfig.auto_archive === 4320 && guild.features.includes(GuildFeature.ThreeDayThreadArchive)) {
+    } else if (
+      archiveSet === ThreadAutoArchiveDuration.ThreeDays &&
+      guild.features.includes(GuildFeature.ThreeDayThreadArchive)
+    ) {
       autoArchive = ThreadAutoArchiveDuration.ThreeDays;
-    } else if (actionConfig.auto_archive === 10080 && guild.features.includes(GuildFeature.SevenDayThreadArchive)) {
+    } else if (
+      archiveSet === ThreadAutoArchiveDuration.OneWeek &&
+      guild.features.includes(GuildFeature.SevenDayThreadArchive)
+    ) {
       autoArchive = ThreadAutoArchiveDuration.OneWeek;
     } else {
       autoArchive = ThreadAutoArchiveDuration.OneHour;
