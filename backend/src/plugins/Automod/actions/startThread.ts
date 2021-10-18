@@ -1,5 +1,5 @@
 import { GuildFeature, ThreadAutoArchiveDuration } from "discord-api-types";
-import { TextChannel } from "discord.js";
+import { TextChannel, ThreadEditData } from "discord.js";
 import * as t from "io-ts";
 import { noop } from "knub/dist/utils";
 import { renderTemplate, TemplateSafeValueContainer } from "../../../templateFormatter";
@@ -14,6 +14,8 @@ export const StartThreadAction = automodAction({
     auto_archive: tNullable(tDelayString),
     private: tNullable(t.boolean),
     slowmode: tNullable(tDelayString),
+    lock: tNullable(t.boolean),
+    invitable: tNullable(t.boolean),
     limit_per_channel: tNullable(t.number),
   }),
 
@@ -26,7 +28,7 @@ export const StartThreadAction = automodAction({
     const threads = contexts.filter((c) => {
       if (!c.message || !c.user) return false;
       const channel = pluginData.guild.channels.cache.get(c.message.channel_id);
-      if (channel?.type !== "GUILD_TEXT" || !channel.isText()) return false; // for some reason the typing here for channel.type defaults to ThreadChannelTypes (?)
+      if (channel?.type !== ChannelTypeStrings.TEXT || !channel.isText()) return false; // for some reason the typing here for channel.type defaults to ThreadChannelTypes (?)
       // check against max threads per channel
       if (actionConfig.limit_per_channel && actionConfig.limit_per_channel > 0) {
         const threadCount = channel.threads.cache.filter(
@@ -76,17 +78,32 @@ export const StartThreadAction = automodAction({
           autoArchiveDuration: autoArchive,
           type:
             actionConfig.private && guild.features.includes(GuildFeature.PrivateThreads)
-              ? "GUILD_PRIVATE_THREAD"
-              : "GUILD_PUBLIC_THREAD",
+              ? ChannelTypeStrings.PRIVATE_THREAD
+              : ChannelTypeStrings.PUBLIC_THREAD,
           startMessage:
             !actionConfig.private && guild.features.includes(GuildFeature.PrivateThreads) ? c.message!.id : undefined,
         })
         .catch(noop);
-      if (actionConfig.slowmode && thread) {
+      if (!thread) {
+        return;
+      }
+      // post-actions
+      const opts: ThreadEditData = {};
+      if (actionConfig.slowmode) {
         const dur = Math.ceil(Math.max(convertDelayStringToMS(actionConfig.slowmode) ?? 0, 0) / 1000);
         if (dur > 0) {
-          await thread.setRateLimitPerUser(dur).catch(noop);
+          opts.rateLimitPerUser = dur;
         }
+      }
+      if (actionConfig.lock) {
+        opts.locked = true;
+      }
+      if (
+        actionConfig.private &&
+        typeof actionConfig.invitable === "boolean" &&
+        thread.type === ChannelTypeStrings.PRIVATE_THREAD
+      ) {
+        opts.invitable = actionConfig.invitable;
       }
     }
   },
