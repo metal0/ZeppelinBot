@@ -11,7 +11,7 @@ import { automodAction } from "../helpers";
 export const StartThreadAction = automodAction({
   configType: t.type({
     name: tNullable(t.string),
-    auto_archive: tDelayString,
+    auto_archive: tNullable(tDelayString),
     private: tNullable(t.boolean),
     slowmode: tNullable(tDelayString),
     limit_per_channel: tNullable(t.number),
