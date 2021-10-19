@@ -17,7 +17,7 @@ export async function postToCaseLogChannel(
   if (!caseLogChannelId) return null;
 
   const caseLogChannel = pluginData.guild.channels.cache.get(caseLogChannelId as Snowflake);
-  if (!caseLogChannel || !(caseLogChannel instanceof TextChannel)) return null;
+  if (!caseLogChannel || (!caseLogChannel.isText() && !caseLogChannel.isThread())) return null;
 
   let result;
   try {
