@@ -35,7 +35,7 @@ export async function addMemberPendingRoleChange(
               {
                 roles: Array.from(newRoleIds.values()),
               },
-              "Reaction roles",
+              "Select menu roles",
             );
           } catch (e) {
             logger.warn(`Failed to apply role changes to ${member.user.tag} (${member.id}): ${e.message}`);

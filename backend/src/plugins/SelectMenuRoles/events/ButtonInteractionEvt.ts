@@ -33,7 +33,7 @@ export const InteractionEvt = interactionEvt({
       if (timeSinceCreation >= INVALIDATION_TIME) {
         sendEphemeralReply(
           int,
-          `Sorry, but these buttons are invalid because they are older than ${humanizeDuration(
+          `Sorry, but these select menus are invalid because they are older than ${humanizeDuration(
             INVALIDATION_TIME,
           )}.\nIf the menu is still available, open it again to assign yourself roles!`,
         );
