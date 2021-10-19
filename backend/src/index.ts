@@ -183,7 +183,13 @@ connect().then(async () => {
       UserManager: {},
       ReactionManager: {},
       ReactionUserManager: {},
-      MessageManager: 0,
+      MessageManager: {
+        sweepInterval: 600,
+        sweepFilter: LimitedCollection.filterByLifetime({
+          lifetime: 60 * 60 * 24 * 7,
+          getComparisonTimestamp: (e) => e.editedTimestamp ?? e.createdTimestamp,
+        }),
+      },
       PresenceManager: 0,
       GuildInviteManager: 0,
     }),
