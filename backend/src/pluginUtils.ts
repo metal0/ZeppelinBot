@@ -50,6 +50,8 @@ const PluginOverrideCriteriaType: t.Type<PluginOverrideCriteria<unknown>> = t.re
       level: tNullable(t.union([t.string, t.array(t.string)])),
       user: tNullable(t.union([t.string, t.array(t.string)])),
       role: tNullable(t.union([t.string, t.array(t.string)])),
+      is_thread: tNullable(t.boolean),
+      thread: tNullable(t.union([t.string, t.array(t.string)])),
 
       all: tNullable(t.array(PluginOverrideCriteriaType)),
       any: tNullable(t.array(PluginOverrideCriteriaType)),

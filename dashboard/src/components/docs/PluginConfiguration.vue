@@ -59,7 +59,7 @@
                   config:
                     can_kick: false
                 # Don't allow kicking on a specific thread
-                - thread_id: "109672661671505920"
+                - thread: "109672661671505920"
                   config:
                     can_kick: false
                 # Same as above, but for a full category
