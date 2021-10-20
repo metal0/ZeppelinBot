@@ -419,15 +419,16 @@ const baseValues = {
   },
   round(arg, decimals = 0) {
     if (isNaN(arg)) return 0;
+    if (typeof arg !== "number") arg = parseFloat(arg);
     return decimals === 0 ? Math.round(arg) : arg.toFixed(decimals);
   },
   floor(arg) {
     if (isNaN(arg)) return 0;
-    return Math.floor(arg);
+    return Math.floor(parseFloat(arg));
   },
   ceil(arg) {
     if (isNaN(arg)) return 0;
-    return Math.ceil(arg);
+    return Math.ceil(parseFloat(arg));
   },
   add(...args) {
     return args.reduce((result, arg) => {
