@@ -16,7 +16,7 @@ import { ArgsFromSignatureOrArray } from "knub/dist/commands/commandUtils";
 import moment from "moment-timezone";
 import { getBaseUrl, sendErrorMessage } from "../../pluginUtils";
 import { allowTimeout, RegExpRunner } from "../../RegExpRunner";
-import { MINUTES, multiSorter, sorter, trimLines } from "../../utils";
+import { MINUTES, multiSorter, noop, sorter, trimLines } from "../../utils";
 import { asyncFilter } from "../../utils/async";
 import { hasDiscordPermissions } from "../../utils/hasDiscordPermissions";
 import { inputPatternToRegExp, InvalidRegexError } from "../../validatorUtils";
@@ -200,22 +200,22 @@ export async function displaySearch(
 
       collector.on("collect", async (interaction: MessageComponentInteraction) => {
         if (msg.author.id !== interaction.user.id) {
-          interaction.reply({ content: `You are not permitted to use these buttons.`, ephemeral: true });
+          interaction.reply({ content: `You are not permitted to use these buttons.`, ephemeral: true }).catch(noop);
         } else {
           if (interaction.customId === `previousButton:${idMod}` && currentPage > 1) {
             collector.stop();
-            await interaction.deferUpdate();
+            await interaction.deferUpdate().catch(noop);
             await loadSearchPage(currentPage - 1);
           } else if (interaction.customId === `nextButton:${idMod}` && currentPage < searchResult.lastPage) {
             collector.stop();
-            await interaction.deferUpdate();
+            await interaction.deferUpdate().catch(noop);
             await loadSearchPage(currentPage + 1);
           } else if (interaction.customId === `reloadButton:${idMod}`) {
             collector.stop();
-            await interaction.deferUpdate();
+            await interaction.deferUpdate().catch(noop);
             await loadSearchPage(currentPage);
           } else {
-            await interaction.deferUpdate();
+            await interaction.deferUpdate().catch(noop);
           }
         }
       });

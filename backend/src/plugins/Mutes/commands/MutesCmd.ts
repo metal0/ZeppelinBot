@@ -3,7 +3,7 @@ import moment from "moment-timezone";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { humanizeDurationShort } from "../../../humanizeDurationShort";
 import { getBaseUrl } from "../../../pluginUtils";
-import { DBDateFormat, MINUTES, resolveMember } from "../../../utils";
+import { DBDateFormat, MINUTES, resolveMember, noop } from "../../../utils";
 import { IMuteWithDetails, mutesCmd } from "../types";
 
 export const MutesCmd = mutesCmd({
@@ -205,10 +205,10 @@ export const MutesCmd = mutesCmd({
 
         collector.on("collect", async (interaction: MessageComponentInteraction) => {
           if (msg.author.id !== interaction.user.id) {
-            interaction.reply({ content: `You are not permitted to use these buttons.`, ephemeral: true });
+            interaction.reply({ content: `You are not permitted to use these buttons.`, ephemeral: true }).catch(noop);
           } else {
             collector.resetTimer();
-            await interaction.deferUpdate();
+            await interaction.deferUpdate().catch(noop);
             if (interaction.customId === `previousButton:${idMod}` && currentPage > 1) {
               await drawListPage(currentPage - 1);
             } else if (interaction.customId === `nextButton:${idMod}` && currentPage < totalPages) {

@@ -1,5 +1,6 @@
 import { SelectMenuInteraction } from "discord.js";
 import { GuildPluginData } from "knub";
+import { noop } from "../../../utils";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
 import { SelectMenuRolesPluginType, TSelectMenuPairOpts } from "../types";
 import { addMemberPendingRoleChange } from "./addMemberPendingRoleChange";
@@ -16,10 +17,12 @@ export async function handleModifyRole(
   const guildRoles = await pluginData.guild.roles.fetch();
   for (const i in values) {
     if (!guildRoles.find((rl) => rl.id === values[i])) {
-      await int.reply({
-        content: `A configuration error was encountered, please contact the Administrators!`,
-        ephemeral: true,
-      });
+      await int
+        .reply({
+          content: `A configuration error was encountered, please contact the Administrators!`,
+          ephemeral: true,
+        })
+        .catch(noop);
       pluginData.getPlugin(LogsPlugin).logBotAlert({
         body: `**A configuration error occurred** on select menus for message ${int.message.id}, role **${values[i]}** not found on server`,
       });
@@ -41,12 +44,14 @@ export async function handleModifyRole(
     );
     toAdd.forEach((r) => addMemberPendingRoleChange(pluginData, member.id, "+", r));
     toRemove.forEach((r) => addMemberPendingRoleChange(pluginData, member.id, "-", r));
-    await int.deferUpdate();
+    await int.deferUpdate().catch(noop);
   } catch (e) {
-    await int.reply({
-      content: "A configuration error was encountered, please contact the Administrators!",
-      ephemeral: true,
-    });
+    await int
+      .reply({
+        content: "A configuration error was encountered, please contact the Administrators!",
+        ephemeral: true,
+      })
+      .catch(noop);
     pluginData.getPlugin(LogsPlugin).logBotAlert({
       body: `**A configuration error occurred** on select menus for message ${int.message.id}, error: ${e}. We might be missing permissions!`,
     });

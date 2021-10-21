@@ -4,7 +4,7 @@ import moment from "moment";
 import { LogType } from "src/data/LogType";
 import { logger } from "src/logger";
 import { LogsPlugin } from "src/plugins/Logs/LogsPlugin";
-import { MINUTES } from "src/utils";
+import { MINUTES, noop } from "src/utils";
 import { idToTimestamp } from "src/utils/idToTimestamp";
 import { reactionRolesEvt } from "../types";
 import { handleModifyRole, handleOpenMenu } from "../util/buttonActionHandlers";
@@ -82,5 +82,5 @@ export const ButtonInteractionEvt = reactionRolesEvt({
 });
 
 async function sendEphemeralReply(interaction: MessageComponentInteraction, message: string) {
-  await interaction.reply({ content: message, ephemeral: true });
+  await interaction.reply({ content: message, ephemeral: true }).catch(noop);
 }

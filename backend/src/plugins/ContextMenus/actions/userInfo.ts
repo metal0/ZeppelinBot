@@ -1,13 +1,14 @@
 import { ContextMenuInteraction } from "discord.js";
 import { GuildPluginData } from "knub";
 import { UtilityPlugin } from "../../../plugins/Utility/UtilityPlugin";
+import { noop } from "../../../utils";
 import { ContextMenuPluginType } from "../types";
 
 export async function userInfoAction(
   pluginData: GuildPluginData<ContextMenuPluginType>,
   interaction: ContextMenuInteraction,
 ) {
-  interaction.deferReply({ ephemeral: true });
+  interaction.deferReply({ ephemeral: true }).catch(noop);
   const executingMember = await pluginData.guild.members.fetch(interaction.user.id);
   const userCfg = await pluginData.config.getMatchingConfig({
     channelId: interaction.channelId,

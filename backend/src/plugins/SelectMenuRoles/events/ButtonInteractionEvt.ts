@@ -3,7 +3,7 @@ import humanizeDuration from "humanize-duration";
 import moment from "moment";
 import { logger } from "src/logger";
 import { LogsPlugin } from "src/plugins/Logs/LogsPlugin";
-import { MINUTES } from "src/utils";
+import { MINUTES, noop } from "src/utils";
 import { idToTimestamp } from "src/utils/idToTimestamp";
 import { interactionEvt } from "../types";
 import { handleModifyRole } from "../util/buttonActionHandlers";
@@ -72,5 +72,5 @@ export const InteractionEvt = interactionEvt({
 });
 
 async function sendEphemeralReply(interaction: MessageComponentInteraction, message: string) {
-  await interaction.reply({ content: message, ephemeral: true });
+  await interaction.reply({ content: message, ephemeral: true }).catch(noop);
 }

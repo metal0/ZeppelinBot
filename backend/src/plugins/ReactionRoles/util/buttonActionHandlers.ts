@@ -2,7 +2,7 @@ import { MessageButton, MessageComponentInteraction, Snowflake } from "discord.j
 import { GuildPluginData } from "knub";
 import diff from "lodash.difference";
 import { intersection } from "lodash";
-import { isValidSnowflake } from "src/utils";
+import { isValidSnowflake, noop } from "src/utils";
 import { LogsPlugin } from "../../../plugins/Logs/LogsPlugin";
 import { ReactionRolesPluginType, RoleManageTypes, TButtonOpts, TButtonPairOpts } from "../types";
 import { generateStatelessCustomId } from "./buttonCustomIdFunctions";
@@ -16,10 +16,12 @@ export async function handleOpenMenu(
 ) {
   const menuButtons: MessageButton[] = [];
   if (group.button_menus == null) {
-    await int.reply({
-      content: `A configuration error was encountered, please contact the Administrators!`,
-      ephemeral: true,
-    });
+    await int
+      .reply({
+        content: `A configuration error was encountered, please contact the Administrators!`,
+        ephemeral: true,
+      })
+      .catch(noop);
     pluginData.getPlugin(LogsPlugin).logBotAlert({
       body: `**A configuration error occurred** on buttons for message ${int.message.id}, no menus found in config`,
     });
@@ -43,10 +45,12 @@ export async function handleOpenMenu(
   }
 
   if (menuButtons.length === 0) {
-    await int.reply({
-      content: `A configuration error was encountered, please contact the Administrators!`,
-      ephemeral: true,
-    });
+    await int
+      .reply({
+        content: `A configuration error was encountered, please contact the Administrators!`,
+        ephemeral: true,
+      })
+      .catch(noop);
     pluginData.getPlugin(LogsPlugin).logBotAlert({
       body: `**A configuration error occurred** on buttons for message ${int.message.id}, menu **${context.roleOrMenu}** not found in config`,
     });
@@ -54,7 +58,7 @@ export async function handleOpenMenu(
   }
   const rows = splitButtonsIntoRows(menuButtons, Object.values(group.button_menus[context.roleOrMenu])); // new MessageActionRow().addComponents(menuButtons);
 
-  int.reply({ content: `Click to add/remove a role`, components: rows, ephemeral: true });
+  int.reply({ content: `Click to add/remove a role`, components: rows, ephemeral: true }).catch(noop);
 }
 
 export async function handleModifyRole(
@@ -65,10 +69,12 @@ export async function handleModifyRole(
 ) {
   const role = await pluginData.guild.roles.fetch(context.roleOrMenu);
   if (!role) {
-    await int.reply({
-      content: `A configuration error was encountered, please contact the Administrators!`,
-      ephemeral: true,
-    });
+    await int
+      .reply({
+        content: `A configuration error was encountered, please contact the Administrators!`,
+        ephemeral: true,
+      })
+      .catch(noop);
     pluginData.getPlugin(LogsPlugin).logBotAlert({
       body: `**A configuration error occurred** on buttons for message ${int.message.id}, role **${context.roleOrMenu}** not found on server`,
     });
@@ -101,12 +107,12 @@ export async function handleModifyRole(
     const newRoles = oldMemberRoles.filter((r) => !matchedRoles.includes(r) || r === pluginData.guild.id); // lol
     if (member.roles.cache.has(role.id)) {
       if (roleGroup?.role_type === RoleManageTypes.add) {
-        await int.reply({ content: `You cannot remove the <@&${role.id}> role`, ephemeral: true });
+        await int.reply({ content: `You cannot remove the <@&${role.id}> role`, ephemeral: true }).catch(noop);
         return;
       }
     } else {
       if (roleGroup?.role_type === RoleManageTypes.remove) {
-        await int.reply({ content: `You cannot add the <@&${role.id}> role`, ephemeral: true });
+        await int.reply({ content: `You cannot add the <@&${role.id}> role`, ephemeral: true }).catch(noop);
         return;
       }
     }
@@ -130,20 +136,24 @@ export async function handleModifyRole(
     const added = diff(newRoles, oldMemberRoles).map((g) => `<@&${g}>`);
     const removed = diff(oldMemberRoles, newRoles).map((g) => `<@&${g}>`);
     if (added.length > 0 || removed.length > 0) {
-      await int.reply({
-        content: `${added.length > 0 ? `Role(s) added: ${added.join(" ")}\n` : ""}${
-          removed.length > 0 ? `Role(s) removed: ${removed.join(" ")}` : ""
-        }`,
-        ephemeral: true,
-      });
+      await int
+        .reply({
+          content: `${added.length > 0 ? `Role(s) added: ${added.join(" ")}\n` : ""}${
+            removed.length > 0 ? `Role(s) removed: ${removed.join(" ")}` : ""
+          }`,
+          ephemeral: true,
+        })
+        .catch(noop);
     } else {
-      await int.deferUpdate();
+      await int.deferUpdate().catch(noop);
     }
   } catch (e) {
-    await int.reply({
-      content: "A configuration error was encountered, please contact the Administrators!",
-      ephemeral: true,
-    });
+    await int
+      .reply({
+        content: "A configuration error was encountered, please contact the Administrators!",
+        ephemeral: true,
+      })
+      .catch(noop);
     pluginData.getPlugin(LogsPlugin).logBotAlert({
       body: `**A configuration error occurred** on buttons for message ${int.message.id}, error: ${e}. We might be missing permissions!`,
     });

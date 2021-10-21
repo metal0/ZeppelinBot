@@ -56,10 +56,13 @@ export async function createPaginatedMessage(
 
   collector.on("collect", async (interaction) => {
     if (fullOpts.limitToUserId && interaction.user.id !== fullOpts.limitToUserId) {
-      return interaction.reply({ content: `You are not permitted to use these buttons.`, ephemeral: true });
+      return interaction
+        .reply({ content: `You are not permitted to use these buttons.`, ephemeral: true })
+        .catch(noop)
+        .catch(noop);
     }
 
-    await interaction.deferUpdate();
+    await interaction.deferUpdate().catch(noop);
 
     let pageDelta = 0;
     if (interaction.customId === backwardId) {
