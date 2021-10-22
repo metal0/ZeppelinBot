@@ -47,7 +47,7 @@ export const MatchRegexTrigger = automodTrigger<MatchResultType>()({
     }
 
     if (context.user && context.user.id === "344911110064963586") {
-      console.log("Checking regex", context.message?.data.content);
+      console.log("Checking regex against msg:", context.message?.data.content);
     }
 
     if (!regexCache.has(trigger)) {

@@ -10,7 +10,6 @@ import { performance } from "perf_hooks";
 import { calculateBlocking } from "../../../utils/easyProfiler";
 
 export async function runAutomod(pluginData: GuildPluginData<AutomodPluginType>, context: AutomodContext) {
-  console.log("runAutomod", "context:", context);
   const userId = context.user?.id || context.member?.id || context.message?.user_id;
   const user = context.user || (userId && pluginData.client.users!.cache.get(userId as Snowflake));
   const member = context.member || (userId && pluginData.guild.members.cache.get(userId as Snowflake)) || null;
@@ -33,7 +32,13 @@ export async function runAutomod(pluginData: GuildPluginData<AutomodPluginType>,
   });
 
   for (const [ruleName, rule] of Object.entries(config.rules)) {
+    if (ruleName === "form_submissions") {
+      console.log("Checking form submissions");
+    }
     if (rule.enabled === false) continue;
+    if (ruleName === "form_submissions") {
+      console.log("enabled");
+    }
     if (
       !rule.affects_bots &&
       user &&
@@ -45,12 +50,24 @@ export async function runAutomod(pluginData: GuildPluginData<AutomodPluginType>,
       continue;
     }
 
+    if (ruleName === "form_submissions") {
+      console.log("enabled");
+    }
+
     if (!rule.affects_self && userId && userId === pluginData.client.user?.id) {
       continue;
     }
 
+    if (ruleName === "form_submissions") {
+      console.log("bots");
+    }
+
     if (rule.cooldown && checkAndUpdateCooldown(pluginData, rule, context)) {
       continue;
+    }
+
+    if (ruleName === "form_submissions") {
+      console.log("cd");
     }
 
     const ruleStartTime = performance.now();
