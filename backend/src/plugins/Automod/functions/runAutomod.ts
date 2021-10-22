@@ -10,7 +10,6 @@ import { performance } from "perf_hooks";
 import { calculateBlocking } from "../../../utils/easyProfiler";
 
 export async function runAutomod(pluginData: GuildPluginData<AutomodPluginType>, context: AutomodContext) {
-  if (context.message) console.log("executing ", context.message.data.content, " in automod");
   const userId = context.user?.id || context.member?.id || context.message?.user_id;
   const user = context.user || (userId && pluginData.client.users!.cache.get(userId as Snowflake));
   const member = context.member || (userId && pluginData.guild.members.cache.get(userId as Snowflake)) || null;
@@ -23,9 +22,7 @@ export async function runAutomod(pluginData: GuildPluginData<AutomodPluginType>,
   const threadId = channelOrThread?.isThread() ? channelOrThread.id : null;
   const channel = channelOrThread?.isThread() ? channelOrThread.parent : channelOrThread;
   const categoryId = channel?.parentId;
-  if (context.message) {
-    console.log("channelId", channelId, "categoryId", categoryId, "threadId", threadId, "userId", userId);
-  }
+
   const config = await pluginData.config.getMatchingConfig({
     channelId,
     categoryId,
@@ -33,10 +30,7 @@ export async function runAutomod(pluginData: GuildPluginData<AutomodPluginType>,
     userId,
     member,
   });
-  if (context.message) {
-    console.log("checking rules for ", context.message.data.content, " in automod: ", Object.keys(config.rules));
-    console.log("form_submissions", config.rules["form_submissions"]);
-  }
+
   for (const [ruleName, rule] of Object.entries(config.rules)) {
     if (rule.enabled === false) continue;
     if (
