@@ -10,6 +10,7 @@ import { performance } from "perf_hooks";
 import { calculateBlocking } from "../../../utils/easyProfiler";
 
 export async function runAutomod(pluginData: GuildPluginData<AutomodPluginType>, context: AutomodContext) {
+  console.log("runAutomod", "context:", context);
   const userId = context.user?.id || context.member?.id || context.message?.user_id;
   const user = context.user || (userId && pluginData.client.users!.cache.get(userId as Snowflake));
   const member = context.member || (userId && pluginData.guild.members.cache.get(userId as Snowflake)) || null;
@@ -33,6 +34,7 @@ export async function runAutomod(pluginData: GuildPluginData<AutomodPluginType>,
 
   for (const [ruleName, rule] of Object.entries(config.rules)) {
     if (rule.enabled === false) continue;
+    console.log("passed enabled check");
     if (
       !rule.affects_bots &&
       user &&
@@ -43,15 +45,19 @@ export async function runAutomod(pluginData: GuildPluginData<AutomodPluginType>,
     ) {
       continue;
     }
+    console.log("passed bot check");
 
     if (!rule.affects_self && userId && userId === pluginData.client.user?.id) {
       continue;
     }
 
+    console.log("passed affects self check");
+
     if (rule.cooldown && checkAndUpdateCooldown(pluginData, rule, context)) {
       continue;
     }
 
+    console.log("passed cd check");
     const ruleStartTime = performance.now();
 
     let matchResult: AutomodTriggerMatchResult<any> | null | undefined;

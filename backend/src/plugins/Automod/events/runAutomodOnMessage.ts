@@ -13,7 +13,6 @@ export async function runAutomodOnMessage(
   message: SavedMessage,
   isEdit: boolean,
 ) {
-  console.log("runAutomodOnMessage", message.id, message.data.content);
   const member = pluginData.guild.members.resolve(message.user_id) ?? undefined;
   const user = pluginData.client.users.resolve(message.user_id) ?? undefined;
 
