@@ -35,13 +35,15 @@ export async function runAutomod(pluginData: GuildPluginData<AutomodPluginType>,
     if (rule.enabled === false) continue;
     if (
       !rule.affects_bots &&
-      (!user || user.bot) &&
+      user &&
+      user.bot &&
       !context.counterTrigger &&
       !context.antiraid &&
       !context.threadChange?.deleted
     ) {
       continue;
     }
+
     if (!rule.affects_self && userId && userId === pluginData.client.user?.id) {
       continue;
     }
