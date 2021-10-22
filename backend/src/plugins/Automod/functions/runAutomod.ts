@@ -10,6 +10,7 @@ import { performance } from "perf_hooks";
 import { calculateBlocking } from "../../../utils/easyProfiler";
 
 export async function runAutomod(pluginData: GuildPluginData<AutomodPluginType>, context: AutomodContext) {
+  if (context.message) console.log("executing ", context.message.data.content, " in automod");
   const userId = context.user?.id || context.member?.id || context.message?.user_id;
   const user = context.user || (userId && pluginData.client.users!.cache.get(userId as Snowflake));
   const member = context.member || (userId && pluginData.guild.members.cache.get(userId as Snowflake)) || null;

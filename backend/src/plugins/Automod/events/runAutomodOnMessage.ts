@@ -22,8 +22,9 @@ export async function runAutomodOnMessage(
     user,
     member,
   };
-
+  console.log("adding ", message.data.content, " to queue");
   pluginData.state.queue.add(async () => {
+    console.log("executing ", message.data.content, " in queue");
     const startTime = performance.now();
 
     if (isEdit) {
