@@ -33,7 +33,7 @@ export async function runAutomod(pluginData: GuildPluginData<AutomodPluginType>,
   });
   if (context.message) console.log("checking rules for ", context.message.data.content, " in automod");
   for (const [ruleName, rule] of Object.entries(config.rules)) {
-    if (context.message) console.log("rules for ", context.message.data.content, " : ", rule);
+    if (context.message) console.log("rules for ", context.message.data.content, " : ", ruleName);
     if (rule.enabled === false) continue;
     if (
       !rule.affects_bots &&
