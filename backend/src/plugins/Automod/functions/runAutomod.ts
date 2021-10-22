@@ -23,19 +23,9 @@ export async function runAutomod(pluginData: GuildPluginData<AutomodPluginType>,
   const threadId = channelOrThread?.isThread() ? channelOrThread.id : null;
   const channel = channelOrThread?.isThread() ? channelOrThread.parent : channelOrThread;
   const categoryId = channel?.parentId;
-  if (context.message)
-    console.log(
-      "channelId",
-      channelId,
-      "categoryId",
-      categoryId,
-      "threadId",
-      threadId,
-      "userId",
-      userId,
-      "member",
-      member,
-    );
+  if (context.message) {
+    console.log("channelId", channelId, "categoryId", categoryId, "threadId", threadId, "userId", userId);
+  }
   const config = await pluginData.config.getMatchingConfig({
     channelId,
     categoryId,
@@ -43,10 +33,11 @@ export async function runAutomod(pluginData: GuildPluginData<AutomodPluginType>,
     userId,
     member,
   });
-  if (context.message) console.log("checking rules for ", context.message.data.content, " in automod");
+  if (context.message) {
+    console.log("checking rules for ", context.message.data.content, " in automod: ", Object.keys(config.rules));
+  }
   for (const [ruleName, rule] of Object.entries(config.rules)) {
     if (rule.enabled === false) continue;
-    if (context.message) console.log("rules for ", context.message.data.content, " : ", ruleName);
     if (
       !rule.affects_bots &&
       user &&
