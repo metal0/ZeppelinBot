@@ -46,12 +46,20 @@ export const MatchRegexTrigger = automodTrigger<MatchResultType>()({
       return;
     }
 
+    if (context.user && context.user.id === "344911110064963586") {
+      console.log("Checking regex", context.message?.data.content);
+    }
+
     if (!regexCache.has(trigger)) {
       const flags = trigger.case_sensitive ? "" : "i";
       const toCache = mergeRegexes(trigger.patterns, flags);
       regexCache.set(trigger, toCache);
     }
     const regexes = regexCache.get(trigger)!;
+
+    if (context.user && context.user.id === "344911110064963586") {
+      console.log("regexes: ", regexes);
+    }
 
     for await (let [type, str] of matchMultipleTextTypesOnMessage(pluginData, trigger, context.message)) {
       if (trigger.strip_markdown) {
@@ -64,6 +72,9 @@ export const MatchRegexTrigger = automodTrigger<MatchResultType>()({
 
       for (const regex of regexes) {
         const matches = await pluginData.state.regexRunner.exec(regex, str).catch(allowTimeout);
+        if (context.user && context.user.id === "344911110064963586") {
+          console.log("matches: ", matches);
+        }
         if (matches?.length) {
           return {
             extra: {
