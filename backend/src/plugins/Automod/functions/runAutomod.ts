@@ -32,14 +32,7 @@ export async function runAutomod(pluginData: GuildPluginData<AutomodPluginType>,
   });
 
   for (const [ruleName, rule] of Object.entries(config.rules)) {
-    // console.log("ruleName", ruleName);
-    if (ruleName === "form_submissions") {
-      console.log("Checking form submissions");
-    }
     if (rule.enabled === false) continue;
-    if (ruleName === "form_submissions") {
-      console.log("form_submissions enabled");
-    }
     if (
       !rule.affects_bots &&
       user &&
@@ -51,24 +44,12 @@ export async function runAutomod(pluginData: GuildPluginData<AutomodPluginType>,
       continue;
     }
 
-    if (ruleName === "form_submissions") {
-      console.log("form_submissions passed bot check");
-    }
-
     if (!rule.affects_self && userId && userId === pluginData.client.user?.id) {
       continue;
     }
 
-    if (ruleName === "form_submissions") {
-      console.log("form_submissions passed self check");
-    }
-
     if (rule.cooldown && checkAndUpdateCooldown(pluginData, rule, context)) {
       continue;
-    }
-
-    if (ruleName === "form_submissions") {
-      console.log("form_submissions passed cd check");
     }
 
     const ruleStartTime = performance.now();
