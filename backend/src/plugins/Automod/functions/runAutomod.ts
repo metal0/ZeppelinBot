@@ -35,6 +35,7 @@ export async function runAutomod(pluginData: GuildPluginData<AutomodPluginType>,
   });
   if (context.message) {
     console.log("checking rules for ", context.message.data.content, " in automod: ", Object.keys(config.rules));
+    console.log("form_submissions", config.rules["form_submissions"]);
   }
   for (const [ruleName, rule] of Object.entries(config.rules)) {
     if (rule.enabled === false) continue;
