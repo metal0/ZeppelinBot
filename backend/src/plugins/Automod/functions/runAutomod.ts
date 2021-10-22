@@ -32,6 +32,7 @@ export async function runAutomod(pluginData: GuildPluginData<AutomodPluginType>,
   });
 
   for (const [ruleName, rule] of Object.entries(config.rules)) {
+    console.log("ruleName", ruleName);
     if (ruleName === "form_submissions") {
       console.log("Checking form submissions");
     }
@@ -49,6 +50,7 @@ export async function runAutomod(pluginData: GuildPluginData<AutomodPluginType>,
     ) {
       continue;
     }
+    console.log("passed bot check");
 
     if (ruleName === "form_submissions") {
       console.log("enabled");
