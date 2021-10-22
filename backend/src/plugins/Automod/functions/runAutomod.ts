@@ -23,7 +23,19 @@ export async function runAutomod(pluginData: GuildPluginData<AutomodPluginType>,
   const threadId = channelOrThread?.isThread() ? channelOrThread.id : null;
   const channel = channelOrThread?.isThread() ? channelOrThread.parent : channelOrThread;
   const categoryId = channel?.parentId;
-
+  if (context.message)
+    console.log(
+      "channelId",
+      channelId,
+      "categoryId",
+      categoryId,
+      "threadId",
+      threadId,
+      "userId",
+      userId,
+      "member",
+      member,
+    );
   const config = await pluginData.config.getMatchingConfig({
     channelId,
     categoryId,
