@@ -20,7 +20,11 @@ import {
 } from "../../../utils";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
 import { automodAction } from "../helpers";
-import { TemplateSafeUser, userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
+import {
+  savedMessageToTemplateSafeSavedMessage,
+  TemplateSafeUser,
+  userToTemplateSafeUser,
+} from "../../../utils/templateSafeObjects";
 import { messageIsEmpty } from "../../../utils/messageIsEmpty";
 
 export const AlertAction = automodAction({
@@ -69,6 +73,7 @@ export const AlertAction = automodAction({
             matchSummary: matchResult.summary,
             messageLink: theMessageLink,
             logMessage: validateAndParseMessageContent(logMessage)?.content,
+            message: contexts[0].message ? savedMessageToTemplateSafeSavedMessage(contexts[0].message) : undefined,
           }),
         );
       } catch (err) {
