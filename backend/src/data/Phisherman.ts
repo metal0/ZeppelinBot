@@ -7,7 +7,7 @@ import moment from "moment-timezone";
 import { PhishermanKeyCacheEntry } from "./entities/PhishermanKeyCacheEntry";
 import crypto from "crypto";
 
-const API_URL = "https://api.phisherman.gg";
+const API_URL = "https://api.phisherman.gg/v2";
 const MASTER_API_KEY = process.env.PHISHERMAN_API_KEY;
 
 let caughtDomainTrackingMap: Map<string, Map<string, number[]>> = new Map();
@@ -128,7 +128,7 @@ type DomainInfoApiCallResult = PhishermanUnknownDomain | PhishermanDomainInfo;
 async function fetchDomainInfo(domain: string): Promise<PhishermanDomainInfo | null> {
   // tslint:disable-next-line:no-console
   console.log(`[PHISHERMAN] Requesting domain information: ${domain}`);
-  const result = await apiCall<Record<string, DomainInfoApiCallResult>>("GET", `/v2/domains/info/${domain}`);
+  const result = await apiCall<Record<string, DomainInfoApiCallResult>>("GET", `domains/info/${domain}`);
   const domainInfo = result[domain];
   if (domainInfo.classification === "unknown") {
     return null;
@@ -227,7 +227,7 @@ export async function reportTrackedDomainsToPhisherman() {
   }
 
   if (Object.keys(result).length > 0) {
-    await apiCall("POST", "/v2/phish/caught/bulk", result);
+    await apiCall("POST", "phish/caught/bulk", result);
     caughtDomainTrackingMap = new Map();
   }
 }
