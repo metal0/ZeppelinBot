@@ -59,7 +59,7 @@ export function registerExpiringMute(mute: Mute) {
     return;
   }
 
-  console.log("[EXPIRING MUTES LOOP] Registering new expiring mute");
+  // console.log("[EXPIRING MUTES LOOP] Registering new expiring mute");
   const remaining = Math.max(0, moment.utc(mute.expires_at).diff(moment.utc()));
   if (remaining > LOOP_INTERVAL) {
     return;
@@ -72,7 +72,7 @@ export function registerExpiringMute(mute: Mute) {
 }
 
 export function clearExpiringMute(mute: Mute) {
-  console.log("[EXPIRING MUTES LOOP] Clearing expiring mute");
+  // console.log("[EXPIRING MUTES LOOP] Clearing expiring mute");
   if (timeouts.has(muteToKey(mute))) {
     clearTimeout(timeouts.get(muteToKey(mute))!);
   }
