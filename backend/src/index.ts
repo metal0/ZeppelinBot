@@ -182,7 +182,7 @@ setInterval(() => {
 }, 500);
 setInterval(() => {
   const avgBlocking = avgTotal / (avgCount || 1);
-  console.log(`Average blocking in the last 5min: ${avgBlocking / avgTotal}ms`);
+  // console.log(`Average blocking in the last 5min: ${avgBlocking / avgTotal}ms`);
   avgTotal = 0;
   avgCount = 0;
 }, 5 * 60 * 1000);
