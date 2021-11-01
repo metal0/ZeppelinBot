@@ -176,6 +176,8 @@ export async function getPhishermanDomainInfo(domain: string): Promise<Phisherma
 }
 
 export async function phishermanApiKeyIsValid(apiKey: string): Promise<boolean> {
+  return true;
+  /*
   const keyCache = getKeyCacheRepository();
   const hash = crypto.createHash("sha256").update(apiKey).digest("hex");
   const entry = await keyCache.findOne({ hash });
@@ -192,6 +194,7 @@ export async function phishermanApiKeyIsValid(apiKey: string): Promise<boolean> 
   });
 
   return isValid;
+  */
 }
 
 export function trackPhishermanCaughtDomain(apiKey: string, domain: string) {
