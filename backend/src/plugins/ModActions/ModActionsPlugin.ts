@@ -218,7 +218,7 @@ export const ModActionsPlugin = zeppelinGuildPlugin<ModActionsPluginType>()({
 
   beforeUnload(pluginData) {
     pluginData.state.unloaded = true;
-    pluginData.state.unregisterGuildEventListener();
+    pluginData.state.unregisterGuildEventListener?.();
     pluginData.state.events.removeAllListeners();
   },
 });

@@ -1,10 +1,9 @@
 import { GuildFeature, ThreadAutoArchiveDuration } from "discord-api-types";
 import { TextChannel, ThreadEditData } from "discord.js";
 import * as t from "io-ts";
-import { noop } from "knub/dist/utils";
 import { renderTemplate, TemplateSafeValueContainer } from "../../../templateFormatter";
 import { ChannelTypeStrings } from "../../../types";
-import { convertDelayStringToMS, MINUTES, tDelayString, tNullable } from "../../../utils";
+import { convertDelayStringToMS, MINUTES, noop, tDelayString, tNullable } from "../../../utils";
 import { savedMessageToTemplateSafeSavedMessage, userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
 import { automodAction } from "../helpers";
 
@@ -71,7 +70,7 @@ export const StartThreadAction = automodAction({
             msg: savedMessageToTemplateSafeSavedMessage(c.message!),
           }),
         );
-      const threadName = await renderThreadName(actionConfig.name ?? "{user.username}#{user.discriminator}s thread");
+      const threadName = await renderThreadName(actionConfig.name ?? "{user.tag}s thread");
       const thread = await channel.threads
         .create({
           name: threadName,

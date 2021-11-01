@@ -30,6 +30,11 @@ import { runExpiringTempbansLoop } from "./data/loops/expiringTempbansLoop";
 import { runExpiringVCAlertsLoop } from "./data/loops/expiringVCAlertsLoop";
 import { runExpiredArchiveDeletionLoop } from "./data/loops/expiredArchiveDeletionLoop";
 import { runSavedMessageCleanupLoop } from "./data/loops/savedMessageCleanupLoop";
+import { performance } from "perf_hooks";
+import { setProfiler } from "./profiler";
+import { enableProfiling } from "./utils/easyProfiler";
+import { runPhishermanCacheCleanupLoop, runPhishermanReportingLoop } from "./data/loops/phishermanLoops";
+import { hasPhishermanMasterAPIKey } from "./data/Phisherman";
 
 if (!process.env.KEY) {
   // tslint:disable-next-line:no-console
@@ -163,17 +168,27 @@ for (const [i, part] of actualVersionParts.entries()) {
 
 moment.tz.setDefault("UTC");
 
+// Blocking check
+let avgTotal = 0;
+let avgCount = 0;
+let lastCheck = performance.now();
+setInterval(() => {
+  const now = performance.now();
+  let diff = Math.max(0, now - lastCheck);
+  if (diff < 5) diff = 0;
+  avgTotal += diff;
+  avgCount++;
+  lastCheck = now;
+}, 500);
+setInterval(() => {
+  const avgBlocking = avgTotal / (avgCount || 1);
+  console.log(`Average blocking in the last 5min: ${avgBlocking / avgTotal}ms`);
+  avgTotal = 0;
+  avgCount = 0;
+}, 5 * 60 * 1000);
+
 logger.info("Connecting to database");
 connect().then(async () => {
-  const RequestHandler = require("discord.js/src/rest/RequestHandler.js");
-  const originalPush = RequestHandler.prototype.push;
-  // tslint:disable-next-line:only-arrow-functions
-  RequestHandler.prototype.push = function (...args) {
-    const request = args[0];
-    logRestCall(request.method, request.path);
-    return originalPush.call(this, ...args);
-  };
-
   const client = new Client({
     partials: ["USER", "CHANNEL", "GUILD_MEMBER", "MESSAGE", "REACTION"],
 
@@ -360,7 +375,28 @@ connect().then(async () => {
     runExpiredArchiveDeletionLoop();
     await sleep(10 * SECONDS);
     runSavedMessageCleanupLoop();
+
+    if (hasPhishermanMasterAPIKey()) {
+      await sleep(10 * SECONDS);
+      runPhishermanCacheCleanupLoop();
+      await sleep(10 * SECONDS);
+      runPhishermanReportingLoop();
+    }
   });
+
+  setProfiler(bot.profiler);
+  if (process.env.PROFILING === "true") {
+    enableProfiling();
+  }
+
+  let lowestGlobalRemaining = Infinity;
+  setInterval(() => {
+    lowestGlobalRemaining = Math.min(lowestGlobalRemaining, (client as any).rest.globalRemaining);
+  }, 100);
+  setInterval(() => {
+    console.log("Lowest global remaining in the past 5 seconds:", lowestGlobalRemaining);
+    lowestGlobalRemaining = Infinity;
+  }, 5000);
 
   bot.initialize();
   logger.info("Bot Initialized");

@@ -7,7 +7,7 @@ import { availableTriggers } from "../triggers/availableTriggers";
 import { AutomodContext, AutomodPluginType } from "../types";
 import { checkAndUpdateCooldown } from "./checkAndUpdateCooldown";
 import { performance } from "perf_hooks";
-import { calculateBlocking } from "../../../utils/easyProfiler";
+import { calculateBlocking, profilingEnabled } from "../../../utils/easyProfiler";
 
 export async function runAutomod(pluginData: GuildPluginData<AutomodPluginType>, context: AutomodContext) {
   const userId = context.user?.id || context.member?.id || context.message?.user_id;
@@ -15,9 +15,11 @@ export async function runAutomod(pluginData: GuildPluginData<AutomodPluginType>,
   const member = context.member || (userId && pluginData.guild.members.cache.get(userId as Snowflake)) || null;
 
   const channelIdOrThreadId = context.message?.channel_id;
-  const channelOrThread = channelIdOrThreadId
-    ? (pluginData.guild.channels.cache.get(channelIdOrThreadId as Snowflake) as TextChannel | ThreadChannel)
-    : null;
+  const channelOrThread =
+    context.channel ??
+    (channelIdOrThreadId
+      ? (pluginData.guild.channels.cache.get(channelIdOrThreadId as Snowflake) as TextChannel | ThreadChannel)
+      : null);
   const channelId = channelOrThread?.isThread() ? channelOrThread.parent?.id : channelIdOrThreadId;
   const threadId = channelOrThread?.isThread() ? channelOrThread.id : null;
   const channel = channelOrThread?.isThread() ? channelOrThread.parent : channelOrThread;
@@ -43,10 +45,7 @@ export async function runAutomod(pluginData: GuildPluginData<AutomodPluginType>,
     ) {
       continue;
     }
-
-    if (!rule.affects_self && userId && userId === pluginData.client.user?.id) {
-      continue;
-    }
+    if (!rule.affects_self && userId && userId === pluginData.client.user?.id) continue;
 
     if (rule.cooldown && checkAndUpdateCooldown(pluginData, rule, context)) {
       continue;
@@ -62,20 +61,28 @@ export async function runAutomod(pluginData: GuildPluginData<AutomodPluginType>,
         const triggerStartTime = performance.now();
 
         const trigger = availableTriggers[triggerName];
-        const getBlockingTime = calculateBlocking();
+
+        let getBlockingTime: ReturnType<typeof calculateBlocking> | null = null;
+        if (profilingEnabled()) {
+          getBlockingTime = calculateBlocking();
+        }
+
         matchResult = await trigger.match({
           ruleName,
           pluginData,
           context,
           triggerConfig,
         });
-        const blockingTime = getBlockingTime();
-        pluginData
-          .getKnubInstance()
-          .profiler.addDataPoint(
-            `automod:${pluginData.guild.id}:${ruleName}:triggers:${triggerName}:blocking`,
-            blockingTime,
-          );
+
+        if (profilingEnabled()) {
+          const blockingTime = getBlockingTime?.() || 0;
+          pluginData
+            .getKnubInstance()
+            .profiler.addDataPoint(
+              `automod:${pluginData.guild.id}:${ruleName}:triggers:${triggerName}:blocking`,
+              blockingTime,
+            );
+        }
 
         if (matchResult) {
           contexts = [context, ...(matchResult.extraContexts || [])];
@@ -107,12 +114,14 @@ export async function runAutomod(pluginData: GuildPluginData<AutomodPluginType>,
           matchResult.fullSummary = `Triggered automod rule **${ruleName}**\n${matchResult.summary}`.trim();
         }
 
-        pluginData
-          .getKnubInstance()
-          .profiler.addDataPoint(
-            `automod:${pluginData.guild.id}:${ruleName}:triggers:${triggerName}`,
-            performance.now() - triggerStartTime,
-          );
+        if (profilingEnabled()) {
+          pluginData
+            .getKnubInstance()
+            .profiler.addDataPoint(
+              `automod:${pluginData.guild.id}:${ruleName}:triggers:${triggerName}`,
+              performance.now() - triggerStartTime,
+            );
+        }
 
         if (matchResult) {
           break triggerLoop;
@@ -138,18 +147,22 @@ export async function runAutomod(pluginData: GuildPluginData<AutomodPluginType>,
           matchResult,
         });
 
-        pluginData
-          .getKnubInstance()
-          .profiler.addDataPoint(
-            `automod:${pluginData.guild.id}:${ruleName}:actions:${actionName}`,
-            performance.now() - actionStartTime,
-          );
+        if (profilingEnabled()) {
+          pluginData
+            .getKnubInstance()
+            .profiler.addDataPoint(
+              `automod:${pluginData.guild.id}:${ruleName}:actions:${actionName}`,
+              performance.now() - actionStartTime,
+            );
+        }
       }
     }
 
-    pluginData
-      .getKnubInstance()
-      .profiler.addDataPoint(`automod:${pluginData.guild.id}:${ruleName}`, performance.now() - ruleStartTime);
+    if (profilingEnabled()) {
+      pluginData
+        .getKnubInstance()
+        .profiler.addDataPoint(`automod:${pluginData.guild.id}:${ruleName}`, performance.now() - ruleStartTime);
+    }
 
     if (matchResult && !rule.allow_further_rules) {
       break;
