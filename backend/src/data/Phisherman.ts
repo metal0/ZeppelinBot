@@ -104,6 +104,7 @@ async function apiCall<T>(
     });
     const data = await response.json().catch(() => null);
     if (!response.ok || (data as any)?.success === false) {
+      console.error(`[PHISHERMAN] API call failed: ${url}`);
       throw new PhishermanApiError(response.status, (data as any)?.message ?? "");
     }
     return data;
