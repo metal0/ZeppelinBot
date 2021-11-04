@@ -400,19 +400,20 @@ connect().then(async () => {
     // console.log("Lowest global remaining in the past 5 seconds:", lowestGlobalRemaining);
     lowestGlobalRemaining = Infinity;
   }, 15000);
-
-  setInterval(() => {
-    const queryStatsMap = consumeQueryStats();
-    const entries = Array.from(queryStatsMap.entries());
-    entries.sort((a, b) => b[1] - a[1]);
-    const topEntriesStr = entries
-      .slice(0, 5)
-      .map(([key, count]) => `${count}x ${key}`)
-      .join("\n");
-    // FIXME: Debug
-    // tslint:disable-next-line:no-console
-    console.log(`Top query entries in the past 5 minutes:\n${topEntriesStr}`);
-  }, 5 * MINUTES);
+  if (process.env.PROFILING === "true") {
+    setInterval(() => {
+      const queryStatsMap = consumeQueryStats();
+      const entries = Array.from(queryStatsMap.entries());
+      entries.sort((a, b) => b[1] - a[1]);
+      const topEntriesStr = entries
+        .slice(0, 5)
+        .map(([key, count]) => `${count}x ${key}`)
+        .join("\n");
+      // FIXME: Debug
+      // tslint:disable-next-line:no-console
+      console.log(`Top query entries in the past 5 minutes:\n${topEntriesStr}`);
+    }, 5 * MINUTES);
+  }
 
   bot.initialize();
   logger.info("Bot Initialized");
