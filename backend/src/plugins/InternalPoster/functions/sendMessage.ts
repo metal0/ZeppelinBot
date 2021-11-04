@@ -1,10 +1,11 @@
-import { Message, MessageOptions, NewsChannel, TextChannel, WebhookClient } from "discord.js";
+import { Message, MessageOptions, NewsChannel, TextChannel, ThreadChannel, WebhookClient } from "discord.js";
 import { GuildPluginData } from "knub";
 import { InternalPosterPluginType } from "../types";
 import { getOrCreateWebhookForChannel } from "./getOrCreateWebhookForChannel";
 import { APIMessage } from "discord-api-types";
 import { isDiscordAPIError } from "../../../utils";
 import { getOrCreateWebhookClientForChannel } from "./getOrCreateWebhookClientForChannel";
+import { ChannelTypeStrings } from "../../../types";
 
 export type InternalPosterMessageResult = {
   id: string;
@@ -12,7 +13,7 @@ export type InternalPosterMessageResult = {
 };
 
 async function sendDirectly(
-  channel: TextChannel | NewsChannel,
+  channel: TextChannel | NewsChannel | ThreadChannel,
   content: MessageOptions,
 ): Promise<InternalPosterMessageResult | null> {
   return channel.send(content).then((message) => ({
@@ -26,12 +27,12 @@ async function sendDirectly(
  */
 export async function sendMessage(
   pluginData: GuildPluginData<InternalPosterPluginType>,
-  channel: TextChannel | NewsChannel,
+  channel: TextChannel | NewsChannel | ThreadChannel,
   content: MessageOptions,
 ): Promise<InternalPosterMessageResult | null> {
   return pluginData.state.queue.add(async () => {
     const webhookClient = await getOrCreateWebhookClientForChannel(pluginData, channel);
-    if (!webhookClient) {
+    if (!webhookClient || channel.type === ChannelTypeStrings.PRIVATE_THREAD) {
       return sendDirectly(channel, content);
     }
 
@@ -41,6 +42,7 @@ export async function sendMessage(
         ...(pluginData.client.user && {
           username: pluginData.client.user.username,
           avatarURL: pluginData.client.user.avatarURL() || pluginData.client.user.defaultAvatarURL,
+          threadId: channel instanceof ThreadChannel ? channel.id : undefined,
         }),
       })
       .then((apiMessage) => ({
