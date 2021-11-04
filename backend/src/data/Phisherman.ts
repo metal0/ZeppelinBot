@@ -129,7 +129,13 @@ async function fetchDomainInfo(domain: string): Promise<PhishermanDomainInfo | n
   // tslint:disable-next-line:no-console
   console.log(`[PHISHERMAN] Requesting domain information: ${domain}`);
   const result = await apiCall<Record<string, DomainInfoApiCallResult>>("GET", `domains/info/${domain}`);
-  const domainInfo = result[domain];
+  const firstKey = Object.keys(result)[0];
+  const domainInfo = firstKey ? result[firstKey] : null;
+  if (!domainInfo) {
+    // tslint:disable-next-line:no-console
+    console.warn(`Unexpected Phisherman API response for ${domain}:`, result);
+    return null;
+  }
   if (domainInfo.classification === "unknown") {
     return null;
   }
@@ -141,7 +147,7 @@ export async function getPhishermanDomainInfo(domain: string): Promise<Phisherma
     return pendingDomainInfoChecks.get(domain)!;
   }
 
-  const promise = (async () => {
+  let promise = (async () => {
     if (memoryCache.has(domain)) {
       return memoryCache.get(domain)!.info;
     }
@@ -175,7 +181,7 @@ export async function getPhishermanDomainInfo(domain: string): Promise<Phisherma
 
     return freshData;
   })();
-  promise.finally(() => {
+  promise = promise.finally(() => {
     pendingDomainInfoChecks.delete(domain);
   });
   pendingDomainInfoChecks.set(domain, promise);
@@ -184,8 +190,10 @@ export async function getPhishermanDomainInfo(domain: string): Promise<Phisherma
 }
 
 export async function phishermanApiKeyIsValid(apiKey: string): Promise<boolean> {
-  return true;
-  /*
+  if (apiKey === MASTER_API_KEY) {
+    return true;
+  }
+
   const keyCache = getKeyCacheRepository();
   const hash = crypto.createHash("sha256").update(apiKey).digest("hex");
   const entry = await keyCache.findOne({ hash });
@@ -202,7 +210,6 @@ export async function phishermanApiKeyIsValid(apiKey: string): Promise<boolean> 
   });
 
   return isValid;
-  */
 }
 
 export function trackPhishermanCaughtDomain(apiKey: string, domain: string) {

@@ -36,6 +36,7 @@ import { pluginInfo } from "./info";
 import { availableTriggers } from "./triggers/availableTriggers";
 import { AutomodPluginType, ConfigSchema } from "./types";
 import { PhishermanPlugin } from "../Phisherman/PhishermanPlugin";
+import { InternalPosterPlugin } from "../InternalPoster/InternalPosterPlugin";
 
 const defaultOptions = {
   config: {
@@ -208,6 +209,7 @@ export const AutomodPlugin = zeppelinGuildPlugin<AutomodPluginType>()({
     MutesPlugin,
     CountersPlugin,
     PhishermanPlugin,
+    InternalPosterPlugin,
   ],
 
   configSchema: ConfigSchema,

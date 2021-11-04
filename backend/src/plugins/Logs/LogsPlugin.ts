@@ -112,6 +112,7 @@ import { logVoiceChannelLeave } from "./logFunctions/logVoiceChannelLeave";
 import { logVoiceChannelMove } from "./logFunctions/logVoiceChannelMove";
 import { logMemberTimedUnban } from "./logFunctions/logMemberTimedUnban";
 import { logDmFailed } from "./logFunctions/logDmFailed";
+import { InternalPosterPlugin } from "../InternalPoster/InternalPosterPlugin";
 
 const defaultOptions: PluginOptions<LogsPluginType> = {
   config: {
@@ -122,7 +123,7 @@ const defaultOptions: PluginOptions<LogsPluginType> = {
     },
     ping_user: true, // Legacy/deprecated, if below is false mentions wont actually ping. In case you really want the old behavior, set below to true
     allow_user_mentions: false,
-    timestamp_format: "YYYY-MM-DD HH:mm:ss z",
+    timestamp_format: "[<t:]X[>]",
     include_embed_timestamp: true,
   },
 
@@ -145,6 +146,7 @@ export const LogsPlugin = zeppelinGuildPlugin<LogsPluginType>()({
 
   dependencies: async () => [
     TimeAndDatePlugin,
+    InternalPosterPlugin,
     // The `as any` cast here is to prevent TypeScript from locking up from the circular dependency
     ((await import("../Cases/CasesPlugin")) as any).CasesPlugin,
   ],

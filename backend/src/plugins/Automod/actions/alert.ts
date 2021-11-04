@@ -17,6 +17,7 @@ import {
   isTruthy,
   verboseChannelMention,
   validateAndParseMessageContent,
+  chunkMessageLines,
 } from "../../../utils";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
 import { automodAction } from "../helpers";
@@ -26,6 +27,7 @@ import {
   userToTemplateSafeUser,
 } from "../../../utils/templateSafeObjects";
 import { messageIsEmpty } from "../../../utils/messageIsEmpty";
+import { InternalPosterPlugin } from "../../InternalPoster/InternalPosterPlugin";
 
 export const AlertAction = automodAction({
   configType: t.type({
@@ -40,7 +42,7 @@ export const AlertAction = automodAction({
     const channel = pluginData.guild.channels.cache.get(actionConfig.channel as Snowflake);
     const logs = pluginData.getPlugin(LogsPlugin);
 
-    if (channel?.isText()) {
+    if (channel && (channel instanceof TextChannel || channel instanceof ThreadChannel)) {
       const text = actionConfig.text;
       const theMessageLink =
         contexts[0].message && messageLink(pluginData.guild.id, contexts[0].message.channel_id, contexts[0].message.id);
@@ -95,11 +97,14 @@ export const AlertAction = automodAction({
       }
 
       try {
-        await createChunkedMessage(
-          channel,
-          rendered,
-          erisAllowedMentionsToDjsMentionOptions(actionConfig.allowed_mentions),
-        );
+        const poster = pluginData.getPlugin(InternalPosterPlugin);
+        const chunks = chunkMessageLines(rendered);
+        for (const chunk of chunks) {
+          await poster.sendMessage(channel, {
+            content: rendered,
+            allowedMentions: erisAllowedMentionsToDjsMentionOptions(actionConfig.allowed_mentions),
+          });
+        }
       } catch (err) {
         if (err.code === 50001) {
           logs.logBotAlert({

@@ -4,7 +4,8 @@ import { CaseTypes } from "./CaseTypes";
 import { connection } from "./db";
 import { Case } from "./entities/Case";
 import { CaseNote } from "./entities/CaseNote";
-import moment = require("moment-timezone");
+import moment from "moment-timezone";
+import { chunkArray } from "../utils";
 import { Queue } from "../Queue";
 
 const CASE_SUMMARY_REASON_MAX_LENGTH = 300;
@@ -111,6 +112,26 @@ export class GuildCases extends BaseGuildRepository {
     });
   }
 
+  async getMinCaseNumber(): Promise<number> {
+    const result = await this.cases
+      .createQueryBuilder()
+      .where("guild_id = :guildId", { guildId: this.guildId })
+      .select(["MIN(case_number) AS min_case_number"])
+      .getRawOne<{ min_case_number: number }>();
+
+    return result?.min_case_number || 0;
+  }
+
+  async getMaxCaseNumber(): Promise<number> {
+    const result = await this.cases
+      .createQueryBuilder()
+      .where("guild_id = :guildId", { guildId: this.guildId })
+      .select(["MAX(case_number) AS max_case_number"])
+      .getRawOne<{ max_case_number: number }>();
+
+    return result?.max_case_number || 0;
+  }
+
   async setHidden(id: number, hidden: boolean): Promise<void> {
     await this.cases.update(
       { id },
@@ -138,6 +159,8 @@ export class GuildCases extends BaseGuildRepository {
         .catch((err) => {
           if (err?.code === "ER_DUP_ENTRY") {
             if (data.audit_log_id) {
+              // FIXME: Debug
+              // tslint:disable-next-line:no-console
               console.trace(`Tried to insert case with duplicate audit_log_id`);
               return this.createInternal({
                 ...data,
@@ -195,6 +218,44 @@ export class GuildCases extends BaseGuildRepository {
     await this.caseNotes.insert({
       ...data,
       case_id: caseId,
+    });
+  }
+
+  async deleteAllCases(): Promise<void> {
+    const idRows = await this.cases
+      .createQueryBuilder()
+      .where("guild_id = :guildId", { guildId: this.guildId })
+      .select(["id"])
+      .getRawMany<{ id: number }>();
+    const ids = idRows.map((r) => r.id);
+    const batches = chunkArray(ids, 500);
+    for (const batch of batches) {
+      await this.cases.createQueryBuilder().where("id IN (:ids)", { ids: batch }).delete().execute();
+    }
+  }
+
+  async bumpCaseNumbers(amount: number): Promise<void> {
+    await this.cases
+      .createQueryBuilder()
+      .where("guild_id = :guildId", { guildId: this.guildId })
+      .update()
+      .set({
+        case_number: () => `case_number + ${parseInt(amount as unknown as string, 10)}`,
+      })
+      .execute();
+  }
+
+  getExportCases(skip: number, take: number): Promise<Case[]> {
+    return this.cases.find({
+      where: {
+        guild_id: this.guildId,
+      },
+      relations: ["notes"],
+      order: {
+        case_number: "ASC",
+      },
+      skip,
+      take,
     });
   }
 }
