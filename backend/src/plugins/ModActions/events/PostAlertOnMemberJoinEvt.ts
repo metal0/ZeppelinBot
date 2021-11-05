@@ -1,4 +1,4 @@
-import { Permissions, Snowflake, TextChannel } from "discord.js";
+import { Permissions, Snowflake, TextChannel, ThreadChannel } from "discord.js";
 import { LogType } from "../../../data/LogType";
 import { resolveMember } from "../../../utils";
 import { hasDiscordPermissions } from "../../../utils/hasDiscordPermissions";
@@ -30,7 +30,7 @@ export const PostAlertOnMemberJoinEvt = modActionsEvt({
         return;
       }
 
-      if (!(alertChannel instanceof TextChannel)) {
+      if (!(alertChannel instanceof TextChannel) && !(alertChannel instanceof ThreadChannel)) {
         logs.logBotAlert({
           body: `Non-text channel configured as \`alert_channel\` in \`mod_actions\`: \`${alertChannelId}\``,
         });
