@@ -49,6 +49,8 @@ export type TLogChannelMap = t.TypeOf<typeof LogChannelMap>;
 
 export const ConfigSchema = t.type({
   channels: LogChannelMap,
+  user_logs_channel: tNullable(t.string),
+  user_logs_options: tNullable(LogChannel),
   format: t.intersection([
     tLogFormats,
     t.type({
@@ -86,6 +88,8 @@ export interface LogsPluginType extends BasePluginType {
     onMessageDeleteFn;
     onMessageDeleteBulkFn;
     onMessageUpdateFn;
+
+    fetchedUserLogsThreads: number | null;
   };
 }
 

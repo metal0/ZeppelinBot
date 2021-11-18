@@ -1,3 +1,4 @@
+import * as t from "io-ts";
 import { MessageEmbedOptions, MessageMentionTypes, Snowflake, TextChannel } from "discord.js";
 import { GuildPluginData } from "knub";
 import { allowTimeout } from "../../../RegExpRunner";
@@ -8,6 +9,8 @@ import { LogType } from "../../../data/LogType";
 import { MessageBuffer } from "../../../utils/MessageBuffer";
 import { createChunkedMessage, isDiscordAPIError, MINUTES } from "../../../utils";
 import { InternalPosterPlugin } from "../../InternalPoster/InternalPosterPlugin";
+import { getUserThread } from "./getUserThread";
+import { TemplateSafeUser } from "../../../utils/templateSafeObjects";
 
 const excludedUserProps = ["user", "member", "mod"];
 const excludedRoleProps = ["message.member.roles", "member.roles"];
@@ -72,6 +75,71 @@ async function shouldExclude(
   return false;
 }
 
+async function sendLogMessage<TLogType extends keyof ILogTypeData>(
+  pluginData: GuildPluginData<LogsPluginType>,
+  opts: TLogChannel,
+  channelId: string,
+  type: TLogType,
+  data: TypedTemplateSafeValueContainer<ILogTypeData[TLogType]>,
+  exclusionData: ExclusionData = {},
+) {
+  const typeStr = LogType[type];
+  const channel = pluginData.guild.channels.cache.get(channelId as Snowflake);
+  if (!channel || (!channel.isText() && !channel.isThread())) return;
+  if (pluginData.state.channelCooldowns.isOnCooldown(channelId)) return;
+  if (opts.include?.length && !opts.include.includes(typeStr)) return;
+  if (opts.exclude && opts.exclude.includes(typeStr)) return;
+  if (await shouldExclude(pluginData, opts, exclusionData)) return;
+
+  const message = await getLogMessage(pluginData, type, data, {
+    format: opts.format,
+    include_embed_timestamp: opts.include_embed_timestamp,
+    timestamp_format: opts.timestamp_format,
+  });
+  if (!message) return;
+
+  // Initialize message buffer for this channel
+  if (!pluginData.state.buffers.has(channelId)) {
+    const batchTime = Math.min(Math.max(opts.batch_time ?? DEFAULT_BATCH_TIME, MIN_BATCH_TIME), MAX_BATCH_TIME);
+    const internalPosterPlugin = pluginData.getPlugin(InternalPosterPlugin);
+    pluginData.state.buffers.set(
+      channelId,
+      new MessageBuffer({
+        timeout: batchTime,
+        textSeparator: "\n",
+        consume: (part) => {
+          const parse: MessageMentionTypes[] = pluginData.config.get().allow_user_mentions ? ["users"] : [];
+          internalPosterPlugin
+            .sendMessage(channel, {
+              ...part,
+              allowedMentions: { parse },
+            })
+            .catch((err) => {
+              if (isDiscordAPIError(err)) {
+                // Missing Access / Missing Permissions
+                // TODO: Show/log this somewhere
+                if (err.code === 50001 || err.code === 50013) {
+                  pluginData.state.channelCooldowns.setCooldown(channelId, 2 * MINUTES);
+                  return;
+                }
+              }
+
+              // tslint:disable-next-line:no-console
+              console.warn(`Error while sending ${typeStr} log to ${pluginData.guild.id}/${channelId}: ${err.message}`);
+            });
+        },
+      }),
+    );
+  }
+
+  // Add log message to buffer
+  const buffer = pluginData.state.buffers.get(channelId)!;
+  buffer.push({
+    content: typeof message === "string" ? message : message.content || "",
+    embeds: typeof message === "string" ? [] : ((message.embeds || []) as MessageEmbedOptions[]),
+  });
+}
+
 export async function log<TLogType extends keyof ILogTypeData>(
   pluginData: GuildPluginData<LogsPluginType>,
   type: TLogType,
@@ -79,64 +147,23 @@ export async function log<TLogType extends keyof ILogTypeData>(
   exclusionData: ExclusionData = {},
 ) {
   const logChannels: TLogChannelMap = pluginData.config.get().channels;
-  const typeStr = LogType[type];
 
   logChannelLoop: for (const [channelId, opts] of Object.entries(logChannels)) {
-    const channel = pluginData.guild.channels.cache.get(channelId as Snowflake);
-    if (!channel || (!channel.isText() && !channel.isThread())) continue;
-    if (pluginData.state.channelCooldowns.isOnCooldown(channelId)) continue;
-    if (opts.include?.length && !opts.include.includes(typeStr)) continue;
-    if (opts.exclude && opts.exclude.includes(typeStr)) continue;
-    if (await shouldExclude(pluginData, opts, exclusionData)) continue;
+    await sendLogMessage(pluginData, opts, channelId, type, data, exclusionData);
+  }
 
-    const message = await getLogMessage(pluginData, type, data, {
-      format: opts.format,
-      include_embed_timestamp: opts.include_embed_timestamp,
-      timestamp_format: opts.timestamp_format,
-    });
-    if (!message) return;
-
-    // Initialize message buffer for this channel
-    if (!pluginData.state.buffers.has(channelId)) {
-      const batchTime = Math.min(Math.max(opts.batch_time ?? DEFAULT_BATCH_TIME, MIN_BATCH_TIME), MAX_BATCH_TIME);
-      const internalPosterPlugin = pluginData.getPlugin(InternalPosterPlugin);
-      pluginData.state.buffers.set(
-        channelId,
-        new MessageBuffer({
-          timeout: batchTime,
-          textSeparator: "\n",
-          consume: (part) => {
-            const parse: MessageMentionTypes[] = pluginData.config.get().allow_user_mentions ? ["users"] : [];
-            internalPosterPlugin
-              .sendMessage(channel, {
-                ...part,
-                allowedMentions: { parse },
-              })
-              .catch((err) => {
-                if (isDiscordAPIError(err)) {
-                  // Missing Access / Missing Permissions
-                  // TODO: Show/log this somewhere
-                  if (err.code === 50001 || err.code === 50013) {
-                    pluginData.state.channelCooldowns.setCooldown(channelId, 2 * MINUTES);
-                    return;
-                  }
-                }
-
-                // tslint:disable-next-line:no-console
-                console.warn(
-                  `Error while sending ${typeStr} log to ${pluginData.guild.id}/${channelId}: ${err.message}`,
-                );
-              });
-          },
-        }),
-      );
+  const user_logs = pluginData.config.get().user_logs_channel;
+  if (user_logs && (data.user instanceof TemplateSafeUser || data.userId)) {
+    const newOpts = pluginData.config.get().user_logs_options;
+    if (!newOpts) return;
+    const channel = pluginData.guild.channels.cache.get(user_logs as Snowflake);
+    if (!channel || !channel.isText() || channel.isThread()) return;
+    const userId = `${data.user instanceof TemplateSafeUser ? data.user.id : data.userId}`;
+    if (userId.length < 2) return;
+    const userThread = await getUserThread(pluginData, channel, userId);
+    if (!userThread) {
+      return;
     }
-
-    // Add log message to buffer
-    const buffer = pluginData.state.buffers.get(channelId)!;
-    buffer.push({
-      content: typeof message === "string" ? message : message.content || "",
-      embeds: typeof message === "string" ? [] : ((message.embeds || []) as MessageEmbedOptions[]),
-    });
+    await sendLogMessage(pluginData, newOpts, userThread.id, type, data, exclusionData);
   }
 }

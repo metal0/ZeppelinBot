@@ -117,6 +117,8 @@ import { InternalPosterPlugin } from "../InternalPoster/InternalPosterPlugin";
 const defaultOptions: PluginOptions<LogsPluginType> = {
   config: {
     channels: {},
+    user_logs_channel: null,
+    user_logs_options: {},
     format: {
       timestamp: FORMAT_NO_TIMESTAMP, // Legacy/deprecated, use timestamp_format below instead
       ...DefaultLogMessages,
@@ -272,6 +274,8 @@ export const LogsPlugin = zeppelinGuildPlugin<LogsPluginType>()({
     state.channelCooldowns = new CooldownManager();
 
     state.regexRunner = getRegExpRunner(`guild-${pluginData.guild.id}`);
+
+    state.fetchedUserLogsThreads = null;
   },
 
   afterLoad(pluginData) {
@@ -327,5 +331,6 @@ export const LogsPlugin = zeppelinGuildPlugin<LogsPluginType>()({
       pluginData.state.regexRunner.off("repeatedTimeout", pluginData.state.regexRunnerRepeatedTimeoutListener);
     }
     discardRegExpRunner(`guild-${pluginData.guild.id}`);
+    pluginData.state.fetchedUserLogsThreads = null;
   },
 });
