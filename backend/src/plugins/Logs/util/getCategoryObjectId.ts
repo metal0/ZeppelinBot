@@ -86,8 +86,8 @@ export function getObjectId<TLogType extends keyof ILogTypeData>(
       break;
     case "role":
       if (data.role instanceof TemplateSafeRole) objectId = data.role.id;
-      if (data.oldRole instanceof TemplateSafeChannel) objectId = data.oldRole.id;
-      if (data.newRole instanceof TemplateSafeChannel) objectId = data.newRole.id;
+      if (data.oldRole instanceof TemplateSafeRole) objectId = data.oldRole.id;
+      if (data.newRole instanceof TemplateSafeRole) objectId = data.newRole.id;
       break;
     case "channel":
       if (data.channel instanceof TemplateSafeChannel) objectId = data.channel.id;
