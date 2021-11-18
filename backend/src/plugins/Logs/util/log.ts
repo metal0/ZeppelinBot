@@ -9,8 +9,15 @@ import { LogType } from "../../../data/LogType";
 import { MessageBuffer } from "../../../utils/MessageBuffer";
 import { createChunkedMessage, isDiscordAPIError, MINUTES } from "../../../utils";
 import { InternalPosterPlugin } from "../../InternalPoster/InternalPosterPlugin";
-import { getUserThread } from "./getUserThread";
-import { TemplateSafeUser } from "../../../utils/templateSafeObjects";
+import { getCategoryThread } from "./getCategoryThread";
+import {
+  TemplateSafeChannel,
+  TemplateSafeMember,
+  TemplateSafeRole,
+  TemplateSafeUnknownMember,
+  TemplateSafeUnknownUser,
+  TemplateSafeUser,
+} from "../../../utils/templateSafeObjects";
 
 const excludedUserProps = ["user", "member", "mod"];
 const excludedRoleProps = ["message.member.roles", "member.roles"];
@@ -149,21 +156,71 @@ export async function log<TLogType extends keyof ILogTypeData>(
   const logChannels: TLogChannelMap = pluginData.config.get().channels;
 
   logChannelLoop: for (const [channelId, opts] of Object.entries(logChannels)) {
-    await sendLogMessage(pluginData, opts, channelId, type, data, exclusionData);
-  }
+    if (opts.categorize) {
+      const channel = pluginData.guild.channels.cache.get(channelId as Snowflake);
+      if (!channel || !channel.isText() || channel.isThread()) continue;
+      // check object types for current log
+      if (
+        opts.categorize === "member" &&
+        !(data.member instanceof TemplateSafeMember) &&
+        !(data.user instanceof TemplateSafeUser) &&
+        !(data.user instanceof TemplateSafeUnknownUser) &&
+        !(data.member instanceof TemplateSafeUnknownMember) &&
+        !data.userId
+      ) {
+        continue;
+      } else if (opts.categorize === "role" && !(data.role instanceof TemplateSafeRole)) {
+        continue;
+      } else if (opts.categorize === "channel" && !(data.channel instanceof TemplateSafeChannel)) {
+        continue;
+      } else if (
+        opts.categorize === "mod" &&
+        !(data.mod instanceof TemplateSafeMember) &&
+        !(data.mod instanceof TemplateSafeUser) &&
+        !(data.mod instanceof TemplateSafeUnknownUser) &&
+        !(data.mod instanceof TemplateSafeUnknownMember)
+      ) {
+        continue;
+      }
+      let objectId: string | null = null;
+      switch (opts.categorize) {
+        case "member":
+          if (data.member instanceof TemplateSafeMember || data.member instanceof TemplateSafeUnknownMember) {
+            objectId = data.member.id;
+          }
+          if (data.user instanceof TemplateSafeUser || data.user instanceof TemplateSafeUnknownUser) {
+            objectId = data.user.id;
+          }
+          if (data.userId) {
+            objectId = data.userId.toString();
+          }
+          break;
+        case "mod":
+          if (
+            data.mod instanceof TemplateSafeMember ||
+            data.mod instanceof TemplateSafeUnknownMember ||
+            data.mod instanceof TemplateSafeUser ||
+            data.mod instanceof TemplateSafeUnknownUser
+          ) {
+            objectId = data.mod.id;
+          }
+          break;
+        case "role":
+          if (data.role instanceof TemplateSafeRole) objectId = data.role.id;
+          break;
+        case "channel":
+          if (data.channel instanceof TemplateSafeChannel) objectId = data.channel.id;
+          break;
+      }
+      if (!objectId) continue;
+      const catThread = await getCategoryThread(pluginData, channel, objectId);
+      if (!catThread) {
+        continue;
+      }
+      await sendLogMessage(pluginData, opts, catThread.id, type, data, exclusionData);
 
-  const user_logs = pluginData.config.get().user_logs_channel;
-  if (user_logs && (data.user instanceof TemplateSafeUser || data.userId)) {
-    const newOpts = pluginData.config.get().user_logs_options;
-    if (!newOpts) return;
-    const channel = pluginData.guild.channels.cache.get(user_logs as Snowflake);
-    if (!channel || !channel.isText() || channel.isThread()) return;
-    const userId = `${data.user instanceof TemplateSafeUser ? data.user.id : data.userId}`;
-    if (userId.length < 2) return;
-    const userThread = await getUserThread(pluginData, channel, userId);
-    if (!userThread) {
-      return;
+      continue;
     }
-    await sendLogMessage(pluginData, newOpts, userThread.id, type, data, exclusionData);
+    await sendLogMessage(pluginData, opts, channelId, type, data, exclusionData);
   }
 }

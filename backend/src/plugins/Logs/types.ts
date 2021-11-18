@@ -27,6 +27,9 @@ import { MessageBuffer } from "../../utils/MessageBuffer";
 export const tLogFormats = t.record(t.string, t.union([t.string, tMessageContent]));
 export type TLogFormats = t.TypeOf<typeof tLogFormats>;
 
+export const LogCategory = t.union([t.literal("member"), t.literal("role"), t.literal("channel"), t.literal("mod")]);
+export type TLogCategory = t.TypeOf<typeof LogCategory>;
+
 const LogChannel = t.partial({
   include: t.array(t.string),
   exclude: t.array(t.string),
@@ -41,6 +44,7 @@ const LogChannel = t.partial({
   format: tNullable(tLogFormats),
   timestamp_format: t.string,
   include_embed_timestamp: t.boolean,
+  categorize: tNullable(LogCategory),
 });
 export type TLogChannel = t.TypeOf<typeof LogChannel>;
 
@@ -49,8 +53,6 @@ export type TLogChannelMap = t.TypeOf<typeof LogChannelMap>;
 
 export const ConfigSchema = t.type({
   channels: LogChannelMap,
-  user_logs_channel: tNullable(t.string),
-  user_logs_options: tNullable(LogChannel),
   format: t.intersection([
     tLogFormats,
     t.type({
@@ -89,7 +91,8 @@ export interface LogsPluginType extends BasePluginType {
     onMessageDeleteBulkFn;
     onMessageUpdateFn;
 
-    fetchedUserLogsThreads: number | null;
+    cachedCategories: string[];
+    categorizedLogThreadMap: { [key: string]: Map<string, string> };
   };
 }
 
