@@ -27,7 +27,13 @@ import { MessageBuffer } from "../../utils/MessageBuffer";
 export const tLogFormats = t.record(t.string, t.union([t.string, tMessageContent]));
 export type TLogFormats = t.TypeOf<typeof tLogFormats>;
 
-export const LogCategory = t.union([t.literal("member"), t.literal("role"), t.literal("channel"), t.literal("mod")]);
+export const LogCategory = t.union([
+  t.literal("member"),
+  t.literal("role"),
+  t.literal("channel"),
+  t.literal("mod"),
+  t.literal("thread"),
+]);
 export type TLogCategory = t.TypeOf<typeof LogCategory>;
 
 const LogChannel = t.partial({
