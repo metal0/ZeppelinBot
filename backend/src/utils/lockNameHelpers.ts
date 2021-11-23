@@ -1,4 +1,4 @@
-import { GuildMember, Message, User } from "discord.js";
+import { Channel, GuildMember, Message, ThreadChannel, User } from "discord.js";
 import { SavedMessage } from "../data/entities/SavedMessage";
 
 export function allStarboardsLock() {
@@ -23,4 +23,8 @@ export function messageLock(message: Message | SavedMessage | { id: string }) {
 
 export function muteLock(user: GuildMember | User | { id: string }) {
   return `mute-${user.id}`;
+}
+
+export function logCategoryLock(channel: Channel | ThreadChannel | { id: string }, objectId: { id: string }) {
+  return `logcategory-${channel.id}-${objectId}`;
 }
