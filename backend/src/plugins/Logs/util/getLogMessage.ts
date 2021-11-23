@@ -122,7 +122,9 @@ export async function getLogMessage<TLogType extends keyof ILogTypeData>(
       typeof format === "string" ? await renderLogString(format) : await renderRecursively(format, renderLogString);
   } catch (e) {
     if (e instanceof TemplateParseError) {
-      logger.error(`Error when parsing template:\nError: ${e.message}\nTemplate: ${format}`);
+      logger.error(
+        `Error when parsing template:\nError: ${e.message}\nTemplate: ${format}\nGuild: ${pluginData.guild.name} (${pluginData.guild.id})\nLog Type: ${type} `,
+      );
       return null;
     } else {
       throw e;
