@@ -10,7 +10,7 @@ if (!process.env.KEY) {
 
 function errorHandler(err) {
   console.error(err.stack || err); // tslint:disable-line:no-console
-  process.exit(1);
+  // process.exit(1);
 }
 
 process.on("unhandledRejection", errorHandler);
