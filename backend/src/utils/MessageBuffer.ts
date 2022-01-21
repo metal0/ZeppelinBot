@@ -99,9 +99,13 @@ export class MessageBuffer {
           }
         }
       }
-
-      if (chunk.content.embeds == null) chunk.content.embeds = [];
-      chunk.content.embeds.push(...content.embeds);
+      while (content.embeds.length > 0) {
+        if (chunk.content.embeds == null) chunk.content.embeds = [];
+        chunk.content.embeds.push(...content.embeds.splice(0, MAX_EMBEDS_PER_MESSAGE));
+        if (chunk.content.embeds.length > 0) {
+          this.startNewChunk(contentType);
+        }
+      }
     }
   }
 
