@@ -5,7 +5,7 @@ import { resolveMember } from "../../../utils";
 import { memberRolesLock } from "../../../utils/lockNameHelpers";
 import { PendingMemberRoleChanges, SelectMenuRolesPluginType, RoleChangeMode } from "../types";
 
-const ROLE_CHANGE_BATCH_DEBOUNCE_TIME = 3000;
+const ROLE_CHANGE_BATCH_DEBOUNCE_TIME = 500;
 
 export async function addMemberPendingRoleChange(
   pluginData: GuildPluginData<SelectMenuRolesPluginType>,
