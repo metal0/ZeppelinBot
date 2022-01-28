@@ -319,7 +319,7 @@ export const TemplateFunctions: TemplateFunction[] = [
     description: "Converts a snowflake to a mention",
     returnValue: "string",
     arguments: ["snowflake"],
-    examples: ["mention(344837487526412300)"],
+    examples: ["mention('344837487526412300')"],
     plugin: "tags",
   },
   {
