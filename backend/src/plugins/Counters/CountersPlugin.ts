@@ -21,7 +21,7 @@ import { ViewCounterCmd } from "./commands/ViewCounterCmd";
 import { changeCounterValue } from "./functions/changeCounterValue";
 import { counterExists } from "./functions/counterExists";
 import { decayCounter } from "./functions/decayCounter";
-import { getAllCounterValues, getCounterValue } from "./functions/getCounterValue";
+import { getAllCounterValues, getCounterValue, getRankedCounterValues } from "./functions/getCounterValue";
 import { getPrettyNameForCounter } from "./functions/getPrettyNameForCounter";
 import { getPrettyNameForCounterTrigger } from "./functions/getPrettyNameForCounterTrigger";
 import { offCounterEvent } from "./functions/offCounterEvent";
@@ -129,6 +129,7 @@ export const CountersPlugin = zeppelinGuildPlugin<CountersPluginType>()({
     // Gets a counter's value
     getCounterValue: mapToPublicFn(getCounterValue),
     getAllCounterValues: mapToPublicFn(getAllCounterValues),
+    getRankedCounterValues: mapToPublicFn(getRankedCounterValues),
 
     // Set a counter's value to an absolute value
     setCounterValue: mapToPublicFn(setCounterValue),

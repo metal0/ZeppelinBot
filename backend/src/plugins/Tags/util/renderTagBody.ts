@@ -11,6 +11,7 @@ import {
   TemplateSafeCounterValue,
   userToTemplateSafeUser,
 } from "../../../utils/templateSafeObjects";
+import { isArray } from "util";
 
 const MAX_TAG_FN_CALLS = 25;
 
@@ -53,12 +54,17 @@ export async function renderTagBody(
       const cData = await countersPlugin.getCounterValue(counter, channelId, userId);
       return cData?.toString() ?? "";
     },
-    async get_all_counter_values(counter) {
-      if (!countersPlugin) return "";
-      const cData = (await countersPlugin.getAllCounterValues(counter))?.map((cd) =>
-        counterValueToTemplateSafeCounterValue(cd),
-      );
-      return cData?.sort((a, b) => b.value - a.value) ?? [];
+    async get_all_counter_values(counter, field?, limit?, userId?) {
+      if (!countersPlugin || !countersPlugin.counterExists(counter)) return "";
+
+      const cData = (
+        field
+          ? await countersPlugin.getRankedCounterValues(counter, field, limit, userId)
+          : await countersPlugin.getAllCounterValues(counter)
+      )?.map((cd) => counterValueToTemplateSafeCounterValue(cd));
+
+      if (Array.isArray(cData) && cData.length === 1 && limit === 1) return cData[0];
+      return cData ?? [];
     },
     async get_user(str) {
       if (!str || typeof str !== "string") return "";
