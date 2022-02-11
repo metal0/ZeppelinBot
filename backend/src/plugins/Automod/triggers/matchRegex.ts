@@ -1,4 +1,3 @@
-import { Util } from "discord.js";
 import * as t from "io-ts";
 import { allowTimeout } from "../../../RegExpRunner";
 import { normalizeText } from "../../../utils/normalizeText";
@@ -7,11 +6,14 @@ import { TRegex } from "../../../validatorUtils";
 import { getTextMatchPartialSummary } from "../functions/getTextMatchPartialSummary";
 import { MatchableTextType, matchMultipleTextTypesOnMessage } from "../functions/matchMultipleTextTypesOnMessage";
 import { automodTrigger } from "../helpers";
+import { mergeRegexes } from "../../../utils/mergeRegexes";
 
 interface MatchResultType {
   pattern: string;
   type: MatchableTextType;
 }
+
+const regexCache = new WeakMap<any, RegExp[]>();
 
 export const MatchRegexTrigger = automodTrigger<MatchResultType>()({
   configType: t.type({
@@ -44,6 +46,13 @@ export const MatchRegexTrigger = automodTrigger<MatchResultType>()({
       return;
     }
 
+    if (!regexCache.has(trigger)) {
+      const flags = trigger.case_sensitive ? "" : "i";
+      const toCache = mergeRegexes(trigger.patterns, flags);
+      regexCache.set(trigger, toCache);
+    }
+    const regexes = regexCache.get(trigger)!;
+
     for await (let [type, str] of matchMultipleTextTypesOnMessage(pluginData, trigger, context.message)) {
       if (trigger.strip_markdown) {
         str = stripMarkdown(str);
@@ -53,13 +62,12 @@ export const MatchRegexTrigger = automodTrigger<MatchResultType>()({
         str = normalizeText(str);
       }
 
-      for (const sourceRegex of trigger.patterns) {
-        const regex = new RegExp(sourceRegex.source, trigger.case_sensitive && !sourceRegex.ignoreCase ? "" : "i");
+      for (const regex of regexes) {
         const matches = await pluginData.state.regexRunner.exec(regex, str).catch(allowTimeout);
         if (matches?.length) {
           return {
             extra: {
-              pattern: sourceRegex.source,
+              pattern: regex.source,
               type,
             },
           };
@@ -72,6 +80,6 @@ export const MatchRegexTrigger = automodTrigger<MatchResultType>()({
 
   renderMatchInformation({ pluginData, contexts, matchResult }) {
     const partialSummary = getTextMatchPartialSummary(pluginData, matchResult.extra.type, contexts[0]);
-    return `Matched regex \`${Util.escapeInlineCode(matchResult.extra.pattern)}\` in ${partialSummary}`;
+    return `Matched regex in ${partialSummary}`;
   },
 });

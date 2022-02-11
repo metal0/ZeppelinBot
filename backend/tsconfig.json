@@ -20,7 +20,9 @@
     "noImplicitThis": true,
     "skipLibCheck": true,
     "strict": true,
-    "strictPropertyInitialization": false
+    "strictPropertyInitialization": false,
+    "useUnknownInCatchVariables": false,
+    "allowJs": true
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "ormconfig.js"]
 }

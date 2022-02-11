@@ -1,3 +1,5 @@
+// tslint:disable:no-console
+
 import { lazyMemoize, memoize, MINUTES } from "../../utils";
 import { Mutes } from "../Mutes";
 import Timeout = NodeJS.Timeout;
@@ -34,6 +36,9 @@ export async function runExpiringMutesLoop() {
   for (const timeout of timeouts.values()) {
     clearTimeout(timeout);
   }
+
+  console.log("[EXPIRING MUTES LOOP] Clearing old expired mutes");
+  await getMutesRepository().clearOldExpiredMutes();
 
   console.log("[EXPIRING MUTES LOOP] Setting timeouts for expiring mutes");
   const expiringMutes = await getMutesRepository().getSoonExpiringMutes(LOOP_INTERVAL);

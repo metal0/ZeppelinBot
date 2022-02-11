@@ -24,12 +24,19 @@ import { RunAutomodOnJoinEvt, RunAutomodOnLeaveEvt } from "./events/RunAutomodOn
 import { RunAutomodOnMemberUpdate } from "./events/RunAutomodOnMemberUpdate";
 import { runAutomodOnMessage } from "./events/runAutomodOnMessage";
 import { runAutomodOnModAction } from "./events/runAutomodOnModAction";
+import {
+  RunAutomodOnThreadCreate,
+  RunAutomodOnThreadDelete,
+  RunAutomodOnThreadUpdate,
+} from "./events/runAutomodOnThreadEvents";
 import { clearOldRecentNicknameChanges } from "./functions/clearOldNicknameChanges";
 import { clearOldRecentActions } from "./functions/clearOldRecentActions";
 import { clearOldRecentSpam } from "./functions/clearOldRecentSpam";
 import { pluginInfo } from "./info";
 import { availableTriggers } from "./triggers/availableTriggers";
 import { AutomodPluginType, ConfigSchema } from "./types";
+import { PhishermanPlugin } from "../Phisherman/PhishermanPlugin";
+import { InternalPosterPlugin } from "../InternalPoster/InternalPosterPlugin";
 
 const defaultOptions = {
   config: {
@@ -79,6 +86,10 @@ const configPreprocessor: ConfigPreprocessorFn<AutomodPluginType> = (options) =>
 
       if (rule.affects_bots == null) {
         rule.affects_bots = false;
+      }
+
+      if (rule["affects_self"] == null) {
+        rule["affects_self"] = false;
       }
 
       // Loop through the rule's triggers
@@ -173,6 +184,9 @@ const configPreprocessor: ConfigPreprocessorFn<AutomodPluginType> = (options) =>
         if (rule.actions.log == null) {
           rule.actions.log = true;
         }
+        if (rule["actions"]["clean"] && rule["actions"]["start_thread"]) {
+          throw new StrictValidationError([`Cannot have both clean and start_thread at rule '${rule.name}'`]);
+        }
       }
     }
   }
@@ -191,6 +205,8 @@ export const AutomodPlugin = zeppelinGuildPlugin<AutomodPluginType>()({
     ModActionsPlugin,
     MutesPlugin,
     CountersPlugin,
+    PhishermanPlugin,
+    InternalPosterPlugin,
   ],
 
   configSchema: ConfigSchema,
@@ -208,6 +224,9 @@ export const AutomodPlugin = zeppelinGuildPlugin<AutomodPluginType>()({
     RunAutomodOnJoinEvt,
     RunAutomodOnMemberUpdate,
     RunAutomodOnLeaveEvt,
+    RunAutomodOnThreadCreate,
+    RunAutomodOnThreadDelete,
+    RunAutomodOnThreadUpdate
     // Messages use message events from SavedMessages, see onLoad below
   ],
 

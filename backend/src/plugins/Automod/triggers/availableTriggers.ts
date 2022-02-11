@@ -26,9 +26,14 @@ import { NoteTrigger } from "./note";
 import { RoleAddedTrigger } from "./roleAdded";
 import { RoleRemovedTrigger } from "./roleRemoved";
 import { StickerSpamTrigger } from "./stickerSpam";
+import { ThreadCreateTrigger } from "./threadCreate";
+import { ThreadCreateSpamTrigger } from "./threadCreateSpam";
+import { ThreadDeleteTrigger } from "./threadDelete";
 import { UnbanTrigger } from "./unban";
 import { UnmuteTrigger } from "./unmute";
 import { WarnTrigger } from "./warn";
+import { ThreadArchiveTrigger } from "./threadArchive";
+import { ThreadUnarchiveTrigger } from "./threadUnarchive";
 
 export const availableTriggers: Record<string, AutomodTriggerBlueprint<any, any>> = {
   any_message: AnyMessageTrigger,
@@ -52,6 +57,7 @@ export const availableTriggers: Record<string, AutomodTriggerBlueprint<any, any>
   character_spam: CharacterSpamTrigger,
   member_join_spam: MemberJoinSpamTrigger,
   sticker_spam: StickerSpamTrigger,
+  thread_create_spam: ThreadCreateSpamTrigger,
 
   counter_trigger: CounterTrigger,
 
@@ -64,6 +70,11 @@ export const availableTriggers: Record<string, AutomodTriggerBlueprint<any, any>
   unban: UnbanTrigger,
 
   antiraid_level: AntiraidLevelTrigger,
+
+  thread_create: ThreadCreateTrigger,
+  thread_delete: ThreadDeleteTrigger,
+  thread_archive: ThreadArchiveTrigger,
+  thread_unarchive: ThreadUnarchiveTrigger,
 };
 
 export const AvailableTriggers = t.type({
@@ -89,6 +100,7 @@ export const AvailableTriggers = t.type({
   character_spam: CharacterSpamTrigger.configType,
   member_join_spam: MemberJoinSpamTrigger.configType,
   sticker_spam: StickerSpamTrigger.configType,
+  thread_create_spam: ThreadCreateSpamTrigger.configType,
 
   counter_trigger: CounterTrigger.configType,
 
@@ -101,4 +113,9 @@ export const AvailableTriggers = t.type({
   unban: UnbanTrigger.configType,
 
   antiraid_level: AntiraidLevelTrigger.configType,
+
+  thread_create: ThreadCreateTrigger.configType,
+  thread_delete: ThreadDeleteTrigger.configType,
+  thread_archive: ThreadArchiveTrigger.configType,
+  thread_unarchive: ThreadUnarchiveTrigger.configType,
 });

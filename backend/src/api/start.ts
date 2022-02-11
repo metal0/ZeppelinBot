@@ -4,9 +4,10 @@ import { TokenError } from "passport-oauth2";
 import { initArchives } from "./archives";
 import { initAuth } from "./auth";
 import { initDocs } from "./docs";
-import { initGuildsAPI } from "./guilds";
+import { initGuildsAPI } from "./guilds/index";
 import { clientError, error, notFound } from "./responses";
 import { startBackgroundTasks } from "./tasks";
+import multer from "multer";
 
 const app = express();
 
@@ -17,9 +18,10 @@ app.use(
 );
 app.use(
   express.json({
-    limit: "10mb",
+    limit: "50mb",
   }),
 );
+app.use(multer().none());
 
 initAuth(app);
 initGuildsAPI(app);

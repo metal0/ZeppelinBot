@@ -82,7 +82,7 @@ export const MutesPlugin = zeppelinGuildPlugin<MutesPluginType>()({
 
   // prettier-ignore
   events: [
-    ClearActiveMuteOnRoleRemovalEvt,
+    // ClearActiveMuteOnRoleRemovalEvt, // FIXME: Temporarily disabled for performance
     ClearActiveMuteOnMemberBanEvt,
     ReapplyActiveMuteOnJoinEvt,
   ],
@@ -120,7 +120,7 @@ export const MutesPlugin = zeppelinGuildPlugin<MutesPluginType>()({
   },
 
   beforeUnload(pluginData) {
-    pluginData.state.unregisterGuildEventListener();
+    pluginData.state.unregisterGuildEventListener?.();
     pluginData.state.events.removeAllListeners();
   },
 });

@@ -16,6 +16,7 @@ import { ReplyAction } from "./reply";
 import { SetAntiraidLevelAction } from "./setAntiraidLevel";
 import { SetCounterAction } from "./setCounter";
 import { SetSlowmodeAction } from "./setSlowmode";
+import { StartThreadAction } from "./startThread";
 import { WarnAction } from "./warn";
 
 export const availableActions: Record<string, AutomodActionBlueprint<any>> = {
@@ -34,6 +35,7 @@ export const availableActions: Record<string, AutomodActionBlueprint<any>> = {
   add_to_counter: AddToCounterAction,
   set_counter: SetCounterAction,
   set_slowmode: SetSlowmodeAction,
+  start_thread: StartThreadAction,
   archive_thread: ArchiveThreadAction,
   change_roles: ChangeRolesAction,
 };
@@ -54,6 +56,7 @@ export const AvailableActions = t.type({
   add_to_counter: AddToCounterAction.configType,
   set_counter: SetCounterAction.configType,
   set_slowmode: SetSlowmodeAction.configType,
+  start_thread: StartThreadAction.configType,
   archive_thread: ArchiveThreadAction.configType,
   change_roles: ChangeRolesAction.configType,
 });

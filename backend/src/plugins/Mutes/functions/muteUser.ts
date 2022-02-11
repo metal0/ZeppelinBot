@@ -72,7 +72,7 @@ export async function muteUser(
       if (removeRoles) {
         // exclude managed roles from being removed
         const managedRoles = pluginData.guild.roles.cache.filter((x) => x.managed).map((y) => y.id);
-        newRoles = currentUserRoles.filter((r) => !managedRoles.includes(r));
+        newRoles = currentUserRoles.filter((r) => managedRoles.includes(r));
         await member.roles.set(newRoles as Snowflake[]);
       }
     } else {
@@ -118,7 +118,7 @@ export async function muteUser(
           logs.logBotAlert({
             body: `Cannot mute users, specified mute role is above Zeppelin in the role hierarchy`,
           });
-          throw new RecoverablePluginError(ERRORS.MUTE_ROLE_ABOVE_ZEP);
+          throw new RecoverablePluginError(ERRORS.MUTE_ROLE_ABOVE_ZEP, pluginData.guild);
         }
       }
     }

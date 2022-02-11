@@ -1,4 +1,4 @@
-import { GuildMember, PartialGuildMember, User } from "discord.js";
+import { GuildMember, PartialGuildMember, TextChannel, ThreadChannel, User } from "discord.js";
 import * as t from "io-ts";
 import { BasePluginType, CooldownManager } from "knub";
 import { SavedMessage } from "../../data/entities/SavedMessage";
@@ -23,6 +23,7 @@ export const Rule = t.type({
   name: t.string,
   presets: tNullable(t.array(t.string)),
   affects_bots: t.boolean,
+  affects_self: t.boolean,
   triggers: t.array(t.partial(AvailableTriggers.props)),
   actions: t.partial(AvailableActions.props),
   cooldown: tNullable(t.string),
@@ -130,6 +131,15 @@ export interface AutomodContext {
   antiraid?: {
     level: string | null;
   };
+  threadChange?: {
+    created?: ThreadChannel;
+    deleted?: ThreadChannel;
+    archived?: ThreadChannel;
+    unarchived?: ThreadChannel;
+    locked?: ThreadChannel;
+    unlocked?: ThreadChannel;
+  };
+  channel?: TextChannel | ThreadChannel;
 }
 
 export interface RecentAction {

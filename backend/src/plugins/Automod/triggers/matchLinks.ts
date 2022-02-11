@@ -7,11 +7,20 @@ import { TRegex } from "../../../validatorUtils";
 import { getTextMatchPartialSummary } from "../functions/getTextMatchPartialSummary";
 import { MatchableTextType, matchMultipleTextTypesOnMessage } from "../functions/matchMultipleTextTypesOnMessage";
 import { automodTrigger } from "../helpers";
+import { mergeRegexes } from "../../../utils/mergeRegexes";
+import { mergeWordsIntoRegex } from "../../../utils/mergeWordsIntoRegex";
+import { PhishermanPlugin } from "../../Phisherman/PhishermanPlugin";
+import { phishermanDomainIsSafe } from "../../../data/Phisherman";
 
 interface MatchResultType {
   type: MatchableTextType;
   link: string;
+  details?: string;
 }
+
+const regexCache = new WeakMap<any, RegExp[]>();
+
+const quickLinkCheck = /^https?:\/\//i;
 
 export const MatchLinksTrigger = automodTrigger<MatchResultType>()({
   configType: t.type({
@@ -22,6 +31,12 @@ export const MatchLinksTrigger = automodTrigger<MatchResultType>()({
     exclude_words: tNullable(t.array(t.string)),
     include_regex: tNullable(t.array(TRegex)),
     exclude_regex: tNullable(t.array(TRegex)),
+    phisherman: tNullable(
+      t.type({
+        include_suspected: tNullable(t.boolean),
+        include_verified: tNullable(t.boolean),
+      }),
+    ),
     only_real_links: t.boolean,
     match_messages: t.boolean,
     match_embeds: t.boolean,
@@ -52,7 +67,7 @@ export const MatchLinksTrigger = automodTrigger<MatchResultType>()({
 
       for (const link of links) {
         // "real link" = a link that Discord highlights
-        if (trigger.only_real_links && !link.input.match(/^https?:\/\//i)) {
+        if (trigger.only_real_links && !quickLinkCheck.test(link.input)) {
           continue;
         }
 
@@ -62,7 +77,13 @@ export const MatchLinksTrigger = automodTrigger<MatchResultType>()({
         // In order of specificity, regex > word > domain
 
         if (trigger.exclude_regex) {
-          for (const sourceRegex of trigger.exclude_regex) {
+          if (!regexCache.has(trigger.exclude_regex)) {
+            const toCache = mergeRegexes(trigger.exclude_regex, "i");
+            regexCache.set(trigger.exclude_regex, toCache);
+          }
+          const regexes = regexCache.get(trigger.exclude_regex)!;
+
+          for (const sourceRegex of regexes) {
             const matches = await pluginData.state.regexRunner.exec(sourceRegex, link.input).catch(allowTimeout);
             if (matches) {
               continue typeLoop;
@@ -71,7 +92,13 @@ export const MatchLinksTrigger = automodTrigger<MatchResultType>()({
         }
 
         if (trigger.include_regex) {
-          for (const sourceRegex of trigger.include_regex) {
+          if (!regexCache.has(trigger.include_regex)) {
+            const toCache = mergeRegexes(trigger.include_regex, "i");
+            regexCache.set(trigger.include_regex, toCache);
+          }
+          const regexes = regexCache.get(trigger.include_regex)!;
+
+          for (const sourceRegex of regexes) {
             const matches = await pluginData.state.regexRunner.exec(sourceRegex, link.input).catch(allowTimeout);
             if (matches) {
               return { extra: { type, link: link.input } };
@@ -80,8 +107,13 @@ export const MatchLinksTrigger = automodTrigger<MatchResultType>()({
         }
 
         if (trigger.exclude_words) {
-          for (const word of trigger.exclude_words) {
-            const regex = new RegExp(escapeStringRegexp(word), "i");
+          if (!regexCache.has(trigger.exclude_words)) {
+            const toCache = mergeWordsIntoRegex(trigger.exclude_words, "i");
+            regexCache.set(trigger.exclude_words, [toCache]);
+          }
+          const regexes = regexCache.get(trigger.exclude_words)!;
+
+          for (const regex of regexes) {
             if (regex.test(link.input)) {
               continue typeLoop;
             }
@@ -89,8 +121,13 @@ export const MatchLinksTrigger = automodTrigger<MatchResultType>()({
         }
 
         if (trigger.include_words) {
-          for (const word of trigger.include_words) {
-            const regex = new RegExp(escapeStringRegexp(word), "i");
+          if (!regexCache.has(trigger.include_words)) {
+            const toCache = mergeWordsIntoRegex(trigger.include_words, "i");
+            regexCache.set(trigger.include_words, [toCache]);
+          }
+          const regexes = regexCache.get(trigger.include_words)!;
+
+          for (const regex of regexes) {
             if (regex.test(link.input)) {
               return { extra: { type, link: link.input } };
             }
@@ -122,6 +159,25 @@ export const MatchLinksTrigger = automodTrigger<MatchResultType>()({
             }
           }
         }
+
+        if (trigger.phisherman) {
+          const phishermanResult = await pluginData.getPlugin(PhishermanPlugin).getDomainInfo(normalizedHostname);
+          if (phishermanResult != null && !phishermanDomainIsSafe(phishermanResult)) {
+            if (
+              (trigger.phisherman.include_suspected && !phishermanResult.verifiedPhish) ||
+              (trigger.phisherman.include_verified && phishermanResult.verifiedPhish)
+            ) {
+              const suspectedVerified = phishermanResult.verifiedPhish ? "verified" : "suspected";
+              return {
+                extra: {
+                  type,
+                  link: link.input,
+                  details: `using Phisherman (${suspectedVerified})`,
+                },
+              };
+            }
+          }
+        }
       }
     }
 
@@ -130,6 +186,11 @@ export const MatchLinksTrigger = automodTrigger<MatchResultType>()({
 
   renderMatchInformation({ pluginData, contexts, matchResult }) {
     const partialSummary = getTextMatchPartialSummary(pluginData, matchResult.extra.type, contexts[0]);
-    return `Matched link \`${Util.escapeInlineCode(matchResult.extra.link)}\` in ${partialSummary}`;
+    let information = `Matched link \`${Util.escapeInlineCode(matchResult.extra.link)}\``;
+    if (matchResult.extra.details) {
+      information += ` ${matchResult.extra.details}`;
+    }
+    information += ` in ${partialSummary}`;
+    return information;
   },
 });

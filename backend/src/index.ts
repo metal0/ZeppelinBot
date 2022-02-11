@@ -1,4 +1,4 @@
-import { Client, Constants, Intents, TextChannel, ThreadChannel } from "discord.js";
+import { Client, Constants, Intents, Options, TextChannel, ThreadChannel } from "discord.js";
 import { Knub, PluginError } from "knub";
 import { PluginLoadError } from "knub/dist/plugins/PluginLoadError";
 // Always use UTC internally
@@ -17,7 +17,7 @@ import { RecoverablePluginError } from "./RecoverablePluginError";
 import { SimpleError } from "./SimpleError";
 import { ZeppelinGlobalConfig, ZeppelinGuildConfig } from "./types";
 import { startUptimeCounter } from "./uptime";
-import { errorMessage, isDiscordAPIError, isDiscordHTTPError, SECONDS, sleep, successMessage } from "./utils";
+import { errorMessage, isDiscordAPIError, isDiscordHTTPError, MINUTES, SECONDS, sleep, successMessage } from "./utils";
 import { loadYamlSafely } from "./utils/loadYamlSafely";
 import { DecayingCounter } from "./utils/DecayingCounter";
 import { PluginNotLoadedError } from "knub/dist/plugins/PluginNotLoadedError";
@@ -29,6 +29,14 @@ import { runUpcomingScheduledPostsLoop } from "./data/loops/upcomingScheduledPos
 import { runExpiringTempbansLoop } from "./data/loops/expiringTempbansLoop";
 import { runExpiringVCAlertsLoop } from "./data/loops/expiringVCAlertsLoop";
 import { runExpiredArchiveDeletionLoop } from "./data/loops/expiredArchiveDeletionLoop";
+import { runSavedMessageCleanupLoop } from "./data/loops/savedMessageCleanupLoop";
+import { performance } from "perf_hooks";
+import { setProfiler } from "./profiler";
+import { enableProfiling } from "./utils/easyProfiler";
+import { runPhishermanCacheCleanupLoop, runPhishermanReportingLoop } from "./data/loops/phishermanLoops";
+import { hasPhishermanMasterAPIKey } from "./data/Phisherman";
+import { consumeQueryStats } from "./data/queryLogger";
+import { EventEmitter } from "events";
 
 if (!process.env.KEY) {
   // tslint:disable-next-line:no-console
@@ -64,7 +72,7 @@ function errorHandler(err) {
     // Log it in the console as a warning and post a warning to the guild's log.
 
     // tslint:disable:no-console
-    console.warn(`${guildName}: [${err.code}] ${err.message}`);
+    console.warn(`${guildId} ${guildName}: [${err.code}] ${err.message}`);
 
     if (err.guild) {
       const logs = new GuildLogs(err.guild.id);
@@ -162,19 +170,38 @@ for (const [i, part] of actualVersionParts.entries()) {
 
 moment.tz.setDefault("UTC");
 
+// Blocking check
+let avgTotal = 0;
+let avgCount = 0;
+let lastCheck = performance.now();
+setInterval(() => {
+  const now = performance.now();
+  let diff = Math.max(0, now - lastCheck);
+  if (diff < 5) diff = 0;
+  avgTotal += diff;
+  avgCount++;
+  lastCheck = now;
+}, 500);
+setInterval(() => {
+  const avgBlocking = avgTotal / (avgCount || 1);
+  // FIXME: Debug
+  // tslint:disable-next-line:no-console
+  console.log(`Average blocking in the last 5min: ${avgBlocking / avgTotal}ms`);
+  avgTotal = 0;
+  avgCount = 0;
+}, 5 * 60 * 1000);
+
 logger.info("Connecting to database");
 connect().then(async () => {
-  const RequestHandler = require("discord.js/src/rest/RequestHandler.js");
-  const originalPush = RequestHandler.prototype.push;
-  // tslint:disable-next-line:only-arrow-functions
-  RequestHandler.prototype.push = function (...args) {
-    const request = args[0];
-    logRestCall(request.method, request.path);
-    return originalPush.call(this, ...args);
-  };
-
   const client = new Client({
     partials: ["USER", "CHANNEL", "GUILD_MEMBER", "MESSAGE", "REACTION"],
+
+    makeCache: Options.cacheWithLimits({
+      ...Options.defaultMakeCacheSettings,
+      MessageManager: 1,
+      // GuildMemberManager: 15000,
+      GuildInviteManager: 0,
+    }),
 
     restGlobalRateLimit: 50,
     // restTimeOffset: 1000,
@@ -203,7 +230,8 @@ connect().then(async () => {
       Intents.FLAGS.GUILD_VOICE_STATES,
     ],
   });
-  client.setMaxListeners(200);
+  // FIXME: TS doesn't see Client as a child of EventEmitter for some reason
+  (client as unknown as EventEmitter).setMaxListeners(200);
 
   client.on(Constants.Events.RATE_LIMIT, (data) => {
     // tslint:disable-next-line:no-console
@@ -340,7 +368,45 @@ connect().then(async () => {
     runExpiringVCAlertsLoop();
     await sleep(10 * SECONDS);
     runExpiredArchiveDeletionLoop();
+    await sleep(10 * SECONDS);
+    runSavedMessageCleanupLoop();
+
+    if (hasPhishermanMasterAPIKey()) {
+      await sleep(10 * SECONDS);
+      runPhishermanCacheCleanupLoop();
+      await sleep(10 * SECONDS);
+      runPhishermanReportingLoop();
+    }
   });
+
+  setProfiler(bot.profiler);
+  if (process.env.PROFILING === "true") {
+    enableProfiling();
+  }
+
+  let lowestGlobalRemaining = Infinity;
+  setInterval(() => {
+    lowestGlobalRemaining = Math.min(lowestGlobalRemaining, (client as any).rest.globalRemaining);
+  }, 100);
+  setInterval(() => {
+    // FIXME: Debug
+    // tslint:disable-next-line:no-console
+    console.log("Lowest global remaining in the past 15 seconds:", lowestGlobalRemaining);
+    lowestGlobalRemaining = Infinity;
+  }, 15000);
+
+  setInterval(() => {
+    const queryStatsMap = consumeQueryStats();
+    const entries = Array.from(queryStatsMap.entries());
+    entries.sort((a, b) => b[1] - a[1]);
+    const topEntriesStr = entries
+      .slice(0, 5)
+      .map(([key, count]) => `${count}x ${key}`)
+      .join("\n");
+    // FIXME: Debug
+    // tslint:disable-next-line:no-console
+    console.log(`Top query entries in the past 5 minutes:\n${topEntriesStr}`);
+  }, 5 * MINUTES);
 
   bot.initialize();
   logger.info("Bot Initialized");
