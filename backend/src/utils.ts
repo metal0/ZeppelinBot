@@ -330,7 +330,7 @@ export const zEmbedInput = z.object({
   title: z.string().optional(),
   description: z.string().optional(),
   url: z.string().optional(),
-  timestamp: z.number().optional(),
+  timestamp: z.string().optional(),
   color: z.number().optional(),
 
   footer: z.optional(
@@ -388,6 +388,7 @@ export const zEmbedInput = z.object({
         url: z.string().optional(),
         width: z.number().optional(),
         height: z.number().optional(),
+        icon_url: z.string().optional(),
       }),
     )
     .nullable(),
