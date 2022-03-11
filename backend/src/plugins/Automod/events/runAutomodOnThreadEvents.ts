@@ -5,6 +5,8 @@ import { AutomodContext, AutomodPluginType } from "../types";
 
 export const RunAutomodOnThreadCreate = typedGuildEventListener<AutomodPluginType>()({
   event: "threadCreate",
+  allowBots: true,
+  allowSelf: true,
   async listener({ pluginData, args: { thread } }) {
     const user = thread.ownerId
       ? await pluginData.client.users.fetch(thread.ownerId).catch(() => undefined)
@@ -47,6 +49,8 @@ export const RunAutomodOnThreadCreate = typedGuildEventListener<AutomodPluginTyp
 
 export const RunAutomodOnThreadDelete = typedGuildEventListener<AutomodPluginType>()({
   event: "threadDelete",
+  allowBots: true,
+  allowSelf: true,
   async listener({ pluginData, args: { thread } }) {
     const user = thread.ownerId
       ? await pluginData.client.users.fetch(thread.ownerId).catch(() => undefined)
@@ -69,6 +73,8 @@ export const RunAutomodOnThreadDelete = typedGuildEventListener<AutomodPluginTyp
 
 export const RunAutomodOnThreadUpdate = typedGuildEventListener<AutomodPluginType>()({
   event: "threadUpdate",
+  allowBots: true,
+  allowSelf: true,
   async listener({ pluginData, args: { oldThread, newThread: thread } }) {
     const user = thread.ownerId
       ? await pluginData.client.users.fetch(thread.ownerId).catch(() => undefined)
