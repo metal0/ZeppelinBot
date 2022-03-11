@@ -6,6 +6,8 @@ import { AutomodContext, AutomodPluginType } from "../types";
 
 export const RunAutomodOnMemberUpdate = typedGuildEventListener<AutomodPluginType>()({
   event: "guildMemberUpdate",
+  allowBots: true,
+  allowSelf: true,
   listener({ pluginData, args: { oldMember, newMember } }) {
     if (!oldMember) return;
     if (oldMember.partial) return;
