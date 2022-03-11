@@ -33,18 +33,19 @@ export const ReplyAction = automodAction({
 
   async apply({ pluginData, contexts, actionConfig, ruleName }) {
     const contextsWithTextChannels = contexts
-      .filter((c) => c.message?.channel_id)
+      .filter((c) => c.channel?.id || c.message?.channel_id)
       .filter((c) => {
-        const channel = pluginData.guild.channels.cache.get(c.message!.channel_id as Snowflake);
+        const channel = c.channel ?? pluginData.guild.channels.cache.get(c.message!.channel_id as Snowflake);
         return channel instanceof TextChannel || channel instanceof ThreadChannel;
       });
 
     const contextsByChannelId = contextsWithTextChannels.reduce((map: Map<string, AutomodContext[]>, context) => {
-      if (!map.has(context.message!.channel_id)) {
-        map.set(context.message!.channel_id, []);
+      const chId = context.channel?.id ?? context.message!.channel_id;
+      if (!map.has(chId)) {
+        map.set(chId, []);
       }
 
-      map.get(context.message!.channel_id)!.push(context);
+      map.get(chId)!.push(context);
       return map;
     }, new Map());
 
@@ -103,7 +104,7 @@ export const ReplyAction = automodAction({
           },
         };
 
-        if (typeof actionConfig !== "string" && actionConfig.inline) {
+        if (typeof actionConfig !== "string" && actionConfig.inline && _contexts[0].message) {
           messageOpts.reply = {
             failIfNotExists: false,
             messageReference: _contexts[0].message!.id,
