@@ -22,6 +22,7 @@ import {
 import { LogsPlugin } from "../../Logs/LogsPlugin";
 import { automodAction } from "../helpers";
 import {
+  channelToTemplateSafeChannel,
   savedMessageToTemplateSafeSavedMessage,
   TemplateSafeUser,
   userToTemplateSafeUser,
@@ -76,6 +77,7 @@ export const AlertAction = automodAction({
             messageLink: theMessageLink,
             logMessage: validateAndParseMessageContent(logMessage)?.content,
             message: contexts[0].message ? savedMessageToTemplateSafeSavedMessage(contexts[0].message) : undefined,
+            channel: contexts[0].channel ? channelToTemplateSafeChannel(contexts[0].channel) : undefined,
           }),
         );
       } catch (err) {
