@@ -5,6 +5,8 @@ import { AutomodContext, AutomodPluginType } from "../types";
 
 export const RunAutomodOnJoinEvt = typedGuildEventListener<AutomodPluginType>()({
   event: "guildMemberAdd",
+  allowBots: true,
+  allowSelf: true,
   listener({ pluginData, args: { member } }) {
     const context: AutomodContext = {
       timestamp: Date.now(),
@@ -28,6 +30,8 @@ export const RunAutomodOnJoinEvt = typedGuildEventListener<AutomodPluginType>()(
 
 export const RunAutomodOnLeaveEvt = typedGuildEventListener<AutomodPluginType>()({
   event: "guildMemberRemove",
+  allowBots: true,
+  allowSelf: true,
   listener({ pluginData, args: { member } }) {
     const context: AutomodContext = {
       timestamp: Date.now(),
