@@ -1,6 +1,6 @@
 import { MessageOptions, Permissions, Snowflake, TextChannel, ThreadChannel, User } from "discord.js";
 import * as t from "io-ts";
-import { userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
+import { savedMessageToTemplateSafeSavedMessage, userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
 import { renderTemplate, TemplateSafeValueContainer } from "../../../templateFormatter";
 import {
   convertDelayStringToMS,
@@ -39,6 +39,7 @@ export const ReplyAction = automodAction({
         return channel instanceof TextChannel || channel instanceof ThreadChannel;
       });
 
+    const message = contexts.find((c) => c.message)?.message;
     const contextsByChannelId = contextsWithTextChannels.reduce((map: Map<string, AutomodContext[]>, context) => {
       const chId = context.channel?.id ?? context.message!.channel_id;
       if (!map.has(chId)) {
@@ -58,6 +59,7 @@ export const ReplyAction = automodAction({
           str,
           new TemplateSafeValueContainer({
             user: userToTemplateSafeUser(user),
+            message: message ? savedMessageToTemplateSafeSavedMessage(message) : null,
           }),
         );
 
