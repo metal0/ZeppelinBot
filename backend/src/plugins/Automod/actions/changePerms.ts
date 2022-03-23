@@ -16,12 +16,7 @@ export const ChangePermsAction = automodAction({
     channel: tNullable(t.string),
     perms: tPartialDictionary(t.keyof(Permissions.FLAGS), tNullable(t.boolean)),
   }),
-  defaultConfig: {
-    channel: "",
-    perms: {
-      SEND_MESSAGES: true,
-    },
-  },
+  defaultConfig: {},
 
   async apply({ pluginData, contexts, actionConfig, ruleName }) {
     const user = contexts.find((c) => c.user)?.user;
@@ -33,29 +28,32 @@ export const ChangePermsAction = automodAction({
         new TemplateSafeValueContainer({
           user: user ? userToTemplateSafeUser(user) : null,
           guild: guildToTemplateSafeGuild(pluginData.guild),
+          msg: message ? savedMessageToTemplateSafeSavedMessage(message) : null,
         }),
       );
     const renderChannel = async (str: string) =>
       renderTemplate(
         str,
         new TemplateSafeValueContainer({
+          user: user ? userToTemplateSafeUser(user) : null,
+          guild: guildToTemplateSafeGuild(pluginData.guild),
           msg: message ? savedMessageToTemplateSafeSavedMessage(message) : null,
         }),
       );
     const target = await renderTarget(actionConfig.target);
     const channelId = actionConfig.channel ? await renderChannel(actionConfig.channel) : null;
-    const role = await pluginData.guild.roles.fetch(target);
+    const role = pluginData.guild.roles.resolve(target);
     if (!role) {
-      const member = await pluginData.guild.members.fetch(target);
+      const member = await pluginData.guild.members.fetch(target).catch(noop);
       if (!member) return;
     }
 
     if (channelId && isValidSnowflake(channelId)) {
-      const channel = await pluginData.guild.channels.fetch(channelId);
-      if (!channel) return;
+      const channel = pluginData.guild.channels.resolve(channelId);
+      if (!channel || channel.isThread()) return;
       const overwrite = channel.permissionOverwrites.cache.find((pw) => pw.id === target);
-      const allow = new Permissions(overwrite ? overwrite.allow : "0").serialize();
-      const deny = new Permissions(overwrite ? overwrite.deny : "0").serialize();
+      const allow = new Permissions(overwrite?.allow ?? 0n).serialize();
+      const deny = new Permissions(overwrite?.deny ?? 0n).serialize();
       const newPerms: Partial<Record<PermissionString, boolean | null>> = {};
 
       for (const key in allow) {
