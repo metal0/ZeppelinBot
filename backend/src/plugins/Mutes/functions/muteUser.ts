@@ -21,6 +21,8 @@ import { MuteOptions, MutesPluginType } from "../types";
 import { Mute } from "../../../data/entities/Mute";
 import { registerExpiringMute } from "../../../data/loops/expiringMutesLoop";
 
+const TIMEOUT_MAX = 27 * 24 * 60 * 60 * 1000;
+
 /**
  * TODO: Clean up this function
  */
@@ -36,11 +38,13 @@ export async function muteUser(
   const lock = await pluginData.locks.acquire(muteLock({ id: userId }));
 
   const muteRole = pluginData.config.get().mute_role;
-  if (!muteRole) {
+  /*if (!muteRole) {
     lock.unlock();
     throw new RecoverablePluginError(ERRORS.NO_MUTE_ROLE_IN_CONFIG);
-  }
+  }*/
 
+  if (!muteRole && muteTime && muteTime > TIMEOUT_MAX) muteTime = TIMEOUT_MAX;
+  if (!muteRole && !muteTime) muteTime = TIMEOUT_MAX;
   const timeUntilUnmute = muteTime ? humanizeDuration(muteTime) : "indefinite";
 
   // No mod specified -> mark Zeppelin as the mod
@@ -90,36 +94,47 @@ export async function muteUser(
     }
 
     // Apply mute role if it's missing
-    if (!currentUserRoles.includes(muteRole as Snowflake)) {
-      try {
-        await member.roles.add(muteRole as Snowflake);
-      } catch (e) {
-        const actualMuteRole = pluginData.guild.roles.cache.get(muteRole as Snowflake);
-        if (!actualMuteRole) {
-          lock.unlock();
-          logs.logBotAlert({
-            body: `Cannot mute users, specified mute role Id is invalid`,
-          });
-          throw new RecoverablePluginError(ERRORS.INVALID_MUTE_ROLE_ID);
-        }
+    if (muteRole) {
+      if (!currentUserRoles.includes(muteRole as Snowflake)) {
+        try {
+          await member.roles.add(muteRole as Snowflake);
+        } catch (e) {
+          const actualMuteRole = pluginData.guild.roles.cache.get(muteRole as Snowflake);
+          if (!actualMuteRole) {
+            lock.unlock();
+            logs.logBotAlert({
+              body: `Cannot mute users, specified mute role Id is invalid`,
+            });
+            throw new RecoverablePluginError(ERRORS.INVALID_MUTE_ROLE_ID);
+          }
 
-        const zep = await resolveMember(pluginData.client, pluginData.guild, pluginData.client.user!.id);
-        const zepRoles = pluginData.guild.roles.cache.filter((x) => zep!.roles.cache.has(x.id));
-        // If we have roles and one of them is above the muted role, throw generic error
-        if (zepRoles.size >= 0 && zepRoles.some((zepRole) => zepRole.position > actualMuteRole.position)) {
-          lock.unlock();
-          logs.logBotAlert({
-            body: `Cannot mute user ${member.id}: ${e}`,
-          });
-          throw e;
-        } else {
-          // Otherwise, throw error that mute role is above zeps roles
-          lock.unlock();
-          logs.logBotAlert({
-            body: `Cannot mute users, specified mute role is above Zeppelin in the role hierarchy`,
-          });
-          throw new RecoverablePluginError(ERRORS.MUTE_ROLE_ABOVE_ZEP, pluginData.guild);
+          const zep = await resolveMember(pluginData.client, pluginData.guild, pluginData.client.user!.id);
+          const zepRoles = pluginData.guild.roles.cache.filter((x) => zep!.roles.cache.has(x.id));
+          // If we have roles and one of them is above the muted role, throw generic error
+          if (zepRoles.size >= 0 && zepRoles.some((zepRole) => zepRole.position > actualMuteRole.position)) {
+            lock.unlock();
+            logs.logBotAlert({
+              body: `Cannot mute user ${member.id}: ${e}`,
+            });
+            throw e;
+          } else {
+            // Otherwise, throw error that mute role is above zeps roles
+            lock.unlock();
+            logs.logBotAlert({
+              body: `Cannot mute users, specified mute role is above Zeppelin in the role hierarchy`,
+            });
+            throw new RecoverablePluginError(ERRORS.MUTE_ROLE_ABOVE_ZEP, pluginData.guild);
+          }
         }
+      }
+    } else {
+      try {
+        await member.timeout(muteTime ?? TIMEOUT_MAX, reason);
+      } catch (e) {
+        lock.unlock();
+        logs.logBotAlert({
+          body: `Cannot mute users, timeout failed`,
+        });
       }
     }
 
