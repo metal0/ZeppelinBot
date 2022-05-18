@@ -1,3 +1,4 @@
+import { ThreadAutoArchiveDuration } from "discord-api-types";
 import { MessageEmbedOptions, Snowflake, StageChannel, ThreadChannel, VoiceChannel } from "discord.js";
 import humanizeDuration from "humanize-duration";
 import { GuildPluginData } from "knub";
@@ -70,13 +71,13 @@ export async function getChannelInfoEmbed(
     channelName = channel.name;
   }
 
-  const createdAt = moment.utc(channel.createdAt, "x");
+  const createdAt = moment.utc(channel.createdAt!, "x");
   const timeAndDate = pluginData.getPlugin(TimeAndDatePlugin);
   const tzCreatedAt = requestMemberId
     ? await timeAndDate.inMemberTz(requestMemberId, createdAt)
     : timeAndDate.inGuildTz(createdAt);
   const prettyCreatedAt = tzCreatedAt.format(timeAndDate.getDateFormat("pretty_datetime"));
-  const channelAge = humanizeDuration(Date.now() - channel.createdTimestamp, {
+  const channelAge = humanizeDuration(Date.now() - channel.createdTimestamp!, {
     largest: 2,
     round: true,
   });
@@ -134,7 +135,7 @@ export async function getChannelInfoEmbed(
     const memberCount = thread.memberCount ?? thread.members.cache.size;
     const owner = await thread.fetchOwner().catch(() => null);
     const ownerMention = owner?.user ? verboseUserMention(owner.user) : "Unknown#0000";
-    const autoArchiveDuration = thread.autoArchiveDuration === "MAX" ? 10080 : thread.autoArchiveDuration; // TODO: Boost level check
+    const autoArchiveDuration = thread.autoArchiveDuration!;
     const humanizedArchiveTime = `Archive duration: **${humanizeDuration((autoArchiveDuration ?? 0) * MINUTES)}**`;
 
     embed.fields.push({
