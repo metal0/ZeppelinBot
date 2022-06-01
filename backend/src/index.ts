@@ -396,11 +396,16 @@ connect().then(async () => {
   setInterval(() => {
     lowestGlobalRemaining = Math.min(lowestGlobalRemaining, (client as any).rest.globalRemaining);
   }, 100);
-  setInterval(() => {
-    // console.log("Lowest global remaining in the past 5 seconds:", lowestGlobalRemaining);
-    lowestGlobalRemaining = Infinity;
-  }, 15000);
+
   if (process.env.PROFILING === "true") {
+    setInterval(() => {
+      // FIXME: Debug
+      if (lowestGlobalRemaining < 30) {
+        // tslint:disable-next-line:no-console
+        console.log("[DEBUG] Lowest global remaining in the past 15 seconds:", lowestGlobalRemaining);
+      }
+      lowestGlobalRemaining = Infinity;
+    }, 15000);
     setInterval(() => {
       const queryStatsMap = consumeQueryStats();
       const entries = Array.from(queryStatsMap.entries());

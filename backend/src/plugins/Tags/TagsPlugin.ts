@@ -60,9 +60,7 @@ export const TagsPlugin = zeppelinGuildPlugin<TagsPluginType>()({
   showInDocs: true,
   info: {
     prettyName: "Tags",
-    description: trimPluginDescription(`
-      Tags are a way to store and reuse information.
-    `),
+    description: "Tags are a way to store and reuse information.",
     configurationGuide: trimPluginDescription(`
       ### Template Functions
       You can use template functions in your tags. These functions are called when the tag is rendered.
@@ -70,7 +68,7 @@ export const TagsPlugin = zeppelinGuildPlugin<TagsPluginType>()({
       You use them by adding a \`{}\` on your tag.
 
       Here are the functions you can use in your tags:
-      
+
       ${generateTemplateMarkdown(TemplateFunctions)}
     `),
   },
