@@ -1,4 +1,4 @@
-import { Permissions, Snowflake, StageChannel, TextChannel, VoiceChannel } from "discord.js";
+import { Permissions, Snowflake, StageChannel, TextChannel, ThreadChannel, VoiceChannel } from "discord.js";
 import { GuildPluginData } from "knub";
 import { LogType } from "../../../data/LogType";
 import { isDiscordAPIError, MINUTES } from "../../../utils";
@@ -53,7 +53,7 @@ export async function handleCompanionPermissions(
   try {
     for (const channelId of permsToDelete) {
       const channel = pluginData.guild.channels.cache.get(channelId as Snowflake);
-      if (!channel || !(channel instanceof TextChannel)) continue;
+      if (!channel || channel instanceof ThreadChannel) continue;
       pluginData.state.serverLogs.ignoreLog(LogType.CHANNEL_UPDATE, channelId, 3 * 1000);
       await channel.permissionOverwrites
         .resolve(userId as Snowflake)
@@ -62,7 +62,7 @@ export async function handleCompanionPermissions(
 
     for (const [channelId, permissions] of permsToSet) {
       const channel = pluginData.guild.channels.cache.get(channelId as Snowflake);
-      if (!channel || !(channel instanceof TextChannel)) continue;
+      if (!channel || channel instanceof ThreadChannel) continue;
       pluginData.state.serverLogs.ignoreLog(LogType.CHANNEL_UPDATE, channelId, 3 * 1000);
       const fullSerialized = new Permissions(BigInt(permissions)).serialize();
       const onlyAllowed = filterObject(fullSerialized, (v) => v === true);
