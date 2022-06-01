@@ -200,7 +200,9 @@ export async function displaySearch(
 
       collector.on("collect", async (interaction: MessageComponentInteraction) => {
         if (msg.author.id !== interaction.user.id) {
-          interaction.reply({ content: `You are not permitted to use these buttons.`, ephemeral: true }).catch(noop);
+          interaction
+            .reply({ content: `You are not permitted to use these buttons.`, ephemeral: true })
+            .catch((err) => console.trace(err.message));
         } else {
           if (interaction.customId === `previousButton:${idMod}` && currentPage > 1) {
             collector.stop();
