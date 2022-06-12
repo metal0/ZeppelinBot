@@ -48,6 +48,7 @@ export class GuildCounters extends BaseGuildRepository {
   async findOrCreateCounter(name: string, perChannel: boolean, perUser: boolean): Promise<Counter> {
     const existing = await this.counters.findOne({
       where: {
+        guild_id: this.guildId,
         name,
       },
     });
