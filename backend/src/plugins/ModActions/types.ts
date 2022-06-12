@@ -42,6 +42,7 @@ export const ConfigSchema = t.type({
   can_massunban: t.boolean,
   can_massban: t.boolean,
   can_massmute: t.boolean,
+  can_masswarn: t.boolean,
   can_hidecase: t.boolean,
   can_deletecase: t.boolean,
   can_act_as_other: t.boolean,
