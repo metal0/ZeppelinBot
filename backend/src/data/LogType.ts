@@ -99,4 +99,6 @@ export enum LogType {
   CASE_DELETE,
 
   DM_FAILED,
+
+  MASSWARN,
 }

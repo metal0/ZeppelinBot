@@ -80,6 +80,7 @@ const defaultOptions = {
     can_massunban: false,
     can_massban: false,
     can_massmute: false,
+    can_masswarn: false,
     can_hidecase: false,
     can_deletecase: false,
     can_act_as_other: false,
@@ -106,6 +107,7 @@ const defaultOptions = {
         can_massunban: true,
         can_massban: true,
         can_massmute: true,
+        can_masswarn: true,
         can_hidecase: true,
         can_act_as_other: true,
       },
@@ -205,6 +207,9 @@ export const ModActionsPlugin = zeppelinGuildPlugin<ModActionsPluginType>()({
     // Massbans can take a while depending on rate limits,
     // so we're giving each massban 15 minutes to complete before launching the next massban
     state.massbanQueue = new Queue(15 * MINUTES);
+
+    // Same goes for masswarns, since they have to send a lot of DMs
+    state.masswarnQueue = new Queue(15 * MINUTES);
 
     state.events = new EventEmitter();
   },

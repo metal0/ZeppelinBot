@@ -362,6 +362,12 @@ export const LogTypeData = z.object({
     count: z.number(),
   }),
 
+  [LogType.MASSWARN]: z.object({
+    mod: z.instanceof(TemplateSafeUser),
+    count: z.number(),
+    reason: z.string(),
+  }),
+
   [LogType.MEMBER_TIMED_MUTE]: z.object({
     mod: z.instanceof(TemplateSafeUser),
     user: z.instanceof(TemplateSafeUser),

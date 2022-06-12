@@ -76,6 +76,7 @@ export interface ModActionsPluginType extends BasePluginType {
     unregisterGuildEventListener: () => void;
     ignoredEvents: IIgnoredEvent[];
     massbanQueue: Queue;
+    masswarnQueue: Queue;
 
     events: ModActionsEventEmitter;
   };
