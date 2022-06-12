@@ -1,12 +1,11 @@
 import { Snowflake, TextChannel } from "discord.js";
 import { waitForReply } from "knub/dist/helpers";
 import { performance } from "perf_hooks";
-import { userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { CaseTypes } from "../../../data/CaseTypes";
 import { LogType } from "../../../data/LogType";
 import { humanizeDurationShort } from "../../../humanizeDurationShort";
-import { CasesPlugin } from "../../../plugins/Cases/CasesPlugin";
+import { CasesPlugin } from "../../Cases/CasesPlugin";
 import { canActOn, sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
 import { MINUTES, noop } from "../../../utils";
 import { formatReasonWithAttachments } from "../functions/formatReasonWithAttachments";

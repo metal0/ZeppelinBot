@@ -59,6 +59,7 @@ import { logEmojiUpdate } from "./logFunctions/logEmojiUpdate";
 import { logMassBan } from "./logFunctions/logMassBan";
 import { logMassMute } from "./logFunctions/logMassMute";
 import { logMassUnban } from "./logFunctions/logMassUnban";
+import { logMassWarn } from "./logFunctions/logMassWarn";
 import { logMemberBan } from "./logFunctions/logMemberBan";
 import { logMemberForceban } from "./logFunctions/logMemberForceban";
 import { logMemberJoin } from "./logFunctions/logMemberJoin";
@@ -205,6 +206,7 @@ export const LogsPlugin = zeppelinGuildPlugin<LogsPluginType>()({
     logMassBan: mapToPublicFn(logMassBan),
     logMassMute: mapToPublicFn(logMassMute),
     logMassUnban: mapToPublicFn(logMassUnban),
+    logMassWarn: mapToPublicFn(logMassWarn),
     logMemberBan: mapToPublicFn(logMemberBan),
     logMemberForceban: mapToPublicFn(logMemberForceban),
     logMemberJoin: mapToPublicFn(logMemberJoin),
