@@ -19,11 +19,11 @@ export async function getCounterValue(
   }
 
   if (counter.per_channel && !channelId) {
-    throw new Error(`Counter is per channel but no channel ID was supplied`);
+    throw new Error(`Counter ${counterName} (${pluginData.guild.id}) is per channel but no channel ID was supplied`);
   }
 
   if (counter.per_user && !userId) {
-    throw new Error(`Counter is per user but no user ID was supplied`);
+    throw new Error(`Counter ${counterName} (${pluginData.guild.id}) is per user but no user ID was supplied`);
   }
 
   const counterId = pluginData.state.counterIds[counterName];

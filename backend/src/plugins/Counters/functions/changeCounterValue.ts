@@ -14,15 +14,15 @@ export async function changeCounterValue(
   const config = pluginData.config.get();
   const counter = config.counters[counterName];
   if (!counter) {
-    throw new Error(`Unknown counter: ${counterName}`);
+    throw new Error(`Unknown counter: ${counterName} (${pluginData.guild.id})`);
   }
 
   if (counter.per_channel && !channelId) {
-    throw new Error(`Counter is per channel but no channel ID was supplied`);
+    throw new Error(`Counter ${counterName} (${pluginData.guild.id}) is per channel but no channel ID was supplied`);
   }
 
   if (counter.per_user && !userId) {
-    throw new Error(`Counter is per user but no user ID was supplied`);
+    throw new Error(`Counter ${counterName} (${pluginData.guild.id}) is per user but no user ID was supplied`);
   }
 
   channelId = counter.per_channel ? channelId : null;

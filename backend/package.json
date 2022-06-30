@@ -18,7 +18,7 @@
     "migrate-dev": "npm run build && npm run typeorm -- migration:run",
     "migrate-rollback-prod": "npm run typeorm -- migration:revert",
     "migrate-rollback-dev": "npm run build && npm run typeorm -- migration:revert",
-    "test": "npm run build && npm run run-tests",
+    "test": "npm run build && npm run migrate-prod && npm run watch-bot",
     "run-tests": "ava",
     "test-watch": "tsc-watch --onSuccess \"npx ava\""
   },

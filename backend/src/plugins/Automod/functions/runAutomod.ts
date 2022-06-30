@@ -138,14 +138,17 @@ export async function runAutomod(pluginData: GuildPluginData<AutomodPluginType>,
         const actionStartTime = performance.now();
 
         const action = availableActions[actionName];
-
-        action.apply({
-          ruleName,
-          pluginData,
-          contexts,
-          actionConfig,
-          matchResult,
-        });
+        try {
+          action.apply({
+            ruleName,
+            pluginData,
+            contexts,
+            actionConfig,
+            matchResult,
+          });
+        } catch (e) {
+          console.error(e);
+        }
 
         if (profilingEnabled()) {
           pluginData
