@@ -15,8 +15,9 @@ export async function cleanupConfigs() {
   // >1 month old: 1 config retained per month
   const oneMonthCutoff = moment.utc().subtract(30, "days").format(DBDateFormat);
   do {
-    rows = await connection.query(
-      `
+    rows = await connection
+      .query(
+        `
       WITH _configs
       AS (
         SELECT
@@ -38,23 +39,26 @@ export async function cleanupConfigs() {
       FROM _configs
       WHERE row_num > 1
     `,
-      [oneMonthCutoff],
-    );
+        [oneMonthCutoff],
+        // tslint:disable-next-line:no-console
+      )
+      .catch(console.error);
 
-    if (rows.length > 0) {
+    if (rows && rows.length > 0) {
       await configRepository.delete({
         id: In(rows.map((r) => r.id)),
       });
-    }
 
-    cleaned += rows.length;
-  } while (rows.length === CLEAN_PER_LOOP);
+      cleaned += rows.length;
+    }
+  } while (rows && rows.length === CLEAN_PER_LOOP);
 
   // >2 weeks old: 1 config retained per day
   const twoWeekCutoff = moment.utc().subtract(2, "weeks").format(DBDateFormat);
   do {
-    rows = await connection.query(
-      `
+    rows = await connection
+      .query(
+        `
       WITH _configs
       AS (
         SELECT
@@ -76,17 +80,19 @@ export async function cleanupConfigs() {
       FROM _configs
       WHERE row_num > 1
     `,
-      [twoWeekCutoff, oneMonthCutoff],
-    );
+        [twoWeekCutoff, oneMonthCutoff],
+        // tslint:disable-next-line:no-console
+      )
+      .catch(console.error);
 
-    if (rows.length > 0) {
+    if (rows && rows.length > 0) {
       await configRepository.delete({
         id: In(rows.map((r) => r.id)),
       });
-    }
 
-    cleaned += rows.length;
-  } while (rows.length === CLEAN_PER_LOOP);
+      cleaned += rows.length;
+    }
+  } while (rows && rows.length === CLEAN_PER_LOOP);
 
   return cleaned;
 }
