@@ -29,7 +29,7 @@ import { onCounterEvent } from "./functions/onCounterEvent";
 import { setCounterValue } from "./functions/setCounterValue";
 import { ConfigSchema, CountersPluginType, TTrigger } from "./types";
 
-const MAX_COUNTERS = 20;
+const MAX_COUNTERS = 69;
 const MAX_TRIGGERS_PER_COUNTER = 200;
 const DECAY_APPLY_INTERVAL = 5 * MINUTES;
 
