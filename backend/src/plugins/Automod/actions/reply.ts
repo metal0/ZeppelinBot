@@ -35,8 +35,8 @@ export const ReplyAction = automodAction({
     const contextsWithTextChannels = contexts
       .filter((c) => c.channel?.id || c.message?.channel_id)
       .filter((c) => {
-        const channel = c.channel ?? pluginData.guild.channels.cache.get(c.message!.channel_id as Snowflake);
-        return channel instanceof TextChannel || channel instanceof ThreadChannel;
+        const channel = pluginData.guild.channels.cache.get(c.message!.channel_id as Snowflake);
+        return channel?.isText();
       });
 
     const message = contexts.find((c) => c.message)?.message;

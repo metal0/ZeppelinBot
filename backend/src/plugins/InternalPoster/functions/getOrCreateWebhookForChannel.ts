@@ -1,19 +1,34 @@
 import { GuildPluginData } from "knub";
 import { InternalPosterPluginType } from "../types";
-import { NewsChannel, Permissions, TextChannel, ThreadChannel } from "discord.js";
+import {
+  AnyChannel,
+  GuildChannel,
+  MessageManager,
+  NewsChannel,
+  Permissions,
+  TextChannel,
+  ThreadChannel,
+} from "discord.js";
 import { isDiscordAPIError } from "../../../utils";
 
 type WebhookInfo = [id: string, token: string];
 
+export type WebhookableChannel = Extract<AnyChannel, { createWebhook: (...args: any[]) => any }>;
+
+export function channelIsWebhookable(channel: AnyChannel): channel is WebhookableChannel {
+  return "createWebhook" in channel;
+}
+
 export async function getOrCreateWebhookForChannel(
   pluginData: GuildPluginData<InternalPosterPluginType>,
-  channel: TextChannel | NewsChannel | ThreadChannel,
+  channel: WebhookableChannel | ThreadChannel,
 ): Promise<WebhookInfo | null> {
   // tslint:disable-next-line:no-console FIXME: Here for debugging purposes
   // console.log(`getOrCreateWebhookForChannel(${channel.id})`);
 
   if (channel instanceof ThreadChannel && channel.parent) channel = channel.parent;
   if (channel instanceof ThreadChannel) return null;
+
   // Database cache
   const fromDb = await pluginData.state.webhooks.findByChannelId(channel.id);
   if (fromDb) {

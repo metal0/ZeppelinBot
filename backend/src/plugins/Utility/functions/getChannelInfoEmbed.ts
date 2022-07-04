@@ -134,8 +134,9 @@ export async function getChannelInfoEmbed(
     const memberCount = thread.memberCount ?? thread.members.cache.size;
     const owner = await thread.fetchOwner().catch(() => null);
     const ownerMention = owner?.user ? verboseUserMention(owner.user) : "Unknown#0000";
-    const autoArchiveDuration = <number>thread.autoArchiveDuration!;
-    const humanizedArchiveTime = `Archive duration: **${humanizeDuration((autoArchiveDuration ?? 0) * MINUTES)}**`;
+    const humanizedArchiveTime = `Archive duration: **${humanizeDuration(
+      (thread.autoArchiveDuration ?? 0) * MINUTES,
+    )}**`;
 
     embed.fields.push({
       name: preEmbedPadding + "Thread information",
