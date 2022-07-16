@@ -44,7 +44,7 @@ export const UnmuteCmd = modActionsCmd({
     const hasMuteRole = memberToUnmute && mutesPlugin.hasMutedRole(memberToUnmute);
 
     // Check if they're muted in the first place
-    if (!(await pluginData.state.mutes.isMuted(args.user)) && !hasMuteRole) {
+    if (!(await pluginData.state.mutes.isMuted(user.id)) && !hasMuteRole) {
       sendErrorMessage(pluginData, msg.channel, "Cannot unmute: member is not muted");
       return;
     }
