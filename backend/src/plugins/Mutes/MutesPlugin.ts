@@ -93,6 +93,7 @@ export const MutesPlugin = zeppelinGuildPlugin<MutesPluginType>()({
     hasMutedRole(pluginData) {
       return (member: GuildMember) => {
         const muteRole = pluginData.config.get().mute_role;
+        if (member.communicationDisabledUntilTimestamp) return true;
         return muteRole ? member.roles.cache.has(muteRole as Snowflake) : false;
       };
     },
