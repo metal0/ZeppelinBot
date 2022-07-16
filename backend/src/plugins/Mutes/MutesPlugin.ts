@@ -92,6 +92,7 @@ export const MutesPlugin = zeppelinGuildPlugin<MutesPluginType>()({
     unmuteUser: mapToPublicFn(unmuteUser),
     hasMutedRole(pluginData) {
       return (member: GuildMember) => {
+        if (member.isCommunicationDisabled()) return true;
         const muteRole = pluginData.config.get().mute_role;
         return muteRole ? member.roles.cache.has(muteRole as Snowflake) : false;
       };
