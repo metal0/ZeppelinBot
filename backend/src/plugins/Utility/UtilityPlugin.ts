@@ -15,6 +15,7 @@ import { AvatarCmd } from "./commands/AvatarCmd";
 import { BanSearchCmd } from "./commands/BanSearchCmd";
 import { ChannelInfoCmd } from "./commands/ChannelInfoCmd";
 import { CleanArgs, cleanCmd, CleanCmd } from "./commands/CleanCmd";
+import { ArchiveArgs, archiveCmd, ArchiveCmd } from "./commands/ArchiveCmd";
 import { ContextCmd } from "./commands/ContextCmd";
 import { EmojiInfoCmd } from "./commands/EmojiInfoCmd";
 import { HelpCmd } from "./commands/HelpCmd";
@@ -50,6 +51,7 @@ const defaultOptions: PluginOptions<UtilityPluginType> = {
     can_level: false,
     can_search: false,
     can_clean: false,
+    can_archive: false,
     can_info: false,
     can_server: false,
     can_inviteinfo: false,
@@ -82,6 +84,7 @@ const defaultOptions: PluginOptions<UtilityPluginType> = {
         can_level: true,
         can_search: true,
         can_clean: true,
+        can_archive: true,
         can_info: true,
         can_server: true,
         can_inviteinfo: true,
@@ -145,6 +148,7 @@ export const UtilityPlugin = zeppelinGuildPlugin<UtilityPluginType>()({
     JumboCmd,
     AvatarCmd,
     CleanCmd,
+    ArchiveCmd,
     InviteInfoCmd,
     ChannelInfoCmd,
     MessageInfoCmd,
@@ -164,6 +168,12 @@ export const UtilityPlugin = zeppelinGuildPlugin<UtilityPluginType>()({
     clean(pluginData) {
       return (args: CleanArgs, msg) => {
         cleanCmd(pluginData, args, msg);
+      };
+    },
+
+    archive(pluginData) {
+      return (args: ArchiveArgs, msg) => {
+        archiveCmd(pluginData, args, msg);
       };
     },
 
