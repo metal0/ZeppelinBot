@@ -45,7 +45,10 @@ export async function createCase(pluginData: GuildPluginData<CasesPluginType>, a
   });
 
   if (!casesTypesWithoutArchive.includes(args.type)) {
-    const messagesToArchive = await pluginData.state.savedMessages.getUserMessages(user.id, 50);
+    const messagesToArchive = Array.from(await pluginData.state.savedMessages.getUserMessages(user.id, 50)).sort(
+      (a, b) => (a.posted_at > b.posted_at ? 1 : -1),
+    );
+
     const archiveId = await pluginData.state.archives.createFromSavedMessages(messagesToArchive, pluginData.guild);
     const baseUrl = getBaseUrl(pluginData);
 
