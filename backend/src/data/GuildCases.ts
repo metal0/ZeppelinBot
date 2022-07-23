@@ -138,7 +138,6 @@ export class GuildCases extends BaseGuildRepository {
       const lastCaseNumberRow = await this.cases
         .createQueryBuilder()
         .select(["MAX(case_number) AS last_case_number"])
-        .where("guild_id = :guildId", { guildId: this.guildId })
         .getRawOne();
       const lastCaseNumber = lastCaseNumberRow?.last_case_number || 0;
 
