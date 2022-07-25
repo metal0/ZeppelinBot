@@ -4,12 +4,14 @@ import Vuex, { Store } from "vuex";
 Vue.use(Vuex);
 
 import { RootState } from "./types";
+import { ArchiveStore } from "./archives";
 import { AuthStore } from "./auth";
 import { GuildStore } from "./guilds";
 import { DocsStore } from "./docs";
 
 export const RootStore = new Vuex.Store<RootState>({
   modules: {
+    archives: ArchiveStore,
     auth: AuthStore,
     guilds: GuildStore,
     docs: DocsStore,

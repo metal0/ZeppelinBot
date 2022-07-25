@@ -11,6 +11,15 @@ export function initArchives(app: express.Express) {
     res.redirect("/archives/" + req.params.id);
   });
 
+  app.get("/archives/:id.json", async (req: Request, res: Response) => {
+    const archive = await archives.find(req.params.id);
+    if (!archive) return notFound(res);
+
+    res.setHeader("Content-Type", "application/json; charset=UTF-8");
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.json(archive);
+  });
+
   app.get("/archives/:id", async (req: Request, res: Response) => {
     const archive = await archives.find(req.params.id);
     if (!archive) return notFound(res);

@@ -4,7 +4,7 @@ import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { SavedMessage } from "../../../data/entities/SavedMessage";
 import { LogType } from "../../../data/LogType";
 import { ModActionsPlugin } from "../../../plugins/ModActions/ModActionsPlugin";
-import { getBaseUrl, sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
+import { getDashboardUrl, sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
 import { allowTimeout } from "../../../RegExpRunner";
 import { DAYS, getInviteCodesInString, noop, SECONDS } from "../../../utils";
 import { utilityCmd, UtilityPluginType } from "../types";
@@ -39,7 +39,7 @@ export async function cleanMessages(
 
   // Create an archive
   const archiveId = await pluginData.state.archives.createFromSavedMessages(savedMessages, pluginData.guild);
-  const baseUrl = getBaseUrl(pluginData);
+  const baseUrl = getDashboardUrl(pluginData);
   const archiveUrl = pluginData.state.archives.getUrl(baseUrl, archiveId);
 
   pluginData.getPlugin(LogsPlugin).logClean({

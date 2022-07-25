@@ -45,6 +45,15 @@ export interface StaffState {
   isStaff: boolean;
 }
 
+export interface ArchiveState {
+  available: Map<
+    string,
+    {
+      id: string;
+    }
+  >;
+}
+
 export interface ThinDocsPlugin {
   name: string;
   info: {
@@ -76,6 +85,7 @@ export interface DocsState {
 
 export type RootState = {
   auth: AuthState;
+  archives: ArchiveState;
   guilds: GuildState;
   docs: DocsState;
   staff: StaffState;
