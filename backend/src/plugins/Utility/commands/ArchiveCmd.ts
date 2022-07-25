@@ -1,7 +1,7 @@
 import { GuildPluginData } from "knub";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { SavedMessage } from "../../../data/entities/SavedMessage";
-import { getBaseUrl, sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
+import { getDashboardUrl, sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
 import { utilityCmd, UtilityPluginType } from "../types";
 
 const DEFAULT_COUNT = 50;
@@ -14,7 +14,7 @@ export async function archiveMessages(
   messagesToArchive = Array.from(messagesToArchive).sort((a, b) => (a.posted_at > b.posted_at ? 1 : -1));
 
   const archiveId = await pluginData.state.archives.createFromSavedMessages(messagesToArchive, pluginData.guild);
-  const baseUrl = getBaseUrl(pluginData);
+  const baseUrl = getDashboardUrl(pluginData);
 
   return pluginData.state.archives.getUrl(baseUrl, archiveId);
 }

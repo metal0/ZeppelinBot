@@ -28,6 +28,7 @@ export const PartialZeppelinGuildConfigSchema = t.partial(ZeppelinGuildConfigSch
 
 export interface ZeppelinGlobalConfig extends BaseConfig<any> {
   url: string;
+  dashboard_url: string;
   owners?: string[];
 }
 

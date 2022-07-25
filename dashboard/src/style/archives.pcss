@@ -1,0 +1,250 @@
+:root {
+  --dark-global-background: #2F3136;
+  --dark-theme-switch-bar: #595E68;
+  --dark-theme-switch-thumb: #767E8C;
+  --dark-messages-background: #36393F;
+  --dark-messages-hover-background: #32353B;
+  --dark-global-text-color: #DCDDDE;
+  --dark-accent-text-color: white;
+  --dark-aside-text-color: #A3A6AA;
+
+  --light-global-background: #F2F3F5;
+  --light-theme-switch-bar: #8E96A6;
+  --light-theme-switch-thumb: #afbbd0;
+  --light-messages-background: white;
+  --light-messages-hover-background: #FAFAFA;
+  --light-global-text-color: #2E3338;
+  --light-accent-text-color: #060607;
+  --light-aside-text-color: #5E6772;
+}
+
+.archive {
+  padding: 16px;
+
+  width: 100%;
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+
+  transition: background-color ease .1s, color ease .1s;
+
+  & .theme-switcher {
+    position: absolute;
+    top: 30px;
+    right: 80px;
+
+    & #theme-switcher {
+      display: inline-block;
+      position: relative;
+      appearance: none;
+
+      &::before {
+        content: '';
+        display: inline-block;
+        position: absolute;
+        width: 25px;
+        height: 13px;
+        top: -13px;
+        left: 20px;
+        border-radius: 13px;
+
+        transition: background-color ease .1s;
+      }
+
+      &::after {
+        content: '';
+        display: inline-block;
+        position: absolute;
+        width: 25px;
+        height: 25px;
+        top: -19px;
+        left: 5px;
+        border-radius: 50%;
+        background-image: url('https://i.ibb.co/7JfqXxB/sunny.png');
+        background-size: 70%;
+        background-repeat: no-repeat;
+        background-position: center;
+
+        transition: left ease-in .1s, background-color ease .1s;
+      }
+
+      &:checked::after {
+        left: 35px;
+        background-image: url('https://i.ibb.co/FxzBYR9/night.png');
+      }
+    }
+  }
+
+  & .wrapper {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 800px;
+  }
+
+  & h1 {
+    font-size: 60px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+
+  & h2 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    margin-top: 24px;
+
+    transition: color ease .1s;
+  }
+
+  & svg {
+    display: inline;
+    vertical-align: sub;
+  }
+
+  & .archive-channel-messages {
+    border-radius: 8px;
+    margin-bottom: 8px;
+    padding: 16px 0;
+
+    transition: background-color ease .1s;
+
+    & li {
+      clear: both;
+      padding: 5px 16px;
+
+      &:not(:first-of-type) {
+        margin-top: 17px;
+      }
+
+      & img {
+        border-radius: 50%;
+        float: left;
+        margin: 0 15px 5px 0;
+      }
+
+      & h3 {
+        margin-top: -5px;
+
+        & .user-tag {
+          font-weight: 600;
+          font-size: 16px;
+
+          transition: color ease .1s;
+        }
+
+        & .message-date {
+          font-size: 12px;
+          margin-left: 4px;
+
+          transition: color ease .1s;
+        }
+      }
+
+      & .message-content {
+        font-size: 16px;
+        margin-top: -3px;
+      }
+    }
+  }
+
+  & p {
+    margin-bottom: 16px;
+  }
+
+  & ul {
+    list-style: none;
+    margin-left: 0;
+    margin-bottom: 16px;
+  }
+
+  & footer {
+    font-size: 12px;
+    margin-top: 15px;
+  }
+
+  &.dark {
+    background-color: var(--dark-global-background);
+    color: var(--dark-global-text-color);
+
+    & .theme-switcher {
+      & #theme-switcher {
+        &::before {
+          background-color: var(--dark-theme-switch-bar);
+        }
+
+        &::after {
+          background-color: var(--dark-theme-switch-thumb);
+        }
+      }
+    }
+
+    & h2 {
+      color: var(--dark-accent-text-color);
+    }
+
+    & .archive-channel-messages {
+      background-color: var(--dark-messages-background);
+
+      & li {
+        &:hover {
+          background: var(--dark-messages-hover-background);
+        }
+
+        & h3 {
+          & .user-tag {
+            color: var(--dark-accent-text-color);
+          }
+
+          & .message-date {
+            color: var(--dark-aside-text-color);
+          }
+        }
+      }
+    }
+  }
+
+  &.light {
+    background-color: var(--light-global-background);
+    color: var(--light-global-text-color);
+
+    & .theme-switcher {
+      & #theme-switcher {
+        &::before {
+          background-color: var(--light-theme-switch-bar);
+        }
+
+        &::after {
+          background-color: var(--light-theme-switch-thumb);
+        }
+      }
+    }
+
+    & h2 {
+      color: var(--light-accent-text-color);
+    }
+
+    & .archive-channel-messages {
+      background-color: var(--light-messages-background);
+
+      & li {
+        &:hover {
+          background: var(--light-messages-hover-background);
+        }
+
+        & h3 {
+          & .user-tag {
+            color: var(--light-accent-text-color);
+          }
+
+          & .message-date {
+            color: var(--light-aside-text-color);
+          }
+        }
+      }
+    }
+  }
+}

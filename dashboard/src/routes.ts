@@ -16,6 +16,12 @@ export const router = new VueRouter({
       component: () => import("./components/PrivacyPolicy.vue"),
     },
 
+    // Archives
+    {
+      path: "/archives/:archiveId",
+      component: () => import("./components/Archive.vue"),
+    },
+
     // Docs
     {
       path: "/docs",

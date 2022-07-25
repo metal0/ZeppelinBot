@@ -232,6 +232,11 @@ export function getBaseUrl(pluginData: AnyPluginData<any>) {
   return knub.getGlobalConfig().url;
 }
 
+export function getDashboardUrl(pluginData: AnyPluginData<any>) {
+  const knub = pluginData.getKnubInstance() as TZeppelinKnub;
+  return knub.getGlobalConfig().dashboard_url;
+}
+
 export function isOwner(pluginData: AnyPluginData<any>, userId: string) {
   const knub = pluginData.getKnubInstance() as TZeppelinKnub;
   const owners = knub.getGlobalConfig()?.owners;
