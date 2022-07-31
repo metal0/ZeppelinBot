@@ -5,7 +5,7 @@ import { resolveUser } from "../../../utils";
 import { CaseArgs, CasesPluginType } from "../types";
 import { createCaseNote } from "./createCaseNote";
 import { postCaseToCaseLogChannel } from "./postToCaseLogChannel";
-import { getBaseUrl } from "../../../pluginUtils";
+import { getDashboardUrl } from "../../../pluginUtils";
 import { CaseTypes } from "../../../data/CaseTypes";
 
 export async function createCase(pluginData: GuildPluginData<CasesPluginType>, args: CaseArgs) {
@@ -50,7 +50,7 @@ export async function createCase(pluginData: GuildPluginData<CasesPluginType>, a
     );
 
     const archiveId = await pluginData.state.archives.createFromSavedMessages(messagesToArchive, pluginData.guild);
-    const baseUrl = getBaseUrl(pluginData);
+    const baseUrl = getDashboardUrl(pluginData);
 
     await createCaseNote(pluginData, {
       caseId: createdCase.id,
