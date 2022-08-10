@@ -7,6 +7,7 @@ import { zeppelinGlobalPlugin } from "../ZeppelinPluginBlueprint";
 import { checkGuild } from "./functions/checkGuild";
 import { checkGuildOwnerPermissions } from "./functions/checkOwnerPerms";
 import { GuildAccessMonitorPluginType } from "./types";
+import { env } from "../../env";
 
 /**
  * Global plugin to monitor if Zeppelin is invited to a non-whitelisted server, and leave it
@@ -27,10 +28,19 @@ export const GuildAccessMonitorPlugin = zeppelinGlobalPlugin<GuildAccessMonitorP
     }),
   ],
 
-  beforeLoad(pluginData) {
+  async beforeLoad(pluginData) {
     pluginData.state.allowedGuilds = new AllowedGuilds();
-    pluginData.state.configs = new Configs();
-    pluginData.state.apiPermissionAssignments = new ApiPermissionAssignments();
+
+    const defaultAllowedServers = env.DEFAULT_ALLOWED_SERVERS || [];
+    const configs = new Configs();
+    for (const serverId of defaultAllowedServers) {
+      if (!(await pluginData.state.allowedGuilds.isAllowed(serverId))) {
+        // tslint:disable-next-line:no-console
+        console.log(`Adding allowed-by-default server ${serverId} to the allowed servers`);
+        await pluginData.state.allowedGuilds.add(serverId);
+        await configs.saveNewRevision(`guild-${serverId}`, "plugins: {}", 0);
+      }
+    }
   },
 
   async afterLoad(pluginData) {

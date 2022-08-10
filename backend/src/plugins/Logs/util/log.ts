@@ -1,5 +1,5 @@
 import * as t from "io-ts";
-import { MessageEmbedOptions, MessageMentionTypes, Snowflake, TextChannel } from "discord.js";
+import { MessageEmbedOptions, MessageMentionTypes, Snowflake, TextChannel, VoiceChannel } from "discord.js";
 import { GuildPluginData } from "knub";
 import { allowTimeout } from "../../../RegExpRunner";
 import { ILogTypeData, LogsPluginType, TLogChannel, TLogChannelMap } from "../types";
@@ -85,10 +85,8 @@ export async function log<TLogType extends keyof ILogTypeData>(
 
   logChannelLoop: for (let [channelId, opts] of Object.entries(logChannels)) {
     const channelCheck = pluginData.guild.channels.cache.get(channelId as Snowflake);
-    if (!channelCheck || channelCheck.isVoice() || (!channelCheck.isText() && !channelCheck.isThread())) continue;
-
+    if (!channelCheck?.isText() || channelCheck instanceof VoiceChannel) continue;
     const typeStr = LogType[type];
-
     if (pluginData.state.channelCooldowns.isOnCooldown(channelId)) continue;
     if (opts.include?.length && !opts.include.includes(typeStr)) continue;
     if (opts.exclude && opts.exclude.includes(typeStr)) continue;

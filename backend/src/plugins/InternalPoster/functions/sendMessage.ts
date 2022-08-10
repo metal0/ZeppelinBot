@@ -59,7 +59,7 @@ export async function sendMessage(
       .catch(async (err) => {
         // Unknown Webhook
         if (isDiscordAPIError(err) && err.code === 10015) {
-          await pluginData.state.webhooks.delete(webhookClient!.id);
+          await pluginData.state.webhooks.delete(webhookClient!!.id);
           pluginData.state.webhookClientCache.delete(channel.id);
 
           // Fallback to regular message for this log message
