@@ -1,4 +1,4 @@
-import { Snowflake, TextChannel } from "discord.js";
+import { Snowflake, TextChannel, User } from "discord.js";
 import { waitForReply } from "knub/dist/helpers";
 import { performance } from "perf_hooks";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
@@ -88,28 +88,25 @@ export const MassWarnCmd = modActionsCmd({
           break;
         }
 
-        const user = await resolveUser(pluginData.client, userId);
+        const user = (await resolveUser(pluginData.client, userId)) as User;
         if (!user.id) {
           continue;
         }
 
         const memberToWarn = await resolveMember(pluginData.client, pluginData.guild, user.id);
-        if (!memberToWarn) {
-          continue;
-        }
 
         try {
           const config = pluginData.config.get();
           const reason = parseReason(config, formatReasonWithAttachments(warnReason, [...msg.attachments.values()]));
 
-          const warnResult = await warnMember(pluginData, memberToWarn, reason, {
+          const warnResult = await warnMember(pluginData, reason, memberToWarn, user, {
             contactMethods: [{ type: "dm" }],
             caseArgs: {
               modId: msg.member.id,
               ppId: undefined,
               reason,
             },
-            retryPromptChannel: msg.channel as TextChannel,
+            silentErrors: true,
           });
 
           if (warnResult.status === "failed") {
