@@ -1,4 +1,4 @@
-import { Snowflake, TextChannel } from "discord.js";
+import { Snowflake, TextChannel, User } from "discord.js";
 import { waitForReply } from "knub/dist/helpers";
 import { performance } from "perf_hooks";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
@@ -7,11 +7,13 @@ import { LogType } from "../../../data/LogType";
 import { humanizeDurationShort } from "../../../humanizeDurationShort";
 import { CasesPlugin } from "../../Cases/CasesPlugin";
 import { canActOn, sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
-import { MINUTES, noop } from "../../../utils";
+import { MINUTES, noop, notifyUser, resolveUser } from "../../../utils";
 import { formatReasonWithAttachments } from "../functions/formatReasonWithAttachments";
 import { ignoreEvent } from "../functions/ignoreEvent";
 import { IgnoredEventType, modActionsCmd } from "../types";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
+import { renderTemplate, TemplateSafeValueContainer } from "../../../templateFormatter";
+import { userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
 
 export const MassbanCmd = modActionsCmd({
   trigger: "massban",
@@ -82,6 +84,8 @@ export const MassbanCmd = modActionsCmd({
       const failedBans: string[] = [];
       const casesPlugin = pluginData.getPlugin(CasesPlugin);
       const deleteDays = (await pluginData.config.getForMessage(msg)).ban_delete_message_days;
+      const config = pluginData.config.get();
+
       for (const [i, userId] of args.userIds.entries()) {
         if (pluginData.state.unloaded) {
           break;
@@ -92,6 +96,23 @@ export const MassbanCmd = modActionsCmd({
           // We create our own cases below and post a single "mass banned" log instead
           ignoreEvent(pluginData, IgnoredEventType.Ban, userId, 30 * MINUTES);
           pluginData.state.serverLogs.ignoreLog(LogType.MEMBER_BAN, userId, 30 * MINUTES);
+
+          if (config.ban_message) {
+            const user = (await resolveUser(pluginData.client, userId)) as User;
+
+            if (user.id) {
+              const banMessage = await renderTemplate(
+                config.ban_message,
+                new TemplateSafeValueContainer({
+                  guildName: pluginData.guild.name,
+                  reason: banReason,
+                  moderator: userToTemplateSafeUser(msg.author),
+                }),
+              );
+
+              await notifyUser(user, banMessage, [{ type: "dm" }]);
+            }
+          }
 
           await pluginData.guild.bans.create(userId as Snowflake, {
             days: deleteDays,
