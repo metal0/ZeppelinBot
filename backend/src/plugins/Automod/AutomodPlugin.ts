@@ -73,19 +73,19 @@ const configPreprocessor: ConfigPreprocessorFn<AutomodPluginType> = (options) =>
         continue;
       }
 
-      rule.name = name;
+      rule["name"] = name;
 
       // If the rule doesn't have an explicitly set "enabled" property, set it to true
-      if (rule.enabled == null) {
-        rule.enabled = true;
+      if (rule["enabled"] == null) {
+        rule["enabled"] = true;
       }
 
-      if (rule.allow_further_rules == null) {
-        rule.allow_further_rules = false;
+      if (rule["allow_further_rules"] == null) {
+        rule["allow_further_rules"] = false;
       }
 
-      if (rule.affects_bots == null) {
-        rule.affects_bots = false;
+      if (rule["affects_bots"] == null) {
+        rule["affects_bots"] = false;
       }
 
       if (rule["affects_self"] == null) {
@@ -93,8 +93,8 @@ const configPreprocessor: ConfigPreprocessorFn<AutomodPluginType> = (options) =>
       }
 
       // Loop through the rule's triggers
-      if (rule.triggers) {
-        for (const triggerObj of rule.triggers) {
+      if (rule["triggers"]) {
+        for (const triggerObj of rule["triggers"]) {
           for (const triggerName in triggerObj) {
             if (!availableTriggers[triggerName]) {
               throw new StrictValidationError([`Unknown trigger '${triggerName}' in rule '${rule.name}'`]);

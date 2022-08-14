@@ -6,7 +6,6 @@ import { AlertAction } from "./alert";
 import { ArchiveThreadAction } from "./archiveThread";
 import { BanAction } from "./ban";
 import { ChangeNicknameAction } from "./changeNickname";
-import { ChangeRolesAction } from "./changeRoles";
 import { ChangePermsAction } from "./changePerms";
 import { CleanAction } from "./clean";
 import { KickAction } from "./kick";
@@ -19,6 +18,27 @@ import { SetCounterAction } from "./setCounter";
 import { SetSlowmodeAction } from "./setSlowmode";
 import { StartThreadAction } from "./startThread";
 import { WarnAction } from "./warn";
+
+export const availableActions: Record<string, AutomodActionBlueprint<any>> = {
+  clean: CleanAction,
+  warn: WarnAction,
+  mute: MuteAction,
+  kick: KickAction,
+  ban: BanAction,
+  alert: AlertAction,
+  change_nickname: ChangeNicknameAction,
+  log: LogAction,
+  add_roles: AddRolesAction,
+  remove_roles: RemoveRolesAction,
+  set_antiraid_level: SetAntiraidLevelAction,
+  reply: ReplyAction,
+  add_to_counter: AddToCounterAction,
+  set_counter: SetCounterAction,
+  set_slowmode: SetSlowmodeAction,
+  start_thread: StartThreadAction,
+  archive_thread: ArchiveThreadAction,
+  change_perms: ChangePermsAction,
+};
 
 export const AvailableActions = t.type({
   clean: CleanAction.configType,
@@ -38,6 +58,5 @@ export const AvailableActions = t.type({
   set_slowmode: SetSlowmodeAction.configType,
   start_thread: StartThreadAction.configType,
   archive_thread: ArchiveThreadAction.configType,
-  change_roles: ChangeRolesAction.configType,
   change_perms: ChangePermsAction.configType,
 });
