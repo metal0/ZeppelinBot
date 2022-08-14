@@ -48,14 +48,19 @@ export async function createCase(pluginData: GuildPluginData<CasesPluginType>, a
     const messagesToArchive = Array.from(await pluginData.state.savedMessages.getUserMessages(user.id, 50)).sort(
       (a, b) => (a.posted_at > b.posted_at ? 1 : -1),
     );
+    let noteBody = `No automatic archive was created because no messages were found for this user.`;
 
-    const archiveId = await pluginData.state.archives.createFromSavedMessages(messagesToArchive, pluginData.guild);
-    const baseUrl = getDashboardUrl(pluginData);
+    if (messagesToArchive.length > 0) {
+      const archiveId = await pluginData.state.archives.createFromSavedMessages(messagesToArchive, pluginData.guild);
+      const baseUrl = getDashboardUrl(pluginData);
+
+      noteBody = `Automatically archived messages: ${pluginData.state.archives.getUrl(baseUrl, archiveId)}`;
+    }
 
     await createCaseNote(pluginData, {
       caseId: createdCase.id,
       modId: mod.id,
-      body: `Automatically archived messages: ${pluginData.state.archives.getUrl(baseUrl, archiveId)}`,
+      body: noteBody,
       automatic: args.automatic,
       postInCaseLogOverride: false,
     });
