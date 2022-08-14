@@ -5,6 +5,7 @@ import {
   GuildMember,
   Message,
   PartialGuildMember,
+  PartialUser,
   Role,
   Snowflake,
   StageInstance,
@@ -274,16 +275,25 @@ export function roleToTemplateSafeRole(role: Role): TemplateSafeRole {
   });
 }
 
-export function memberToTemplateSafeMember(member: GuildMember | PartialGuildMember): TemplateSafeMember {
-  const templateSafeUser = userToTemplateSafeUser(member.user!);
+export function memberToTemplateSafeMember(
+  member?: GuildMember | PartialGuildMember | null,
+  user?: User | UnknownUser | null,
+): TemplateSafeMember {
+  if (!member && !user) {
+    throw new Error(`No usable information received; cannot create template`);
+  }
+
+  user = user ?? member?.user;
+
+  const templateSafeUser = userToTemplateSafeUser(user!);
 
   return new TemplateSafeMember({
     ...templateSafeUser,
     user: templateSafeUser,
-    nick: member.nickname ?? "*None*",
-    roles: [...member.roles.cache.mapValues((r) => roleToTemplateSafeRole(r)).values()],
-    joinedAt: member.joinedTimestamp ?? undefined,
-    guildName: member.guild.name,
+    nick: member?.nickname ?? "*None*",
+    roles: member ? [...member.roles.cache.mapValues((r) => roleToTemplateSafeRole(r)).values()] : [],
+    joinedAt: member?.joinedTimestamp ?? undefined,
+    guildName: member?.guild.name,
   });
 }
 
