@@ -79,4 +79,4 @@ npm-audit.txt
 *.debug.js
 
 .vscode/
-.env
+.env.dev
