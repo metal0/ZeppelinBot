@@ -154,6 +154,7 @@ let config = {
     }),
     new DotenvPlugin({
       path: path.resolve(process.cwd(), "../.env"),
+      ignoreStub: true
     }),
   ],
   resolve: {
