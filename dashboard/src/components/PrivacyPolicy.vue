@@ -81,7 +81,7 @@
       <p>
         To request access to personal data stored about you, or to request its
         deletion, to the extent permitted by GDPR, please send an email to <a
-        href="mailto:zep@i0.tf">zep@i0.tf/a>.
+        href="mailto:zep@i0.tf">zep@i0.tf</a>.
       </p>
     </div></div>
 </template>
