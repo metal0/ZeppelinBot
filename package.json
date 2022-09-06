@@ -9,7 +9,7 @@
     "modules": "cd backend && npm i --production=false && cd ../dashboard && npm i --production=false",
     "update": "git reset --hard && git pull && cd backend && npm ci && npm run migrate-prod && npm run build && pm2 restart all && cd ..",
     "codestyle-check": "prettier --check './**/*.{css,html,js,json,ts,tsx}'",
-    "test": "docker compose -f docker-compose.development.yml up -d && ssh -l ubuntu -p 3003 127.0.0.1"
+    "test": "docker compose -f docker-compose.development.yml up -d && sshpass -p sijgfj0sfgsfg03u3yj40g20t10j1t1tem ssh -p 3003 ubuntu@127.0.0.1"
   },
   "devDependencies": {
     "husky": "^3.0.9",
