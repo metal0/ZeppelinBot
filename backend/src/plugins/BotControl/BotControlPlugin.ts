@@ -23,6 +23,7 @@ import { AddServerFromInviteCmd } from "./commands/AddServerFromInviteCmd";
 import { ChannelToServerCmd } from "./commands/ChannelToServerCmd";
 import { RestPerformanceCmd } from "./commands/RestPerformanceCmd";
 import { RateLimitPerformanceCmd } from "./commands/RateLimitPerformanceCmd";
+import { env } from "../../env.js";
 
 const defaultOptions = {
   config: {
@@ -34,6 +35,21 @@ const defaultOptions = {
     can_list_dashboard_perms: false,
     update_cmd: null,
   },
+  overrides: [
+    {
+      any: env.STAFF!.map((e) => {
+        return { user: e };
+      }),
+      config: {
+        can_admin: true,
+        can_use: true,
+        can_eligible: true,
+        can_performance: true,
+        can_add_server_from_invite: true,
+        can_list_dashboard_perms: true,
+      },
+    },
+  ],
 };
 
 export const BotControlPlugin = zeppelinGlobalPlugin<BotControlPluginType>()({

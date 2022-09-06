@@ -12,7 +12,7 @@ services:
         DOCKER_DEV_WEB_PORT: ${DOCKER_DEV_WEB_PORT:?Missing DOCKER_DEV_WEB_PORT}
         API_PORT: ${API_PORT:?Missing API_PORT}
     ports:
-      - "${DOCKER_DEV_WEB_PORT:?Missing DOCKER_DEV_WEB_PORT}:443"
+      - "${DOCKER_DEV_WEB_PORT:?Missing DOCKER_DEV_WEB_PORT}:80"
     volumes:
       - ./:/zeppelin
 
@@ -35,8 +35,11 @@ services:
       args:
         DOCKER_DEV_SSH_PASSWORD: ${DOCKER_DEV_SSH_PASSWORD:?Missing DOCKER_DEV_SSH_PASSWORD}
         DOCKER_DEV_UID: ${DOCKER_DEV_UID:-1000}
+        API_URL: ${API_URL}
+        DASHBOARD_URL: ${DASHBOARD_URL}
     ports:
       - "${DOCKER_DEV_SSH_PORT:?Missing DOCKER_DEV_SSH_PORT}:22"
+      - "${API_PORT:?Missing API_PORT}:${API_PORT:?Missing API_PORT}"
     volumes:
       - ./:/home/ubuntu/zeppelin
       - ~/.ssh:/home/ubuntu/.ssh
