@@ -3,6 +3,7 @@ const VueLoaderPlugin = require("vue-loader/lib/plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const DotenvPlugin = require("dotenv-webpack");
 const merge = require("webpack-merge");
+const webpack = require('webpack');
 
 const targetDir = path.normalize(path.join(__dirname, "dist"));
 
