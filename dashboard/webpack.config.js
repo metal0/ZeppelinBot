@@ -152,16 +152,19 @@ let config = {
         js: ["./src/main.ts"],
       },
     }),
-    process.env.NODE_ENV === 'production' ? new DotenvPlugin({
-      path: path.resolve(process.cwd(), "../.env"),
-      ignoreStub: true
-    }) : undefined,
+
   ],
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".mjs", ".vue"],
     alias: pathAliases,
   },
 };
+
+if(process.env.NODE_ENV === "production") config.plugins.push(new DotenvPlugin({
+    path: path.resolve(process.cwd(), "../.env"),
+    ignoreStub: true
+  }));
+
 
 if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "cloudflare") {
   config = merge(config, {
