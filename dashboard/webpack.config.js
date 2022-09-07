@@ -101,7 +101,7 @@ let config = {
                   require("tailwindcss")(),
                 ];
 
-                if (process.env.NODE_ENV === "production") {
+                if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "cloudflare") {
                   plugins.push(require("postcss-preset-env")(), require("cssnano")());
                 }
 
@@ -152,10 +152,10 @@ let config = {
         js: ["./src/main.ts"],
       },
     }),
-    new DotenvPlugin({
+    process.env.NODE_ENV === 'production' ? new DotenvPlugin({
       path: path.resolve(process.cwd(), "../.env"),
       ignoreStub: true
-    }),
+    }) : undefined,
   ],
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".mjs", ".vue"],
@@ -163,7 +163,7 @@ let config = {
   },
 };
 
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "cloudflare") {
   config = merge(config, {
     mode: "production",
     devtool: "source-map",
