@@ -152,7 +152,6 @@ let config = {
         js: ["./src/main.ts"],
       },
     }),
-
   ],
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".mjs", ".vue"],
@@ -161,10 +160,10 @@ let config = {
 };
 
 if(process.env.NODE_ENV === "production") config.plugins.push(new DotenvPlugin({
-    path: path.resolve(process.cwd(), "../.env"),
-    ignoreStub: true
+    path: path.resolve(process.cwd(), "../.env")
   }));
 
+if(process.env.NODE_ENV === "cloudflare") config.plugins.push(new webpack.EnvironmentPlugin(['NODE_ENV', 'API_URL']));
 
 if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "cloudflare") {
   config = merge(config, {
