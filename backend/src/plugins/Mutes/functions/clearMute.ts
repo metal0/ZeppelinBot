@@ -6,6 +6,7 @@ import { GuildPluginData } from "knub";
 import { MutesPluginType } from "../types";
 import { clearExpiringMute } from "../../../data/loops/expiringMutesLoop";
 import { GuildMember } from "discord.js";
+import { memberHasMutedRole } from "./memberHasMutedRole";
 
 export async function clearMute(
   pluginData: GuildPluginData<MutesPluginType>,
@@ -27,6 +28,10 @@ export async function clearMute(
       const muteRole = pluginData.config.get().mute_role;
       if (muteRole) {
         await member.roles.remove(muteRole);
+      } else {
+        if (member.communicationDisabledUntil !== null && memberHasMutedRole(pluginData, member)) {
+          await member.timeout(null);
+        }
       }
       if (mute?.roles_to_restore) {
         const guildRoles = pluginData.guild.roles.cache;
