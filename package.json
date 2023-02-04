@@ -32,7 +32,6 @@
     ]
   },
   "dependencies": {
-    "discord.js": "^13.2.0",
     "knub": "^30.0.0-beta.39"
   }
 }
