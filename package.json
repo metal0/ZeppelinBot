@@ -7,7 +7,7 @@
     "format": "prettier --write './**/*.{css,html,js,json,ts,tsx}'",
     "lint": "tslint \"./{backend,dashboard}/{,!(node_modules)/**/}/*.ts\"",
     "modules": "cd backend && npm i --production=false && cd ../dashboard && npm i --production=false",
-    "update": "git reset --hard && git pull && cd backend && npm ci && npm run migrate-prod && npm run build && pm2 restart all && cd ..",
+    "update": "git reset --hard && git pull && cd backend && npm ci && npm run migrate-prod && npm run build && pm2 restart zeppelin && pm2 restart zeppelin-api && cd ..",
     "codestyle-check": "prettier --check './**/*.{css,html,js,json,ts,tsx}'",
     "test": "docker compose -f docker-compose.development.yml up -d && ssh -l ubuntu -p 3003 127.0.0.1"
   },
