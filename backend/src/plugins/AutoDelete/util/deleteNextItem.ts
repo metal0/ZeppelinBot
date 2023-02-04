@@ -17,7 +17,7 @@ export async function deleteNextItem(pluginData: GuildPluginData<AutoDeletePlugi
 
   scheduleNextDeletion(pluginData);
 
-  const channel = pluginData.guild.channels.cache.get(itemToDelete.message.channel_id as Snowflake) as TextChannel;
+  const channel = (await pluginData.guild.channels.fetch(itemToDelete.message.channel_id as Snowflake)) as TextChannel;
   if (!channel) {
     // Channel was deleted, ignore
     return;

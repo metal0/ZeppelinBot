@@ -15,7 +15,7 @@ import { SlowmodeChannel } from "../../../data/entities/SlowmodeChannel";
 export async function onMessageCreate(pluginData: GuildPluginData<SlowmodePluginType>, msg: SavedMessage) {
   if (msg.is_bot) return;
 
-  const channel = pluginData.guild.channels.cache.get(msg.channel_id as Snowflake) as TextChannel;
+  const channel = (await pluginData.guild.channels.fetch(msg.channel_id as Snowflake)) as TextChannel;
   if (!channel) return;
 
   // Don't apply slowmode if the lock was interrupted earlier (e.g. the message was caught by word filters)

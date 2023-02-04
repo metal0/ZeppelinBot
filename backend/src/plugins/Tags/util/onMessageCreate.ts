@@ -17,7 +17,7 @@ export async function onMessageCreate(pluginData: GuildPluginData<TagsPluginType
   const member = await resolveMember(pluginData.client, pluginData.guild, msg.user_id);
   if (!member) return;
 
-  const channel = pluginData.guild.channels.cache.get(msg.channel_id as Snowflake) as TextChannel;
+  const channel = (await pluginData.guild.channels.fetch(msg.channel_id as Snowflake)) as TextChannel;
   if (!channel) return;
 
   const config = await pluginData.config.getMatchingConfig({

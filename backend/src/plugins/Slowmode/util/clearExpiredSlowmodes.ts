@@ -11,7 +11,7 @@ import { LogsPlugin } from "../../Logs/LogsPlugin";
 export async function clearExpiredSlowmodes(pluginData: GuildPluginData<SlowmodePluginType>) {
   const expiredSlowmodeUsers = await pluginData.state.slowmodes.getExpiredSlowmodeUsers();
   for (const user of expiredSlowmodeUsers) {
-    const channel = pluginData.guild.channels.cache.get(user.channel_id as Snowflake);
+    const channel = await pluginData.guild.channels.fetch(user.channel_id as Snowflake);
     if (!channel) {
       await pluginData.state.slowmodes.clearSlowmodeUser(user.channel_id, user.user_id);
       continue;

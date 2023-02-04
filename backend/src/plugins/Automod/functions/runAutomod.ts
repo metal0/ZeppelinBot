@@ -18,7 +18,7 @@ export async function runAutomod(pluginData: GuildPluginData<AutomodPluginType>,
   const channelOrThread =
     context.channel ??
     (channelIdOrThreadId
-      ? (pluginData.guild.channels.cache.get(channelIdOrThreadId as Snowflake) as TextChannel | ThreadChannel)
+      ? ((await pluginData.guild.channels.fetch(channelIdOrThreadId as Snowflake)) as TextChannel | ThreadChannel)
       : null);
   const channelId = channelOrThread?.isThread() ? channelOrThread.parent?.id : channelIdOrThreadId;
   const threadId = channelOrThread?.isThread() ? channelOrThread.id : null;

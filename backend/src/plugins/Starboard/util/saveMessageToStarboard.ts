@@ -9,7 +9,7 @@ export async function saveMessageToStarboard(
   msg: Message,
   starboard: TStarboardOpts,
 ) {
-  const channel = pluginData.guild.channels.cache.get(starboard.channel_id as Snowflake);
+  const channel = await pluginData.guild.channels.fetch(starboard.channel_id as Snowflake);
   if (!channel) return;
 
   const starCount = (await pluginData.state.starboardReactions.getAllReactionsForMessageId(msg.id)).length;

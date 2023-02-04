@@ -84,7 +84,7 @@ export class GuildArchives extends BaseGuildRepository<ArchiveEntry> {
   protected async renderLinesFromSavedMessages(savedMessages: SavedMessage[], guild: Guild): Promise<string[]> {
     const msgLines: string[] = [];
     for (const msg of savedMessages) {
-      const channel = guild.channels.cache.get(msg.channel_id as Snowflake);
+      const channel = await guild.channels.fetch(msg.channel_id as Snowflake);
       const partialUser = new TemplateSafeValueContainer({ ...msg.data.author, id: msg.user_id });
 
       const line = await renderTemplate(

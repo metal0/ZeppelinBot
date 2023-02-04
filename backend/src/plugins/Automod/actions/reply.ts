@@ -32,12 +32,14 @@ export const ReplyAction = automodAction({
   defaultConfig: {},
 
   async apply({ pluginData, contexts, actionConfig, ruleName }) {
-    const contextsWithTextChannels = contexts
-      .filter((c) => c.channel?.id || c.message?.channel_id)
-      .filter((c) => {
-        const channel = pluginData.guild.channels.cache.get(c.message!.channel_id as Snowflake);
-        return channel?.isText();
-      });
+    const contextsWithTextChannels = await Promise.all(
+      contexts
+        .filter((c) => c.channel?.id || c.message?.channel_id)
+        .filter(async (c) => {
+          const channel = await pluginData.guild.channels.fetch(c.message!.channel_id as Snowflake);
+          return channel?.isText();
+        }),
+    );
 
     const message = contexts.find((c) => c.message)?.message;
     const contextsByChannelId = contextsWithTextChannels.reduce((map: Map<string, AutomodContext[]>, context) => {
@@ -69,7 +71,7 @@ export const ReplyAction = automodAction({
           : ((await renderRecursively(actionConfig.text, renderReplyText)) as MessageOptions);
 
       if (formatted) {
-        const channel = pluginData.guild.channels.cache.get(channelId as Snowflake) as TextChannel;
+        const channel = (await pluginData.guild.channels.fetch(channelId as Snowflake)) as TextChannel;
 
         // Check for basic Send Messages and View Channel permissions
         if (

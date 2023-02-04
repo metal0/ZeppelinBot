@@ -89,7 +89,7 @@ export async function log<TLogType extends keyof ILogTypeData>(
   const logChannels: TLogChannelMap = pluginData.config.get().channels;
 
   logChannelLoop: for (let [channelId, opts] of Object.entries(logChannels)) {
-    const channelCheck = pluginData.guild.channels.cache.get(channelId as Snowflake);
+    const channelCheck = await pluginData.guild.channels.fetch(channelId as Snowflake);
     if (!channelCheck?.isText() || channelCheck instanceof VoiceChannel) continue;
     const typeStr = LogType[type];
     if (pluginData.state.channelCooldowns.isOnCooldown(channelId)) continue;
@@ -116,7 +116,7 @@ export async function log<TLogType extends keyof ILogTypeData>(
       }
       channelId = catThread.id;
     }
-    const channel = pluginData.guild.channels.cache.get(channelId as Snowflake);
+    const channel = await pluginData.guild.channels.fetch(channelId as Snowflake);
     if (!channel || (!channel.isText() && !channel.isThread())) continue;
 
     // Initialize message buffer for this channel

@@ -1,4 +1,4 @@
-import { ThreadChannel } from "discord.js";
+import { GuildChannel, ThreadChannel } from "discord.js";
 import * as t from "io-ts";
 import { noop, tNullable } from "../../../utils";
 import { automodAction } from "../helpers";
@@ -12,12 +12,16 @@ export const UnArchiveThreadAction = automodAction({
   },
 
   async apply({ pluginData, contexts, actionConfig }) {
-    const threads = contexts
-      .filter((c) => c.channel?.id)
-      .map((c) => pluginData.guild.channels.cache.get(c.channel!.id))
-      .filter((c): c is ThreadChannel => c?.isThread() ?? false);
+    const threads = await Promise.all(
+      contexts
+        .filter((c) => c.channel?.id)
+        .map(
+          async (c) => pluginData.guild.channels.fetch(c.channel!.id) as Promise<GuildChannel | ThreadChannel | null>,
+        ),
+    );
+    const filtered: ThreadChannel[] = threads.filter((c): c is ThreadChannel => c?.isThread() ?? false);
 
-    for (const thread of threads) {
+    for (const thread of filtered) {
       if (actionConfig.unlock && thread.locked) {
         await thread.setLocked(false).catch(noop);
       }

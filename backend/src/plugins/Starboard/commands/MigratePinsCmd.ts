@@ -23,7 +23,7 @@ export const MigratePinsCmd = starboardCmd({
       return;
     }
 
-    const starboardChannel = pluginData.guild.channels.cache.get(starboard.channel_id as Snowflake);
+    const starboardChannel = await pluginData.guild.channels.fetch(starboard.channel_id as Snowflake);
     if (!starboardChannel || !(starboardChannel instanceof TextChannel)) {
       sendErrorMessage(pluginData, msg.channel, "Starboard has an unknown/invalid channel id");
       return;

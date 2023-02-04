@@ -120,7 +120,7 @@ export async function getUserInfoEmbed(
         `),
     });
 
-    const voiceChannel = member.voice.channelId ? pluginData.guild.channels.cache.get(member.voice.channelId) : null;
+    const voiceChannel = member.voice.channelId ? await pluginData.guild.channels.fetch(member.voice.channelId) : null;
     if (voiceChannel || member.voice.mute || member.voice.deaf) {
       embed.fields.push({
         name: preEmbedPadding + "Voice information",

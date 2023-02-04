@@ -96,7 +96,7 @@ export const BotControlPlugin = zeppelinGlobalPlugin<BotControlPluginType>()({
 
       const guild = await pluginData.client.guilds.fetch(guildId as Snowflake);
       if (guild) {
-        const channel = guild.channels.cache.get(channelId as Snowflake);
+        const channel = await guild.channels.fetch(channelId as Snowflake);
         if (channel instanceof TextChannel) {
           sendSuccessMessage(pluginData, channel, "Global plugins reloaded!");
         }

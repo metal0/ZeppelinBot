@@ -52,7 +52,7 @@ export async function handleCompanionPermissions(
 
   try {
     for (const channelId of permsToDelete) {
-      const channel = pluginData.guild.channels.cache.get(channelId as Snowflake);
+      const channel = await pluginData.guild.channels.fetch(channelId as Snowflake);
       if (!channel || channel instanceof ThreadChannel) continue;
       pluginData.state.serverLogs.ignoreLog(LogType.CHANNEL_UPDATE, channelId, 3 * 1000);
       await channel.permissionOverwrites
@@ -61,7 +61,7 @@ export async function handleCompanionPermissions(
     }
 
     for (const [channelId, permissions] of permsToSet) {
-      const channel = pluginData.guild.channels.cache.get(channelId as Snowflake);
+      const channel = await pluginData.guild.channels.fetch(channelId as Snowflake);
       if (!channel || channel instanceof ThreadChannel) continue;
       pluginData.state.serverLogs.ignoreLog(LogType.CHANNEL_UPDATE, channelId, 3 * 1000);
       const fullSerialized = new Permissions(BigInt(permissions)).serialize();

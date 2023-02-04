@@ -30,7 +30,7 @@ export async function moveToVoiceChannelAction(
   }
 
   const targetChannelId = await renderTemplate(action.channel, values, false);
-  const targetChannel = pluginData.guild.channels.cache.get(targetChannelId as Snowflake);
+  const targetChannel = await pluginData.guild.channels.fetch(targetChannelId as Snowflake);
   if (!targetChannel) throw new ActionError("Unknown target channel");
   if (!(targetChannel instanceof VoiceChannel)) throw new ActionError("Target channel is not a voice channel");
 

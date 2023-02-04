@@ -26,7 +26,7 @@ export async function setChannelPermissionOverridesAction(
   event: TCustomEvent,
   eventData: any,
 ) {
-  const channel = pluginData.guild.channels.cache.get(action.channel as Snowflake) as TextChannel;
+  const channel = (await pluginData.guild.channels.fetch(action.channel as Snowflake)) as TextChannel;
   if (!channel) {
     throw new ActionError(`Unknown channel: ${action.channel}`);
   }

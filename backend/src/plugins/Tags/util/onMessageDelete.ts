@@ -10,7 +10,7 @@ export const onMessageDelete = typedGuildEventListener({
     // Command message was deleted -> delete the response as well
     const commandMsgResponse = await pluginData.state.tags.findResponseByCommandMessageId(msg.id);
     if (commandMsgResponse) {
-      const channel = pluginData.guild.channels.cache.get(msg.channelId) as TextChannel;
+      const channel = (await pluginData.guild.channels.fetch(msg.channelId)) as TextChannel;
       if (!channel) return;
 
       await pluginData.state.tags.deleteResponseByCommandMessageId(msg.id);
@@ -21,7 +21,7 @@ export const onMessageDelete = typedGuildEventListener({
     // Response was deleted -> delete the command message as well
     const responseMsgResponse = await pluginData.state.tags.findResponseByResponseMessageId(msg.id);
     if (responseMsgResponse) {
-      const channel = pluginData.guild.channels.cache.get(msg.channelId) as TextChannel;
+      const channel = (await pluginData.guild.channels.fetch(msg.channelId)) as TextChannel;
       if (!channel) return;
 
       await pluginData.state.tags.deleteResponseByResponseMessageId(msg.id);

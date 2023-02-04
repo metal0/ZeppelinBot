@@ -12,9 +12,9 @@ export async function onMessageDeleteBulk(pluginData: GuildPluginData<LogsPlugin
     return;
   }
 
-  const channel = pluginData.guild.channels.cache.get(
+  const channel = (await pluginData.guild.channels.fetch(
     savedMessages[0].channel_id as Snowflake,
-  ) as GuildTextBasedChannel;
+  )) as GuildTextBasedChannel;
   const archiveId = await pluginData.state.archives.createFromSavedMessages(savedMessages, pluginData.guild);
   const archiveUrl = pluginData.state.archives.getUrl(getBaseUrl(pluginData), archiveId);
   const authorIds = Array.from(new Set(savedMessages.map((item) => `\`${item.user_id}\``)));

@@ -40,7 +40,7 @@ export const AlertAction = automodAction({
   defaultConfig: {},
 
   async apply({ pluginData, contexts, actionConfig, ruleName, matchResult }) {
-    const channel = pluginData.guild.channels.cache.get(actionConfig.channel as Snowflake);
+    const channel = await pluginData.guild.channels.fetch(actionConfig.channel as Snowflake);
     const logs = pluginData.getPlugin(LogsPlugin);
 
     if (channel?.isText()) {

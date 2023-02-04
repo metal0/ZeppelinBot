@@ -12,9 +12,9 @@ export const ChannelToServerCmd = botControlCmd({
   },
 
   async run({ pluginData, message: msg, args }) {
-    const channel = pluginData.client.channels.cache.get(args.channelId);
+    const channel = await pluginData.client.channels.fetch(args.channelId);
     if (!channel) {
-      sendErrorMessage(pluginData, msg.channel as TextChannel, "Channel not found in cache!");
+      sendErrorMessage(pluginData, msg.channel as TextChannel, "Channel not found!");
       return;
     }
 

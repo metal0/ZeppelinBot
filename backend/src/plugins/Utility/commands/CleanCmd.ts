@@ -80,7 +80,7 @@ export async function cleanCmd(pluginData: GuildPluginData<UtilityPluginType>, a
     return;
   }
 
-  const targetChannel = args.channel ? pluginData.guild.channels.cache.get(args.channel as Snowflake) : msg.channel;
+  const targetChannel = args.channel ? await pluginData.guild.channels.fetch(args.channel as Snowflake) : msg.channel;
   if (!targetChannel?.isText()) {
     sendErrorMessage(pluginData, msg.channel, `Invalid channel specified`);
     return;

@@ -30,7 +30,7 @@ export const VcdisconnectCmd = utilityCmd({
       sendErrorMessage(pluginData, msg.channel, "Member is not in a voice channel");
       return;
     }
-    const channel = pluginData.guild.channels.cache.get(args.member.voice.channelId) as VoiceChannel;
+    const channel = (await pluginData.guild.channels.fetch(args.member.voice.channelId)) as VoiceChannel;
 
     try {
       await args.member.voice.disconnect();

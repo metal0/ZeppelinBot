@@ -17,7 +17,7 @@ export async function postToCaseLogChannel(
   const caseLogChannelId = pluginData.config.get().case_log_channel;
   if (!caseLogChannelId) return null;
 
-  const caseLogChannel = pluginData.guild.channels.cache.get(caseLogChannelId as Snowflake);
+  const caseLogChannel = await pluginData.guild.channels.fetch(caseLogChannelId as Snowflake);
   // This doesn't use `!isText() || isThread()` because TypeScript had some issues inferring types from it
   if (
     !caseLogChannel ||
@@ -26,8 +26,9 @@ export async function postToCaseLogChannel(
       caseLogChannel instanceof NewsChannel ||
       caseLogChannel instanceof ThreadChannel
     )
-  )
+  ) {
     return null;
+  }
 
   let result: InternalPosterMessageResult | null = null;
   try {

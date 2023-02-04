@@ -64,7 +64,7 @@ export const SendWelcomeMessageEvt = welcomeMessageEvt({
     }
 
     if (config.send_to_channel) {
-      const channel = meta.args.member.guild.channels.cache.get(config.send_to_channel as Snowflake);
+      const channel = await meta.args.member.guild.channels.fetch(config.send_to_channel as Snowflake);
       if (!channel || !(channel instanceof TextChannel)) return;
 
       try {

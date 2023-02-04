@@ -32,7 +32,7 @@ export const CleanAction = automodAction({
         pluginData.state.logs.ignoreLog(LogType.MESSAGE_DELETE, id);
       }
 
-      const channel = pluginData.guild.channels.cache.get(channelId as Snowflake) as TextChannel;
+      const channel = (await pluginData.guild.channels.fetch(channelId as Snowflake)) as TextChannel;
       await channel.bulkDelete(messageIds as Snowflake[]).catch(noop);
     }
   },

@@ -1,4 +1,4 @@
-import { MessageEmbedOptions, Snowflake, StageChannel, ThreadChannel, VoiceChannel } from "discord.js";
+import { GuildChannel, MessageEmbedOptions, Snowflake, StageChannel, ThreadChannel, VoiceChannel } from "discord.js";
 import humanizeDuration from "humanize-duration";
 import { GuildPluginData } from "knub";
 import moment from "moment-timezone";
@@ -25,7 +25,7 @@ export async function getChannelInfoEmbed(
   channelId: string,
   requestMemberId?: string,
 ): Promise<MessageEmbedOptions | null> {
-  const channel = pluginData.guild.channels.cache.get(channelId as Snowflake);
+  const channel = (await pluginData.guild.channels.fetch(channelId as Snowflake)) as GuildChannel | null;
   if (!channel) {
     return null;
   }
@@ -128,7 +128,7 @@ export async function getChannelInfoEmbed(
     });
   }
 
-  if (channel.type === ChannelTypeStrings.PRIVATE_THREAD || channel.type === ChannelTypeStrings.PUBLIC_THREAD) {
+  if (channel.isThread()) {
     const thread = channel as ThreadChannel;
     const parentChannelName = thread.parent?.name ?? `<#${thread.parentId}>`;
     const memberCount = thread.memberCount ?? thread.members.cache.size;

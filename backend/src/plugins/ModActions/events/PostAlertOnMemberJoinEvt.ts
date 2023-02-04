@@ -22,7 +22,7 @@ export const PostAlertOnMemberJoinEvt = modActionsEvt({
     const logs = pluginData.getPlugin(LogsPlugin);
 
     if (actions.length) {
-      const alertChannel = pluginData.guild.channels.cache.get(alertChannelId as Snowflake);
+      const alertChannel = await pluginData.guild.channels.fetch(alertChannelId as Snowflake);
       if (!alertChannel) {
         logs.logBotAlert({
           body: `Unknown \`alert_channel\` configured for \`mod_actions\`: \`${alertChannelId}\``,

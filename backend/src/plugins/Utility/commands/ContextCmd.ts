@@ -36,7 +36,7 @@ export const ContextCmd = utilityCmd({
     }
 
     const previousMessage = (
-      await (pluginData.guild.channels.cache.get(channel.id) as TextChannel).messages.fetch({
+      await ((await pluginData.guild.channels.fetch(channel.id)) as TextChannel)?.messages.fetch({
         limit: 1,
         before: messageId as Snowflake,
       })
