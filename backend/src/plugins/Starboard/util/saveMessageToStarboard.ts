@@ -1,5 +1,6 @@
 import { Message, MessageEmbedOptions, Snowflake, TextChannel } from "discord.js";
 import { GuildPluginData } from "knub";
+import { noop } from "../../../utils.js";
 import { StarboardPluginType, TStarboardOpts } from "../types";
 import { createStarboardEmbedFromMessage } from "./createStarboardEmbedFromMessage";
 import { createStarboardPseudoFooterForMessage } from "./createStarboardPseudoFooterForMessage";
@@ -9,7 +10,7 @@ export async function saveMessageToStarboard(
   msg: Message,
   starboard: TStarboardOpts,
 ) {
-  const channel = await pluginData.guild.channels.fetch(starboard.channel_id as Snowflake);
+  const channel = await pluginData.guild.channels.fetch(starboard.channel_id as Snowflake).catch(noop);
   if (!channel) return;
 
   const starCount = (await pluginData.state.starboardReactions.getAllReactionsForMessageId(msg.id)).length;

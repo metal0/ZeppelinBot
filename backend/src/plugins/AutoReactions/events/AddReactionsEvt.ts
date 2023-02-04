@@ -1,6 +1,6 @@
 import { GuildChannel, GuildTextBasedChannel, Permissions } from "discord.js";
 import { LogType } from "../../../data/LogType";
-import { isDiscordAPIError } from "../../../utils";
+import { isDiscordAPIError, noop } from "../../../utils";
 import { getMissingChannelPermissions } from "../../../utils/getMissingChannelPermissions";
 import { missingPermissionError } from "../../../utils/missingPermissionError";
 import { readChannelPermissions } from "../../../utils/readChannelPermissions";
@@ -16,7 +16,7 @@ export const AddReactionsEvt = autoReactionsEvt({
   allowSelf: true,
 
   async listener({ pluginData, args: { message } }) {
-    const channel = (await message.guild?.channels.fetch(message.channelId)) as
+    const channel = (await message.guild?.channels.fetch(message.channelId).catch(noop)) as
       | GuildTextBasedChannel
       | null
       | undefined;

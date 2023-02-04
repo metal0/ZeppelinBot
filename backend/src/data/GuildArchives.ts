@@ -3,7 +3,7 @@ import moment from "moment-timezone";
 import { isDefaultSticker } from "src/utils/isDefaultSticker";
 import { getRepository, Repository } from "typeorm";
 import { renderTemplate, TemplateSafeValueContainer } from "../templateFormatter";
-import { trimLines } from "../utils";
+import { noop, trimLines } from "../utils";
 import { BaseGuildRepository } from "./BaseGuildRepository";
 import { ArchiveEntry } from "./entities/ArchiveEntry";
 import {
@@ -84,7 +84,7 @@ export class GuildArchives extends BaseGuildRepository<ArchiveEntry> {
   protected async renderLinesFromSavedMessages(savedMessages: SavedMessage[], guild: Guild): Promise<string[]> {
     const msgLines: string[] = [];
     for (const msg of savedMessages) {
-      const channel = await guild.channels.fetch(msg.channel_id as Snowflake);
+      const channel = await guild.channels.fetch(msg.channel_id as Snowflake).catch(noop);
       const partialUser = new TemplateSafeValueContainer({ ...msg.data.author, id: msg.user_id });
 
       const line = await renderTemplate(

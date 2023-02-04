@@ -3,7 +3,7 @@ import { GuildPluginData } from "knub";
 import { erisAllowedMentionsToDjsMentionOptions } from "src/utils/erisAllowedMentionsToDjsMentionOptions";
 import { SavedMessage } from "../../../data/entities/SavedMessage";
 import { LogType } from "../../../data/LogType";
-import { convertDelayStringToMS, resolveMember, tStrictMessageContent } from "../../../utils";
+import { convertDelayStringToMS, noop, resolveMember, tStrictMessageContent } from "../../../utils";
 import { messageIsEmpty } from "../../../utils/messageIsEmpty";
 import { validate } from "../../../validatorUtils";
 import { TagsPluginType } from "../types";
@@ -17,7 +17,7 @@ export async function onMessageCreate(pluginData: GuildPluginData<TagsPluginType
   const member = await resolveMember(pluginData.client, pluginData.guild, msg.user_id);
   if (!member) return;
 
-  const channel = (await pluginData.guild.channels.fetch(msg.channel_id as Snowflake)) as TextChannel;
+  const channel = (await pluginData.guild.channels.fetch(msg.channel_id as Snowflake).catch(noop)) as TextChannel;
   if (!channel) return;
 
   const config = await pluginData.config.getMatchingConfig({

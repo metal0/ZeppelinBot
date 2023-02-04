@@ -67,7 +67,7 @@ export async function handleModifyRole(
   group: TButtonPairOpts,
   context,
 ) {
-  const role = await pluginData.guild.roles.fetch(context.roleOrMenu);
+  const role = await pluginData.guild.roles.fetch(context.roleOrMenu).catch(noop);
   if (!role) {
     await int
       .reply({
@@ -81,7 +81,10 @@ export async function handleModifyRole(
     return;
   }
 
-  const member = await pluginData.guild.members.fetch(int.user.id);
+  const member = await pluginData.guild.members.fetch(int.user.id).catch(noop);
+  if (!member) {
+    return;
+  }
   let roleGroup: TButtonOpts | undefined;
   const allRoles: Set<string> = new Set();
   for (const keyName in group.default_buttons) {

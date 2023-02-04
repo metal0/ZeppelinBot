@@ -8,6 +8,7 @@ import { checkGuild } from "./functions/checkGuild";
 import { checkGuildOwnerPermissions } from "./functions/checkOwnerPerms";
 import { GuildAccessMonitorPluginType } from "./types";
 import { env } from "../../env";
+import { noop } from "../../utils.js";
 
 /**
  * Global plugin to monitor if Zeppelin is invited to a non-whitelisted server, and leave it
@@ -22,7 +23,7 @@ export const GuildAccessMonitorPlugin = zeppelinGlobalPlugin<GuildAccessMonitorP
       async listener({ pluginData, args: { guild } }) {
         if (await checkGuild(pluginData, guild)) {
           await checkGuildOwnerPermissions(pluginData, guild.id, guild.ownerId);
-          await guild.members.fetch();
+          await guild.members.fetch().catch(noop);
         }
       },
     }),
@@ -47,7 +48,7 @@ export const GuildAccessMonitorPlugin = zeppelinGlobalPlugin<GuildAccessMonitorP
     for (const guild of pluginData.client.guilds.cache.values()) {
       if (await checkGuild(pluginData, guild)) {
         await checkGuildOwnerPermissions(pluginData, guild.id, guild.ownerId);
-        await guild.members.fetch();
+        await guild.members.fetch().catch(noop);
       }
     }
   },

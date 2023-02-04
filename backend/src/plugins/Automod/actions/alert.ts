@@ -18,6 +18,7 @@ import {
   verboseChannelMention,
   validateAndParseMessageContent,
   chunkMessageLines,
+  noop,
 } from "../../../utils";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
 import { automodAction } from "../helpers";
@@ -40,7 +41,7 @@ export const AlertAction = automodAction({
   defaultConfig: {},
 
   async apply({ pluginData, contexts, actionConfig, ruleName, matchResult }) {
-    const channel = await pluginData.guild.channels.fetch(actionConfig.channel as Snowflake);
+    const channel = await pluginData.guild.channels.fetch(actionConfig.channel as Snowflake).catch(noop);
     const logs = pluginData.getPlugin(LogsPlugin);
 
     if (channel?.isText()) {

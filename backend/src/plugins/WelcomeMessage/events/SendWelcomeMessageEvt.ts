@@ -7,7 +7,13 @@ import {
 } from "../../../utils/templateSafeObjects";
 import { LogType } from "../../../data/LogType";
 import { renderTemplate, TemplateParseError, TemplateSafeValueContainer } from "../../../templateFormatter";
-import { createChunkedMessage, stripObjectToScalars, verboseChannelMention, verboseUserMention } from "../../../utils";
+import {
+  createChunkedMessage,
+  noop,
+  stripObjectToScalars,
+  verboseChannelMention,
+  verboseUserMention,
+} from "../../../utils";
 import { sendDM } from "../../../utils/sendDM";
 import { welcomeMessageEvt } from "../types";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
@@ -64,7 +70,7 @@ export const SendWelcomeMessageEvt = welcomeMessageEvt({
     }
 
     if (config.send_to_channel) {
-      const channel = await meta.args.member.guild.channels.fetch(config.send_to_channel as Snowflake);
+      const channel = await meta.args.member.guild.channels.fetch(config.send_to_channel as Snowflake).catch(noop);
       if (!channel || !(channel instanceof TextChannel)) return;
 
       try {

@@ -244,7 +244,7 @@ connect().then(async () => {
   const safe429MaxCount = 100;
   const safe429Counter = new DecayingCounter(safe429DecayInterval);
   client.on(Constants.Events.DEBUG, (errorText) => {
-    if (!errorText.includes("429")) {
+    if (!errorText.includes("429") || errorText.includes("Failed to find guild, or unknown type for channel")) {
       return;
     }
 

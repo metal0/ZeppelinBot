@@ -6,6 +6,7 @@ import { CaseTypes } from "../../../data/CaseTypes";
 import {
   EmbedWith,
   messageLink,
+  noop,
   preEmbedPadding,
   resolveMember,
   resolveUser,
@@ -120,7 +121,9 @@ export async function getUserInfoEmbed(
         `),
     });
 
-    const voiceChannel = member.voice.channelId ? await pluginData.guild.channels.fetch(member.voice.channelId) : null;
+    const voiceChannel = member.voice.channelId
+      ? await pluginData.guild.channels.fetch(member.voice.channelId).catch(noop)
+      : null;
     if (voiceChannel || member.voice.mute || member.voice.deaf) {
       embed.fields.push({
         name: preEmbedPadding + "Voice information",

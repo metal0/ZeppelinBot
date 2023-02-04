@@ -8,6 +8,7 @@ import { AutomodContext, AutomodPluginType } from "../types";
 import { checkAndUpdateCooldown } from "./checkAndUpdateCooldown";
 import { performance } from "perf_hooks";
 import { calculateBlocking, profilingEnabled } from "../../../utils/easyProfiler";
+import { noop } from "../../../utils.js";
 
 export async function runAutomod(pluginData: GuildPluginData<AutomodPluginType>, context: AutomodContext) {
   const userId = context.user?.id || context.member?.id || context.message?.user_id;
@@ -18,7 +19,9 @@ export async function runAutomod(pluginData: GuildPluginData<AutomodPluginType>,
   const channelOrThread =
     context.channel ??
     (channelIdOrThreadId
-      ? ((await pluginData.guild.channels.fetch(channelIdOrThreadId as Snowflake)) as TextChannel | ThreadChannel)
+      ? ((await pluginData.guild.channels.fetch(channelIdOrThreadId as Snowflake).catch(noop)) as
+          | TextChannel
+          | ThreadChannel)
       : null);
   const channelId = channelOrThread?.isThread() ? channelOrThread.parent?.id : channelIdOrThreadId;
   const threadId = channelOrThread?.isThread() ? channelOrThread.id : null;

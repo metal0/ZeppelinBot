@@ -7,7 +7,7 @@ import { getLogMessage } from "./getLogMessage";
 import { TypedTemplateSafeValueContainer } from "../../../templateFormatter";
 import { LogType } from "../../../data/LogType";
 import { MessageBuffer } from "../../../utils/MessageBuffer";
-import { isDiscordAPIError, MINUTES } from "../../../utils";
+import { isDiscordAPIError, MINUTES, noop } from "../../../utils";
 import { InternalPosterPlugin } from "../../InternalPoster/InternalPosterPlugin";
 import { getCategoryThread } from "./getCategoryThread";
 import { getObjectId, validateCategoryData } from "./getCategoryObjectId";
@@ -89,7 +89,7 @@ export async function log<TLogType extends keyof ILogTypeData>(
   const logChannels: TLogChannelMap = pluginData.config.get().channels;
 
   logChannelLoop: for (let [channelId, opts] of Object.entries(logChannels)) {
-    const channelCheck = await pluginData.guild.channels.fetch(channelId as Snowflake);
+    const channelCheck = await pluginData.guild.channels.fetch(channelId as Snowflake).catch(noop);
     if (!channelCheck?.isText() || channelCheck instanceof VoiceChannel) continue;
     const typeStr = LogType[type];
     if (pluginData.state.channelCooldowns.isOnCooldown(channelId)) continue;
@@ -116,7 +116,7 @@ export async function log<TLogType extends keyof ILogTypeData>(
       }
       channelId = catThread.id;
     }
-    const channel = await pluginData.guild.channels.fetch(channelId as Snowflake);
+    const channel = await pluginData.guild.channels.fetch(channelId as Snowflake).catch(noop);
     if (!channel || (!channel.isText() && !channel.isThread())) continue;
 
     // Initialize message buffer for this channel

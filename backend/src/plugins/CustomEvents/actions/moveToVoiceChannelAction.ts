@@ -3,7 +3,7 @@ import * as t from "io-ts";
 import { GuildPluginData } from "knub";
 import { canActOn } from "../../../pluginUtils";
 import { renderTemplate, TemplateSafeValueContainer } from "../../../templateFormatter";
-import { resolveMember } from "../../../utils";
+import { noop, resolveMember } from "../../../utils";
 import { ActionError } from "../ActionError";
 import { CustomEventsPluginType, TCustomEvent } from "../types";
 
@@ -30,7 +30,7 @@ export async function moveToVoiceChannelAction(
   }
 
   const targetChannelId = await renderTemplate(action.channel, values, false);
-  const targetChannel = await pluginData.guild.channels.fetch(targetChannelId as Snowflake);
+  const targetChannel = await pluginData.guild.channels.fetch(targetChannelId as Snowflake).catch(noop);
   if (!targetChannel) throw new ActionError("Unknown target channel");
   if (!(targetChannel instanceof VoiceChannel)) throw new ActionError("Target channel is not a voice channel");
 

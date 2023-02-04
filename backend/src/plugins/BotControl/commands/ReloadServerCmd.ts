@@ -1,6 +1,7 @@
 import { Snowflake, TextChannel } from "discord.js";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
+import { noop } from "../../../utils.js";
 import { botControlCmd } from "../types";
 
 export const ReloadServerCmd = botControlCmd({
@@ -24,7 +25,7 @@ export const ReloadServerCmd = botControlCmd({
       return;
     }
 
-    const guild = await pluginData.client.guilds.fetch(args.guildId as Snowflake);
+    const guild = await pluginData.client.guilds.fetch(args.guildId as Snowflake).catch(noop);
     sendSuccessMessage(pluginData, msg.channel as TextChannel, `Reloaded guild **${guild?.name || "???"}**`);
   },
 });

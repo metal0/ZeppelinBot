@@ -4,6 +4,7 @@ import { GuildPluginData } from "knub";
 import { ActionError } from "../ActionError";
 import { CustomEventsPluginType, TCustomEvent } from "../types";
 import { TemplateSafeValueContainer } from "../../../templateFormatter";
+import { noop } from "../../../utils.js";
 
 export const SetChannelPermissionOverridesAction = t.type({
   type: t.literal("set_channel_permission_overrides"),
@@ -26,7 +27,7 @@ export async function setChannelPermissionOverridesAction(
   event: TCustomEvent,
   eventData: any,
 ) {
-  const channel = (await pluginData.guild.channels.fetch(action.channel as Snowflake)) as TextChannel;
+  const channel = (await pluginData.guild.channels.fetch(action.channel as Snowflake).catch(noop)) as TextChannel;
   if (!channel) {
     throw new ActionError(`Unknown channel: ${action.channel}`);
   }

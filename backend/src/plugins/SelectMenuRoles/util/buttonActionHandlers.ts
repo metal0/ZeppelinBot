@@ -31,7 +31,10 @@ export async function handleModifyRole(
   }
 
   try {
-    const member = await pluginData.guild.members.fetch(int.user.id);
+    const member = await pluginData.guild.members.fetch(int.user.id).catch(noop);
+    if (!member) {
+      return;
+    }
     const configuredRoles: string[] = [];
     const menuGroup = group.menus[menuName];
     for (const key in menuGroup.items) {

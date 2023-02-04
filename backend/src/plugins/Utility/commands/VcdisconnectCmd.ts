@@ -9,6 +9,7 @@ import { LogType } from "../../../data/LogType";
 import { canActOn, sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
 import { utilityCmd } from "../types";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
+import { noop } from "../../../utils.js";
 
 export const VcdisconnectCmd = utilityCmd({
   trigger: ["vcdisconnect", "vcdisc", "vcdc", "vckick", "vck"],
@@ -30,7 +31,7 @@ export const VcdisconnectCmd = utilityCmd({
       sendErrorMessage(pluginData, msg.channel, "Member is not in a voice channel");
       return;
     }
-    const channel = (await pluginData.guild.channels.fetch(args.member.voice.channelId)) as VoiceChannel;
+    const channel = (await pluginData.guild.channels.fetch(args.member.voice.channelId).catch(noop)) as VoiceChannel;
 
     try {
       await args.member.voice.disconnect();

@@ -2,6 +2,7 @@ import { Snowflake } from "discord.js";
 import moment from "moment-timezone";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { getBaseUrl, sendErrorMessage } from "../../../pluginUtils";
+import { noop } from "../../../utils.js";
 import { canReadChannel } from "../../../utils/canReadChannel";
 import { utilityCmd } from "../types";
 
@@ -21,7 +22,7 @@ export const SourceCmd = utilityCmd({
       return;
     }
 
-    const message = await args.message.channel.messages.fetch(args.message.messageId);
+    const message = await args.message.channel.messages.fetch(args.message.messageId).catch(noop);
     if (!message) {
       sendErrorMessage(pluginData, cmdMessage.channel, "Unknown message");
       return;

@@ -1,6 +1,7 @@
 import { Guild, GuildChannel, TextChannel } from "discord.js";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { sendErrorMessage } from "../../../pluginUtils";
+import { noop } from "../../../utils.js";
 import { botControlCmd } from "../types";
 
 export const ChannelToServerCmd = botControlCmd({
@@ -12,7 +13,7 @@ export const ChannelToServerCmd = botControlCmd({
   },
 
   async run({ pluginData, message: msg, args }) {
-    const channel = await pluginData.client.channels.fetch(args.channelId);
+    const channel = await pluginData.client.channels.fetch(args.channelId).catch(noop);
     if (!channel) {
       sendErrorMessage(pluginData, msg.channel as TextChannel, "Channel not found!");
       return;

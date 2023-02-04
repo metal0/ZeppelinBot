@@ -36,7 +36,7 @@ export const ReplyAction = automodAction({
       contexts
         .filter((c) => c.channel?.id || c.message?.channel_id)
         .filter(async (c) => {
-          const channel = await pluginData.guild.channels.fetch(c.message!.channel_id as Snowflake);
+          const channel = await pluginData.guild.channels.fetch(c.message!.channel_id as Snowflake).catch(noop);
           return channel?.isText();
         }),
     );
@@ -71,7 +71,7 @@ export const ReplyAction = automodAction({
           : ((await renderRecursively(actionConfig.text, renderReplyText)) as MessageOptions);
 
       if (formatted) {
-        const channel = (await pluginData.guild.channels.fetch(channelId as Snowflake)) as TextChannel;
+        const channel = (await pluginData.guild.channels.fetch(channelId as Snowflake).catch(noop)) as TextChannel;
 
         // Check for basic Send Messages and View Channel permissions
         if (

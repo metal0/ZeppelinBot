@@ -1,7 +1,7 @@
 import { Permissions, Snowflake, StageChannel, TextChannel, ThreadChannel, VoiceChannel } from "discord.js";
 import { GuildPluginData } from "knub";
 import { LogType } from "../../../data/LogType";
-import { isDiscordAPIError, MINUTES } from "../../../utils";
+import { isDiscordAPIError, MINUTES, noop } from "../../../utils";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
 import { CompanionChannelsPluginType, TCompanionChannelOpts } from "../types";
 import { getCompanionChannelOptsForVoiceChannelId } from "./getCompanionChannelOptsForVoiceChannelId";
@@ -52,7 +52,7 @@ export async function handleCompanionPermissions(
 
   try {
     for (const channelId of permsToDelete) {
-      const channel = await pluginData.guild.channels.fetch(channelId as Snowflake);
+      const channel = await pluginData.guild.channels.fetch(channelId as Snowflake).catch(noop);
       if (!channel || channel instanceof ThreadChannel) continue;
       pluginData.state.serverLogs.ignoreLog(LogType.CHANNEL_UPDATE, channelId, 3 * 1000);
       await channel.permissionOverwrites
@@ -61,7 +61,7 @@ export async function handleCompanionPermissions(
     }
 
     for (const [channelId, permissions] of permsToSet) {
-      const channel = await pluginData.guild.channels.fetch(channelId as Snowflake);
+      const channel = await pluginData.guild.channels.fetch(channelId as Snowflake).catch(noop);
       if (!channel || channel instanceof ThreadChannel) continue;
       pluginData.state.serverLogs.ignoreLog(LogType.CHANNEL_UPDATE, channelId, 3 * 1000);
       const fullSerialized = new Permissions(BigInt(permissions)).serialize();

@@ -3,7 +3,7 @@ import humanizeDuration from "humanize-duration";
 import { GuildPluginData } from "knub";
 import moment from "moment-timezone";
 import { ChannelTypeStrings } from "src/types";
-import { EmbedWith, formatNumber, MINUTES, preEmbedPadding, trimLines, verboseUserMention } from "../../../utils";
+import { EmbedWith, formatNumber, MINUTES, noop, preEmbedPadding, trimLines, verboseUserMention } from "../../../utils";
 import { TimeAndDatePlugin } from "../../TimeAndDate/TimeAndDatePlugin";
 import { UtilityPluginType } from "../types";
 
@@ -25,7 +25,7 @@ export async function getChannelInfoEmbed(
   channelId: string,
   requestMemberId?: string,
 ): Promise<MessageEmbedOptions | null> {
-  const channel = (await pluginData.guild.channels.fetch(channelId as Snowflake)) as GuildChannel | null;
+  const channel = (await pluginData.guild.channels.fetch(channelId as Snowflake).catch(noop)) as GuildChannel | null;
   if (!channel) {
     return null;
   }

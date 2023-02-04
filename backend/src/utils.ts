@@ -1296,7 +1296,7 @@ export async function resolveUser<T>(bot, value) {
 
   // If we have the user cached, return that directly
   if (bot.users.cache.has(userId)) {
-    return bot.users.fetch(userId);
+    return bot.users.fetch(userId).catch(noop);
   }
 
   // We don't want to spam the API by trying to fetch unknown users again and again,
@@ -1371,7 +1371,10 @@ export async function resolveRoleId(bot: Client, guildId: string, value: string)
   }
 
   // Role name
-  const roleList = (await bot.guilds.fetch(guildId as Snowflake)).roles.cache;
+  const roleList = (await bot.guilds.fetch(guildId as Snowflake).catch(noop))?.roles.cache;
+  if (!roleList) {
+    return null;
+  }
   const role = roleList.filter((x) => x.name.toLocaleLowerCase() === value.toLocaleLowerCase());
   if (role.size >= 1) {
     return role.firstKey();

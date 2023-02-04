@@ -1,7 +1,7 @@
 import { MessageEmbed, Snowflake, TextChannel } from "discord.js";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
-import { trimLines } from "../../../utils";
+import { noop, trimLines } from "../../../utils";
 import { parseColor } from "../../../utils/parseColor";
 import { rgbToInt } from "../../../utils/rgbToInt";
 import { postCmd } from "../types";
@@ -36,7 +36,7 @@ export const EditEmbedCmd = postCmd({
       }
     }
 
-    const targetMessage = await args.message.channel.messages.fetch(args.message.messageId);
+    const targetMessage = await args.message.channel.messages.fetch(args.message.messageId).catch(noop);
     if (!targetMessage) {
       sendErrorMessage(pluginData, msg.channel, "Unknown message");
       return;

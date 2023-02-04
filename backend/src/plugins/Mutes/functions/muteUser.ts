@@ -8,6 +8,7 @@ import { LogsPlugin } from "../../../plugins/Logs/LogsPlugin";
 import { ERRORS, RecoverablePluginError } from "../../../RecoverablePluginError";
 import { renderTemplate, TemplateSafeValueContainer } from "../../../templateFormatter";
 import {
+  noop,
   notifyUser,
   resolveMember,
   resolveUser,
@@ -199,7 +200,7 @@ export async function muteUser(
 
       const useChannel = existingMute ? config.message_on_update : config.message_on_mute;
       const channel = config.message_channel
-        ? await pluginData.guild.channels.fetch(config.message_channel as Snowflake)
+        ? await pluginData.guild.channels.fetch(config.message_channel as Snowflake).catch(noop)
         : null;
       if (useChannel && channel?.isText()) {
         contactMethods.push({ type: "channel", channel });

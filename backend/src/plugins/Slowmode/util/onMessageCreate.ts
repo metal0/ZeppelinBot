@@ -2,7 +2,7 @@ import { Snowflake, TextChannel } from "discord.js";
 import { GuildPluginData } from "knub";
 import { SavedMessage } from "../../../data/entities/SavedMessage";
 import { hasPermission } from "../../../pluginUtils";
-import { resolveMember } from "../../../utils";
+import { noop, resolveMember } from "../../../utils";
 import { getMissingChannelPermissions } from "../../../utils/getMissingChannelPermissions";
 import { messageLock } from "../../../utils/lockNameHelpers";
 import { missingPermissionError } from "../../../utils/missingPermissionError";
@@ -15,7 +15,7 @@ import { SlowmodeChannel } from "../../../data/entities/SlowmodeChannel";
 export async function onMessageCreate(pluginData: GuildPluginData<SlowmodePluginType>, msg: SavedMessage) {
   if (msg.is_bot) return;
 
-  const channel = (await pluginData.guild.channels.fetch(msg.channel_id as Snowflake)) as TextChannel;
+  const channel = (await pluginData.guild.channels.fetch(msg.channel_id as Snowflake).catch(noop)) as TextChannel;
   if (!channel) return;
 
   // Don't apply slowmode if the lock was interrupted earlier (e.g. the message was caught by word filters)

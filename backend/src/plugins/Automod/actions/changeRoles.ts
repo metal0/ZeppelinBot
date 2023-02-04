@@ -1,7 +1,7 @@
 import { Permissions, Snowflake } from "discord.js";
 import * as t from "io-ts";
 import isEqual from "lodash.isequal";
-import { nonNullish, unique } from "../../../utils";
+import { nonNullish, noop, unique } from "../../../utils";
 import { canAssignRole } from "../../../utils/canAssignRole";
 import { getMissingPermissions } from "../../../utils/getMissingPermissions";
 import { memberRolesLock } from "../../../utils/lockNameHelpers";
@@ -22,7 +22,11 @@ export const ChangeRolesAction = automodAction({
 
   async apply({ pluginData, contexts, actionConfig, ruleName }) {
     const members = unique(contexts.map((c) => c.member).filter(nonNullish));
-    const me = pluginData.guild.me ?? (await pluginData.guild.members.fetch(pluginData.client.user!.id));
+    const me = pluginData.guild.me ?? (await pluginData.guild.members.fetch(pluginData.client.user!.id).catch(noop));
+
+    if (!me) {
+      return;
+    }
 
     const missingPermissions = getMissingPermissions(me.permissions, Permissions.FLAGS.MANAGE_ROLES);
     if (missingPermissions) {

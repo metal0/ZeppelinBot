@@ -4,11 +4,11 @@ import { Reminder } from "../../../data/entities/Reminder";
 import { DiscordAPIError, HTTPError, Snowflake, TextChannel } from "discord.js";
 import moment from "moment-timezone";
 import { disableLinkPreviews } from "knub/dist/helpers";
-import { DBDateFormat, isDiscordHTTPError, SECONDS } from "../../../utils";
+import { DBDateFormat, isDiscordHTTPError, noop, SECONDS } from "../../../utils";
 import humanizeDuration from "humanize-duration";
 
 export async function postReminder(pluginData: GuildPluginData<RemindersPluginType>, reminder: Reminder) {
-  const channel = await pluginData.guild.channels.fetch(reminder.channel_id as Snowflake);
+  const channel = await pluginData.guild.channels.fetch(reminder.channel_id as Snowflake).catch(noop);
   if (channel && (channel.isText() || channel.isThread())) {
     try {
       // Only show created at date if one exists

@@ -40,7 +40,7 @@ export const InfoCmd = utilityCmd({
     // 1. Channel
     if (userCfg.can_channelinfo) {
       const channelId = getChannelId(value);
-      const channel = channelId && (await pluginData.guild.channels.fetch(channelId as Snowflake));
+      const channel = channelId && (await pluginData.guild.channels.fetch(channelId as Snowflake).catch(noop));
       if (channel) {
         const embed = await getChannelInfoEmbed(pluginData, channelId!, message.author.id);
         if (embed) {

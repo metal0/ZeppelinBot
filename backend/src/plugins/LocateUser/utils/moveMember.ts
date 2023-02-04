@@ -1,6 +1,7 @@
 import { GuildMember, Snowflake, TextChannel } from "discord.js";
 import { GuildPluginData } from "knub";
 import { sendErrorMessage } from "../../../pluginUtils";
+import { noop } from "../../../utils.js";
 import { LocateUserPluginType } from "../types";
 
 export async function moveMember(
@@ -9,8 +10,8 @@ export async function moveMember(
   target: GuildMember,
   errorChannel: TextChannel,
 ) {
-  const modMember: GuildMember = await pluginData.guild.members.fetch(toMoveID as Snowflake);
-  if (modMember.voice.channelId != null) {
+  const modMember = await pluginData.guild.members.fetch(toMoveID as Snowflake).catch(noop);
+  if (modMember?.voice.channelId != null) {
     try {
       await modMember.edit({
         channel: target.voice.channelId,

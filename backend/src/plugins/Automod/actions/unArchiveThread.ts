@@ -16,7 +16,8 @@ export const UnArchiveThreadAction = automodAction({
       contexts
         .filter((c) => c.channel?.id)
         .map(
-          async (c) => pluginData.guild.channels.fetch(c.channel!.id) as Promise<GuildChannel | ThreadChannel | null>,
+          async (c) =>
+            pluginData.guild.channels.fetch(c.channel!.id).catch(noop) as Promise<GuildChannel | ThreadChannel | null>,
         ),
     );
     const filtered: ThreadChannel[] = threads.filter((c): c is ThreadChannel => c?.isThread() ?? false);

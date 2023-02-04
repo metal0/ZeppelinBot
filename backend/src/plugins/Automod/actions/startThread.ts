@@ -34,7 +34,7 @@ export const StartThreadAction = automodAction({
     const threads = await Promise.all(
       contexts.filter(async (c) => {
         if (!c.message || !c.user) return false;
-        const channel = await pluginData.guild.channels.fetch(c.message.channel_id);
+        const channel = await pluginData.guild.channels.fetch(c.message.channel_id).catch(noop);
         if (channel?.type !== ChannelTypeStrings.TEXT || !channel.isText()) return false; // for some reason the typing here for channel.type defaults to ThreadChannelTypes (?)
         // check against max threads per channel
         if (actionConfig.limit_per_channel && actionConfig.limit_per_channel > 0) {
@@ -57,7 +57,7 @@ export const StartThreadAction = automodAction({
       : ThreadAutoArchiveDuration.OneHour;
 
     for (const c of threads) {
-      const channel = (await pluginData.guild.channels.fetch(c.message!.channel_id)) as TextChannel;
+      const channel = (await pluginData.guild.channels.fetch(c.message!.channel_id).catch(noop)) as TextChannel;
       const renderThreadName = async (str) =>
         renderTemplate(
           str,

@@ -1,5 +1,5 @@
 import { LogType } from "../../../data/LogType";
-import { differenceToString, getScalarDifference } from "../../../utils";
+import { differenceToString, getScalarDifference, noop } from "../../../utils";
 import { channelToTemplateSafeChannel, stageToTemplateSafeStage } from "../../../utils/templateSafeObjects";
 import { logsEvt } from "../types";
 import { logStageInstanceCreate } from "../logFunctions/logStageInstanceCreate";
@@ -14,7 +14,7 @@ export const LogsStageInstanceCreateEvt = logsEvt({
   async listener(meta) {
     const stageChannel =
       meta.args.stageInstance.channel ??
-      ((await meta.pluginData.guild.channels.fetch(meta.args.stageInstance.channelId)) as StageChannel);
+      ((await meta.pluginData.guild.channels.fetch(meta.args.stageInstance.channelId).catch(noop)) as StageChannel);
 
     logStageInstanceCreate(meta.pluginData, {
       stageInstance: meta.args.stageInstance,
@@ -29,7 +29,7 @@ export const LogsStageInstanceDeleteEvt = logsEvt({
   async listener(meta) {
     const stageChannel =
       meta.args.stageInstance.channel ??
-      ((await meta.pluginData.guild.channels.fetch(meta.args.stageInstance.channelId)) as StageChannel);
+      ((await meta.pluginData.guild.channels.fetch(meta.args.stageInstance.channelId).catch(noop)) as StageChannel);
 
     logStageInstanceDelete(meta.pluginData, {
       stageInstance: meta.args.stageInstance,
@@ -50,7 +50,7 @@ export const LogsStageInstanceUpdateEvt = logsEvt({
   async listener(meta) {
     const stageChannel =
       meta.args.newStageInstance.channel ??
-      ((await meta.pluginData.guild.channels.fetch(meta.args.newStageInstance.channelId)) as StageChannel);
+      ((await meta.pluginData.guild.channels.fetch(meta.args.newStageInstance.channelId).catch(noop)) as StageChannel);
 
     const oldStageInstanceDiffProps = filterObject(meta.args.oldStageInstance || {}, (v, k) =>
       validStageInstanceDiffProps.has(k),

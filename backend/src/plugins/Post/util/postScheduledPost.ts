@@ -2,7 +2,7 @@ import { Snowflake, TextChannel, User } from "discord.js";
 import { GuildPluginData } from "knub";
 import moment from "moment-timezone";
 import { logger } from "../../../logger";
-import { DBDateFormat, verboseChannelMention, verboseUserMention } from "../../../utils";
+import { DBDateFormat, noop, verboseChannelMention, verboseUserMention } from "../../../utils";
 import { PostPluginType } from "../types";
 import { postMessage } from "./postMessage";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
@@ -44,7 +44,7 @@ export async function postScheduledPost(pluginData: GuildPluginData<PostPluginTy
   }
 
   // Post the message
-  const channel = await pluginData.guild.channels.fetch(post.channel_id as Snowflake);
+  const channel = await pluginData.guild.channels.fetch(post.channel_id as Snowflake).catch(noop);
   if (channel?.isText() || channel?.isThread()) {
     const [username, discriminator] = post.author_name.split("#");
     const author: User = (await pluginData.client.users.fetch(post.author_id as Snowflake)) || {

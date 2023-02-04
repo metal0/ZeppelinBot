@@ -4,7 +4,7 @@ import moment from "moment-timezone";
 import { channelToTemplateSafeChannel, userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
 import { LogType } from "../../../data/LogType";
 import { logger } from "../../../logger";
-import { resolveUser, verboseChannelMention } from "../../../utils";
+import { noop, resolveUser, verboseChannelMention } from "../../../utils";
 import { hasDiscordPermissions } from "../../../utils/hasDiscordPermissions";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
 import { TimeAndDatePlugin } from "../../TimeAndDate/TimeAndDatePlugin";
@@ -17,7 +17,9 @@ export async function deleteNextItem(pluginData: GuildPluginData<AutoDeletePlugi
 
   scheduleNextDeletion(pluginData);
 
-  const channel = (await pluginData.guild.channels.fetch(itemToDelete.message.channel_id as Snowflake)) as TextChannel;
+  const channel = (await pluginData.guild.channels
+    .fetch(itemToDelete.message.channel_id as Snowflake)
+    .catch(noop)) as TextChannel;
   if (!channel) {
     // Channel was deleted, ignore
     return;

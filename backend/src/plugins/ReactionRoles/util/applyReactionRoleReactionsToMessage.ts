@@ -17,7 +17,7 @@ export async function applyReactionRoleReactionsToMessage(
   messageId: string,
   reactionRoles: ReactionRole[],
 ): Promise<string[] | undefined> {
-  const channel = (await pluginData.guild.channels.fetch(channelId as Snowflake)) as TextChannel;
+  const channel = pluginData.guild.channels.cache.get(channelId as Snowflake) as TextChannel;
   if (!channel) return;
 
   const errors: string[] = [];

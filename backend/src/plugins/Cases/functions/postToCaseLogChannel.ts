@@ -1,7 +1,7 @@
 import { FileOptions, MessageOptions, NewsChannel, Snowflake, TextChannel, ThreadChannel } from "discord.js";
 import { GuildPluginData } from "knub";
 import { Case } from "../../../data/entities/Case";
-import { isDiscordAPIError } from "../../../utils";
+import { isDiscordAPIError, noop } from "../../../utils";
 import { CasesPluginType } from "../types";
 import { getCaseEmbed } from "./getCaseEmbed";
 import { resolveCaseId } from "./resolveCaseId";
@@ -17,7 +17,7 @@ export async function postToCaseLogChannel(
   const caseLogChannelId = pluginData.config.get().case_log_channel;
   if (!caseLogChannelId) return null;
 
-  const caseLogChannel = await pluginData.guild.channels.fetch(caseLogChannelId as Snowflake);
+  const caseLogChannel = await pluginData.guild.channels.fetch(caseLogChannelId as Snowflake).catch(noop);
   // This doesn't use `!isText() || isThread()` because TypeScript had some issues inferring types from it
   if (
     !caseLogChannel ||
@@ -67,7 +67,7 @@ export async function postCaseToCaseLogChannel(
     try {
       const poster = pluginData.getPlugin(InternalPosterPlugin);
       const channel = pluginData.guild.channels.resolve(channelId as Snowflake) as TextChannel;
-      const message = await channel.messages.fetch(messageId);
+      const message = await channel.messages.fetch(messageId).catch(noop);
       if (message) {
         await poster.editMessage(message, caseEmbed);
       }

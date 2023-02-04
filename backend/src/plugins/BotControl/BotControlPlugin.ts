@@ -24,6 +24,7 @@ import { ChannelToServerCmd } from "./commands/ChannelToServerCmd";
 import { RestPerformanceCmd } from "./commands/RestPerformanceCmd";
 import { RateLimitPerformanceCmd } from "./commands/RateLimitPerformanceCmd";
 import { env } from "../../env.js";
+import { noop } from "../../utils.js";
 
 const defaultOptions = {
   config: {
@@ -94,9 +95,9 @@ export const BotControlPlugin = zeppelinGlobalPlugin<BotControlPluginType>()({
       const [guildId, channelId] = activeReload;
       resetActiveReload();
 
-      const guild = await pluginData.client.guilds.fetch(guildId as Snowflake);
+      const guild = await pluginData.client.guilds.fetch(guildId as Snowflake).catch(noop);
       if (guild) {
-        const channel = await guild.channels.fetch(channelId as Snowflake);
+        const channel = await guild.channels.fetch(channelId as Snowflake).catch(noop);
         if (channel instanceof TextChannel) {
           sendSuccessMessage(pluginData, channel, "Global plugins reloaded!");
         }

@@ -3,7 +3,7 @@ import { GuildPluginData } from "knub";
 import { channelToTemplateSafeChannel, userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
 import { LogType } from "../../../data/LogType";
 import { logger } from "../../../logger";
-import { UnknownUser, verboseChannelMention, verboseUserMention } from "../../../utils";
+import { noop, UnknownUser, verboseChannelMention, verboseUserMention } from "../../../utils";
 import { SlowmodePluginType } from "../types";
 import { clearBotSlowmodeFromUserId } from "./clearBotSlowmodeFromUserId";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
@@ -11,7 +11,7 @@ import { LogsPlugin } from "../../Logs/LogsPlugin";
 export async function clearExpiredSlowmodes(pluginData: GuildPluginData<SlowmodePluginType>) {
   const expiredSlowmodeUsers = await pluginData.state.slowmodes.getExpiredSlowmodeUsers();
   for (const user of expiredSlowmodeUsers) {
-    const channel = await pluginData.guild.channels.fetch(user.channel_id as Snowflake);
+    const channel = await pluginData.guild.channels.fetch(user.channel_id as Snowflake).catch(noop);
     if (!channel) {
       await pluginData.state.slowmodes.clearSlowmodeUser(user.channel_id, user.user_id);
       continue;

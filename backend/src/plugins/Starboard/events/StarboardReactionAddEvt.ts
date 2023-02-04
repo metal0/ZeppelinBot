@@ -76,9 +76,9 @@ export const StarboardReactionAddEvt = starboardEvt({
         // If the message has already been posted to this starboard, update star counts
         if (starboard.show_star_count) {
           for (const starboardMessage of starboardMessages) {
-            const channel = (await pluginData.guild.channels.fetch(
-              starboardMessage.starboard_channel_id as Snowflake,
-            )) as TextChannel;
+            const channel = (await pluginData.guild.channels
+              .fetch(starboardMessage.starboard_channel_id as Snowflake)
+              .catch(noop)) as TextChannel;
             const realStarboardMessage = await channel.messages.fetch(starboardMessage.starboard_message_id);
             await updateStarboardMessageStarCount(
               starboard,

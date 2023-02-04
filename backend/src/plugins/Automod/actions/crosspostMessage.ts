@@ -12,10 +12,10 @@ export const CrosspostMessageAction = automodAction({
       contexts
         .filter((c) => c.message?.id)
         .map(async (c) => {
-          const channel = await pluginData.guild.channels.fetch(c.message!.channel_id);
+          const channel = await pluginData.guild.channels.fetch(c.message!.channel_id).catch(noop);
           if (channel?.type === ChannelTypeStrings.NEWS && channel.isText()) {
             // .isText() to fix the typings
-            return channel.messages.fetch(c.message!.id);
+            return channel.messages.fetch(c.message!.id).catch(noop);
           }
           return null;
         }),

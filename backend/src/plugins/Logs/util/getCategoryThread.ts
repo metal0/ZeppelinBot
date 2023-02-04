@@ -35,7 +35,7 @@ export async function getCategoryThread(
 ): Promise<ThreadChannel | void> {
   await refreshThreadCache(pluginData, channel);
   const objectThread = pluginData.state.categorizedLogThreadMap[channel.id].has(objectId)
-    ? await channel.threads.fetch(pluginData.state.categorizedLogThreadMap[channel.id].get(objectId)!)
+    ? await channel.threads.fetch(pluginData.state.categorizedLogThreadMap[channel.id].get(objectId)!).catch(noop)
     : null;
   if (objectThread) {
     return objectThread;
@@ -45,7 +45,7 @@ export async function getCategoryThread(
 
   // check again
   const objectThread2 = pluginData.state.categorizedLogThreadMap[channel.id].has(objectId)
-    ? await channel.threads.fetch(pluginData.state.categorizedLogThreadMap[channel.id].get(objectId)!)
+    ? await channel.threads.fetch(pluginData.state.categorizedLogThreadMap[channel.id].get(objectId)!).catch(noop)
     : null;
   if (objectThread2) {
     lock.unlock();

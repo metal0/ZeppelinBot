@@ -7,7 +7,7 @@ import {
 import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { LogType } from "../../../data/LogType";
 import { canActOn, sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
-import { channelMentionRegex, isSnowflake, simpleClosestStringMatch } from "../../../utils";
+import { channelMentionRegex, isSnowflake, noop, simpleClosestStringMatch } from "../../../utils";
 import { utilityCmd } from "../types";
 import { ChannelTypeStrings } from "../../../types";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
@@ -28,7 +28,7 @@ export const VcmoveCmd = utilityCmd({
 
     if (isSnowflake(args.channel)) {
       // Snowflake -> resolve channel directly
-      const potentialChannel = await pluginData.guild.channels.fetch(args.channel as Snowflake);
+      const potentialChannel = await pluginData.guild.channels.fetch(args.channel as Snowflake).catch(noop);
       if (!potentialChannel || !(potentialChannel instanceof VoiceChannel)) {
         sendErrorMessage(pluginData, msg.channel, "Unknown or non-voice channel");
         return;
@@ -38,7 +38,7 @@ export const VcmoveCmd = utilityCmd({
     } else if (channelMentionRegex.test(args.channel)) {
       // Channel mention -> parse channel id and resolve channel from that
       const channelId = args.channel.match(channelMentionRegex)![1];
-      const potentialChannel = await pluginData.guild.channels.fetch(channelId as Snowflake);
+      const potentialChannel = await pluginData.guild.channels.fetch(channelId as Snowflake).catch(noop);
       if (!potentialChannel || !(potentialChannel instanceof VoiceChannel)) {
         sendErrorMessage(pluginData, msg.channel, "Unknown or non-voice channel");
         return;
@@ -69,7 +69,9 @@ export const VcmoveCmd = utilityCmd({
       return;
     }
 
-    const oldVoiceChannel = (await pluginData.guild.channels.fetch(args.member.voice.channelId)) as VoiceChannel;
+    const oldVoiceChannel = (await pluginData.guild.channels
+      .fetch(args.member.voice.channelId)
+      .catch(noop)) as VoiceChannel;
 
     try {
       await args.member.edit({
@@ -107,7 +109,7 @@ export const VcmoveAllCmd = utilityCmd({
 
     if (isSnowflake(args.channel)) {
       // Snowflake -> resolve channel directly
-      const potentialChannel = await pluginData.guild.channels.fetch(args.channel as Snowflake);
+      const potentialChannel = await pluginData.guild.channels.fetch(args.channel as Snowflake).catch(noop);
       if (!potentialChannel || !(potentialChannel instanceof VoiceChannel)) {
         sendErrorMessage(pluginData, msg.channel, "Unknown or non-voice channel");
         return;
@@ -117,7 +119,7 @@ export const VcmoveAllCmd = utilityCmd({
     } else if (channelMentionRegex.test(args.channel)) {
       // Channel mention -> parse channel id and resolve channel from that
       const channelId = args.channel.match(channelMentionRegex)![1];
-      const potentialChannel = await pluginData.guild.channels.fetch(channelId as Snowflake);
+      const potentialChannel = await pluginData.guild.channels.fetch(channelId as Snowflake).catch(noop);
       if (!potentialChannel || !(potentialChannel instanceof VoiceChannel)) {
         sendErrorMessage(pluginData, msg.channel, "Unknown or non-voice channel");
         return;
