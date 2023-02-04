@@ -3,7 +3,7 @@ const VueLoaderPlugin = require("vue-loader/lib/plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const DotenvPlugin = require("dotenv-webpack");
 const merge = require("webpack-merge");
-const webpack = require('webpack');
+const webpack = require("webpack");
 
 const targetDir = path.normalize(path.join(__dirname, "dist"));
 
@@ -160,11 +160,14 @@ let config = {
   },
 };
 
-if(process.env.NODE_ENV === "production") config.plugins.push(new DotenvPlugin({
-    path: path.resolve(process.cwd(), "../.env")
-  }));
+if (process.env.NODE_ENV === "production")
+  config.plugins.push(
+    new DotenvPlugin({
+      path: path.resolve(process.cwd(), "../.env"),
+    }),
+  );
 
-if(process.env.NODE_ENV === "cloudflare") config.plugins.push(new webpack.EnvironmentPlugin(['NODE_ENV', 'API_URL']));
+if (process.env.NODE_ENV === "cloudflare") config.plugins.push(new webpack.EnvironmentPlugin(["NODE_ENV", "API_URL"]));
 
 if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "cloudflare") {
   config = merge(config, {
