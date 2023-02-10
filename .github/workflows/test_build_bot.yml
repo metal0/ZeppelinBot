@@ -19,6 +19,6 @@ jobs:
     - name: npm install, run bot
       run: |
         cd backend
-        npm ci
+        npm i
         npm run build
         npm run start-bot-prod

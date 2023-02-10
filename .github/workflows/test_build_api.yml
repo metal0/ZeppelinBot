@@ -19,6 +19,6 @@ jobs:
     - name: npm install, run api
       run: |
         cd backend
-        npm ci
+        npm i
         npm run build
         npm run start-api-prod
