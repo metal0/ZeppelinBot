@@ -1,4 +1,4 @@
-name: Code quality checks
+name: Build Bot
 
 on: [push, pull_request]
 
