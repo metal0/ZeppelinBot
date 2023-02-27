@@ -3,7 +3,7 @@ import { FORMAT_NO_TIMESTAMP, LogsPluginType } from "../types";
 import { LogType } from "../../../data/LogType";
 import { log } from "../util/log";
 import { createTypedTemplateSafeValueContainer } from "../../../templateFormatter";
-import { BaseGuildTextChannel, ThreadChannel, User } from "discord.js";
+import { BaseGuildTextChannel, GuildTextBasedChannel, ThreadChannel, User } from "discord.js";
 import {
   channelToTemplateSafeChannel,
   savedMessageToTemplateSafeSavedMessage,
@@ -13,10 +13,11 @@ import moment from "moment-timezone";
 import { ISavedMessageAttachmentData, SavedMessage } from "../../../data/entities/SavedMessage";
 import { TimeAndDatePlugin } from "../../TimeAndDate/TimeAndDatePlugin";
 import { UnknownUser, useMediaUrls } from "../../../utils";
+import { resolveChannelIds } from "../../../utils/resolveChannelIds";
 
 interface LogMessageDeleteData {
   user: User | UnknownUser;
-  channel: BaseGuildTextChannel | ThreadChannel;
+  channel: GuildTextBasedChannel;
   message: SavedMessage;
 }
 
@@ -47,10 +48,9 @@ export function logMessageDelete(pluginData: GuildPluginData<LogsPluginType>, da
     }),
     {
       userId: data.user.id,
-      channel: data.channel.id,
-      category: data.channel.parentId,
       messageTextContent: data.message.data.content,
       bot: data.user instanceof User ? data.user.bot : false,
+      ...resolveChannelIds(data.channel),
     },
   );
 }

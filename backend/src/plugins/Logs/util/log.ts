@@ -22,6 +22,7 @@ interface ExclusionData {
   roles?: Snowflake[] | null;
   channel?: Snowflake | null;
   category?: Snowflake | null;
+  thread?: Snowflake | null;
   messageTextContent?: string | null;
 }
 
@@ -58,6 +59,10 @@ async function shouldExclude(
     return true;
   }
 
+  if (opts.excluded_threads && exclusionData.thread && opts.excluded_threads.includes(exclusionData.thread)) {
+    return true;
+  }
+
   if (opts.excluded_message_regexes && exclusionData.messageTextContent) {
     for (const regex of opts.excluded_message_regexes) {
       const matches = await pluginData.state.regexRunner
@@ -83,7 +88,7 @@ export async function log<TLogType extends keyof ILogTypeData>(
 
   logChannelLoop: for (const [channelId, opts] of Object.entries(logChannels)) {
     const channel = pluginData.guild.channels.cache.get(channelId as Snowflake);
-    if (!channel || !(channel instanceof TextChannel)) continue;
+    if (!channel?.isText()) continue;
     if (pluginData.state.channelCooldowns.isOnCooldown(channelId)) continue;
     if (opts.include?.length && !opts.include.includes(typeStr)) continue;
     if (opts.exclude && opts.exclude.includes(typeStr)) continue;

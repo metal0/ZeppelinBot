@@ -3,7 +3,7 @@ import { LogsPluginType } from "../types";
 import { LogType } from "../../../data/LogType";
 import { log } from "../util/log";
 import { createTypedTemplateSafeValueContainer } from "../../../templateFormatter";
-import { BaseGuildTextChannel, ThreadChannel, User } from "discord.js";
+import { BaseGuildTextChannel, GuildTextBasedChannel, ThreadChannel, User } from "discord.js";
 import {
   channelToTemplateSafeChannel,
   savedMessageToTemplateSafeSavedMessage,
@@ -11,10 +11,11 @@ import {
 } from "../../../utils/templateSafeObjects";
 import { SavedMessage } from "../../../data/entities/SavedMessage";
 import { UnknownUser } from "../../../utils";
+import { resolveChannelIds } from "../../../utils/resolveChannelIds";
 
 interface LogMessageEditData {
   user: User | UnknownUser;
-  channel: BaseGuildTextChannel | ThreadChannel;
+  channel: GuildTextBasedChannel;
   before: SavedMessage;
   after: SavedMessage;
 }
@@ -31,9 +32,9 @@ export function logMessageEdit(pluginData: GuildPluginData<LogsPluginType>, data
     }),
     {
       userId: data.user.id,
-      channel: data.channel.id,
       messageTextContent: data.after.data.content,
       bot: data.user instanceof User ? data.user.bot : false,
+      ...resolveChannelIds(data.channel),
     },
   );
 }
