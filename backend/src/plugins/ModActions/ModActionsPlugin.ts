@@ -1,4 +1,4 @@
-import { GuildMember, Message, Snowflake } from "discord.js";
+import { GuildMember, Message, PartialUser, Snowflake, User } from "discord.js";
 import { EventEmitter } from "events";
 import { GuildCases } from "../../data/GuildCases";
 import { GuildLogs } from "../../data/GuildLogs";
@@ -6,7 +6,7 @@ import { GuildMutes } from "../../data/GuildMutes";
 import { GuildTempbans } from "../../data/GuildTempbans";
 import { mapToPublicFn } from "../../pluginUtils";
 import { Queue } from "../../Queue";
-import { MINUTES, trimPluginDescription } from "../../utils";
+import { MINUTES, trimPluginDescription, UnknownUser } from "../../utils";
 import { CasesPlugin } from "../Cases/CasesPlugin";
 import { MutesPlugin } from "../Mutes/MutesPlugin";
 import { TimeAndDatePlugin } from "../TimeAndDate/TimeAndDatePlugin";
@@ -160,8 +160,8 @@ export const ModActionsPlugin = zeppelinGuildPlugin<ModActionsPluginType>()({
 
   public: {
     warnMember(pluginData) {
-      return (member: GuildMember, reason: string, warnOptions?: WarnOptions) => {
-        warnMember(pluginData, member, reason, warnOptions);
+      return (reason: string, member: GuildMember | null, user?: User | null, warnOptions?: WarnOptions) => {
+        warnMember(pluginData, reason, member, user, warnOptions);
       };
     },
 

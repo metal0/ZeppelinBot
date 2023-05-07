@@ -162,7 +162,7 @@ export class GuildCounters extends BaseGuildRepository {
       }
 
       const decayAmountToApply = Math.round((diffFromLastDecayMs / decayPeriodMs) * decayAmount);
-      if (decayAmountToApply === 0) {
+      if (decayAmountToApply === 0 || Number.isNaN(decayAmountToApply)) {
         return;
       }
 
@@ -513,7 +513,7 @@ export class GuildCounters extends BaseGuildRepository {
     const queryString = `WITH t AS (
       SELECT 
         *,
-        DENSE_RANK() OVER (ORDER BY ${sql_escape_string(rankedField)} DESC) rank
+        DENSE_RANK() OVER (ORDER BY ${sql_escape_string(rankedField)} DESC) AS 'rank'
       FROM counter_values
       WHERE counter_id=${counterId}
     )

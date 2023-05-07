@@ -7,6 +7,7 @@ import { ArchiveThreadAction } from "./archiveThread";
 import { BanAction } from "./ban";
 import { ChangeNicknameAction } from "./changeNickname";
 import { ChangeRolesAction } from "./changeRoles";
+import { ChangePermsAction } from "./changePerms";
 import { CleanAction } from "./clean";
 import { KickAction } from "./kick";
 import { LogAction } from "./log";
@@ -38,6 +39,7 @@ export const availableActions: Record<string, AutomodActionBlueprint<any>> = {
   start_thread: StartThreadAction,
   archive_thread: ArchiveThreadAction,
   change_roles: ChangeRolesAction,
+  change_perms: ChangePermsAction,
 };
 
 export const AvailableActions = t.type({
@@ -59,4 +61,5 @@ export const AvailableActions = t.type({
   start_thread: StartThreadAction.configType,
   archive_thread: ArchiveThreadAction.configType,
   change_roles: ChangeRolesAction.configType,
+  change_perms: ChangePermsAction.configType,
 });

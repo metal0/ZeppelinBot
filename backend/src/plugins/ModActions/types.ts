@@ -133,6 +133,7 @@ export interface WarnOptions {
   caseArgs?: Partial<CaseArgs> | null;
   contactMethods?: UserNotificationMethod[] | null;
   retryPromptChannel?: TextChannel | null;
+  silentErrors?: boolean | null;
   isAutomodAction?: boolean;
 }
 
