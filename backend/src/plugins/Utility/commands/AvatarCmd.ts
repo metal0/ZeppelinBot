@@ -15,16 +15,20 @@ export const AvatarCmd = utilityCmd({
 
   async run({ message: msg, args, pluginData }) {
     const user = args.user || msg.author;
+
     if (!(user instanceof UnknownUser)) {
+      const member = await pluginData.guild.members.fetch(user.id).catch(() => null);
+
       const embed: MessageEmbedOptions = {
         image: {
-          url: user.displayAvatarURL({ dynamic: true, format: "png", size: 2048 }),
+          url: (member ?? user).displayAvatarURL({ dynamic: true, format: "png", size: 2048 }),
         },
         title: `Avatar of ${user.tag}:`,
       };
-      msg.channel.send({ embeds: [embed] });
+
+      await msg.channel.send({ embeds: [embed] });
     } else {
-      sendErrorMessage(pluginData, msg.channel, "Invalid user ID");
+      await sendErrorMessage(pluginData, msg.channel, "Invalid user ID");
     }
   },
 });
