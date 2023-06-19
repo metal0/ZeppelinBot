@@ -35,7 +35,7 @@ export const ArchiveStore: Module<ArchiveState, RootState> = {
           return;
         }
 
-        const [, channel, userId, postedAt, userTag, content] = matches;
+        const [, channel, userId, postedAt, userTag, , content] = matches;
         const messageData = { userId, postedAt, userTag, content };
 
         if (archive.channels.length < 1 || archive.channels[archive.channels.length - 1].name !== channel) {
