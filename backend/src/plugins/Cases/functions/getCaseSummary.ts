@@ -69,7 +69,12 @@ export async function getCaseSummary(
   let caseType = (caseAbbreviations[theCase.type] || String(theCase.type)).toUpperCase();
   caseType = (caseType + "    ").slice(0, 4);
 
-  let line = `${icon} **\`${caseType}\`** \`[${prettyTimestamp}]\` ${caseTitle} ${reason}`;
+  const guildName =
+    config.guild_aliases && theCase.guild_id in config.guild_aliases
+      ? config.guild_aliases[theCase.guild_id]
+      : pluginData.client.guilds.cache.get(theCase.guild_id)?.name ?? theCase.guild_id;
+
+  let line = `${icon} **\`${caseType}\`** \`[${prettyTimestamp}]\` ${guildName} ${caseTitle} ${reason}`;
   if (leftoverNotes > 1) {
     line += ` *(+${leftoverNotes} ${leftoverNotes === 1 ? "note" : "notes"})*`;
   }

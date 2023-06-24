@@ -35,6 +35,12 @@ export async function getCaseEmbed(
     ? await timeAndDate.inMemberTz(requestMemberId, createdAt)
     : timeAndDate.inGuildTz(createdAt);
 
+  const config = pluginData.config.get();
+  const guildName =
+    config.guild_aliases && theCase.guild_id in config.guild_aliases
+      ? config.guild_aliases[theCase.guild_id]
+      : pluginData.client.guilds.cache.get(theCase.guild_id)?.name ?? theCase.guild_id;
+
   const embed: any = {
     title: `${actionTypeStr} - Case #${theCase.case_number}`,
     footer: {
@@ -49,6 +55,11 @@ export async function getCaseEmbed(
       {
         name: "Moderator",
         value: modName,
+        inline: true,
+      },
+      {
+        name: "Server",
+        value: guildName,
         inline: true,
       },
     ],

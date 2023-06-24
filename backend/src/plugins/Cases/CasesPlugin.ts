@@ -25,6 +25,7 @@ const defaultOptions = {
     case_log_channel: null,
     show_relative_times: true,
     relative_time_cutoff: "7d",
+    guild_aliases: null,
     case_colors: null,
     case_icons: null,
   },

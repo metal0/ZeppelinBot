@@ -13,6 +13,7 @@ export const ConfigSchema = t.type({
   case_log_channel: tNullable(t.string),
   show_relative_times: t.boolean,
   relative_time_cutoff: tDelayString,
+  guild_aliases: tNullable(t.record(t.string, t.string)),
   case_colors: tNullable(tPartialDictionary(t.keyof(CaseNameToType), tColor)),
   case_icons: tNullable(tPartialDictionary(t.keyof(CaseNameToType), t.string)),
 });
