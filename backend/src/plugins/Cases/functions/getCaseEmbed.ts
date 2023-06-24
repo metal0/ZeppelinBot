@@ -59,7 +59,7 @@ export async function getCaseEmbed(
       },
       {
         name: "Server",
-        value: guildName,
+        value: `**${guildName}**`,
         inline: true,
       },
     ],
