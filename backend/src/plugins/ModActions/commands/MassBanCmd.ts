@@ -14,6 +14,7 @@ import { IgnoredEventType, modActionsCmd } from "../types";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
 import { renderTemplate, TemplateSafeValueContainer } from "../../../templateFormatter";
 import { userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
+import { parseReason } from "../functions/parseReason";
 
 export const MassbanCmd = modActionsCmd({
   trigger: "massban",
@@ -41,7 +42,10 @@ export const MassbanCmd = modActionsCmd({
       return;
     }
 
-    const banReason = formatReasonWithAttachments(banReasonReply.content, [...msg.attachments.values()]);
+    const banReason = parseReason(
+      pluginData.config.get(),
+      formatReasonWithAttachments(banReasonReply.content, [...msg.attachments.values()]),
+    );
 
     // Verify we can act on each of the users specified
     for (const userId of args.userIds) {
