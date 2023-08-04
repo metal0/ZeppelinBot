@@ -25,8 +25,7 @@ export async function kickMember(
 
   // Attempt to message the user *before* kicking them, as doing it after may not be possible
   let notifyResult: UserNotificationResult = { method: null, success: true };
-  if (reason) {
-    reason = parseReason(config, reason);
+  if (reason && member) {
     const contactMethods = kickOptions?.contactMethods
       ? kickOptions.contactMethods
       : getDefaultContactMethods(pluginData, "kick");

@@ -1,7 +1,7 @@
+import escapeStringRegexp from "escape-string-regexp";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { createChunkedMessage } from "../../../utils";
 import { tagsCmd } from "../types";
-import escapeStringRegexp from "escape-string-regexp";
 
 export const TagListCmd = tagsCmd({
   trigger: ["tag list", "tags", "taglist"],
@@ -20,7 +20,9 @@ export const TagListCmd = tagsCmd({
 
     const prefix = (await pluginData.config.getForMessage(msg)).prefix;
     const tagNames = tags.map((tag) => tag.tag).sort();
-    const searchRegex = args.search ? new RegExp([...args.search].map((s) => escapeStringRegexp(s)).join(".*")) : null;
+    const searchRegex = args.search
+      ? new RegExp([...args.search].map((s) => escapeStringRegexp(s)).join(".*"), "i")
+      : null;
 
     const filteredTags = args.search ? tagNames.filter((tag) => searchRegex!.test(tag)) : tagNames;
 

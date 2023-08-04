@@ -3,14 +3,7 @@ import { GuildPluginData } from "knub";
 import { userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
 import { CaseTypes } from "../../../data/CaseTypes";
 import { renderTemplate, TemplateSafeValueContainer } from "../../../templateFormatter";
-import {
-  createUserNotificationError,
-  notifyUser,
-  resolveUser,
-  ucfirst,
-  UnknownUser,
-  UserNotificationResult,
-} from "../../../utils";
+import { UserNotificationResult, createUserNotificationError, notifyUser, resolveUser, ucfirst } from "../../../utils";
 import { waitForButtonConfirm } from "../../../utils/waitForInteraction";
 import { CasesPlugin } from "../../Cases/CasesPlugin";
 import { ModActionsPluginType, WarnOptions, WarnResult } from "../types";

@@ -1,8 +1,8 @@
-import { TextChannel, User } from "discord.js";
+import { User } from "discord.js";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { CaseTypes } from "../../../data/CaseTypes";
 import { canActOn, hasPermission, sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
-import { errorMessage, resolveMember, resolveUser } from "../../../utils";
+import { errorMessage, renderUserUsername, resolveMember, resolveUser } from "../../../utils";
 import { waitForButtonConfirm } from "../../../utils/waitForInteraction";
 import { CasesPlugin } from "../../Cases/CasesPlugin";
 import { formatReasonWithAttachments } from "../functions/formatReasonWithAttachments";
@@ -93,7 +93,7 @@ export const WarnCmd = modActionsCmd({
         ppId: mod.id !== msg.author.id ? msg.author.id : undefined,
         reason,
       },
-      retryPromptChannel: msg.channel as TextChannel,
+      retryPromptChannel: msg.channel,
     });
 
     if (warnResult.status === "failed") {
@@ -106,7 +106,7 @@ export const WarnCmd = modActionsCmd({
     sendSuccessMessage(
       pluginData,
       msg.channel,
-      `Warned **${user.tag}** (Case #${warnResult.case.case_number})${messageResultText}`,
+      `Warned **${memberToWarn ? renderUserUsername(memberToWarn.user) : memberToWarn}** (Case #${warnResult.case.case_number})${messageResultText}`,
     );
   },
 });

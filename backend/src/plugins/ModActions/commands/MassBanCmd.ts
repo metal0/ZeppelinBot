@@ -1,5 +1,5 @@
-import { Snowflake, TextChannel, User } from "discord.js";
-import { waitForReply } from "knub/dist/helpers";
+import { Snowflake, User } from "discord.js";
+import { waitForReply } from "knub/helpers";
 import { performance } from "perf_hooks";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { CaseTypes } from "../../../data/CaseTypes";
@@ -7,11 +7,11 @@ import { LogType } from "../../../data/LogType";
 import { humanizeDurationShort } from "../../../humanizeDurationShort";
 import { CasesPlugin } from "../../Cases/CasesPlugin";
 import { canActOn, sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
-import { MINUTES, noop, notifyUser, resolveUser } from "../../../utils";
+import { DAYS, MINUTES, SECONDS, noop, notifyUser, resolveUser } from "../../../utils";
+import { LogsPlugin } from "../../Logs/LogsPlugin";
 import { formatReasonWithAttachments } from "../functions/formatReasonWithAttachments";
 import { ignoreEvent } from "../functions/ignoreEvent";
 import { IgnoredEventType, modActionsCmd } from "../types";
-import { LogsPlugin } from "../../Logs/LogsPlugin";
 import { renderTemplate, TemplateSafeValueContainer } from "../../../templateFormatter";
 import { userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
 import { parseReason } from "../functions/parseReason";
@@ -36,7 +36,7 @@ export const MassbanCmd = modActionsCmd({
 
     // Ask for ban reason (cleaner this way instead of trying to cram it into the args)
     msg.channel.send("Ban reason? `cancel` to cancel");
-    const banReasonReply = await waitForReply(pluginData.client, msg.channel as TextChannel, msg.author.id);
+    const banReasonReply = await waitForReply(pluginData.client, msg.channel, msg.author.id);
     if (!banReasonReply || !banReasonReply.content || banReasonReply.content.toLowerCase().trim() === "cancel") {
       sendErrorMessage(pluginData, msg.channel, "Cancelled");
       return;
@@ -119,8 +119,8 @@ export const MassbanCmd = modActionsCmd({
           }
 
           await pluginData.guild.bans.create(userId as Snowflake, {
-            days: deleteDays,
-            reason: banReason ?? undefined,
+            deleteMessageSeconds: (deleteDays * DAYS) / SECONDS,
+            reason: banReason,
           });
 
           await casesPlugin.createCase({

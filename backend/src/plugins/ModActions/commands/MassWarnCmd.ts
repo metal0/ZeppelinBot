@@ -1,5 +1,5 @@
 import { Snowflake, TextChannel, User } from "discord.js";
-import { waitForReply } from "knub/dist/helpers";
+import { waitForReply } from "knub/helpers";
 import { performance } from "perf_hooks";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { humanizeDurationShort } from "../../../humanizeDurationShort";

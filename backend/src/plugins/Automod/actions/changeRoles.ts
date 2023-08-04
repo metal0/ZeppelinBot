@@ -1,4 +1,4 @@
-import { Permissions, Snowflake } from "discord.js";
+import { PermissionFlagsBits, Permissions, Snowflake } from 'discord.js';
 import * as t from "io-ts";
 import isEqual from "lodash.isequal";
 import { nonNullish, unique } from "../../../utils";
@@ -9,6 +9,8 @@ import { missingPermissionError } from "../../../utils/missingPermissionError";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
 import { ignoreRoleChange } from "../functions/ignoredRoleChanges";
 import { automodAction } from "../helpers";
+
+const p = PermissionFlagsBits;
 
 export const ChangeRolesAction = automodAction({
   configType: t.type({
@@ -22,9 +24,9 @@ export const ChangeRolesAction = automodAction({
 
   async apply({ pluginData, contexts, actionConfig, ruleName }) {
     const members = unique(contexts.map(c => c.member).filter(nonNullish));
-    const me = pluginData.guild.me ?? (await pluginData.guild.members.fetch(pluginData.client.user!.id));
+    const me = pluginData.guild.members.cache.get(pluginData.client.user!.id)!;
 
-    const missingPermissions = getMissingPermissions(me.permissions, Permissions.FLAGS.MANAGE_ROLES);
+    const missingPermissions = getMissingPermissions(me.permissions, p.ManageRoles);
     if (missingPermissions) {
       const logs = pluginData.getPlugin(LogsPlugin);
       logs.logBotAlert({

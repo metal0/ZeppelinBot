@@ -3,7 +3,7 @@ import { Case } from "../../data/entities/Case";
 import { GuildArchives } from "../../data/GuildArchives";
 import { GuildCases } from "../../data/GuildCases";
 import { GuildLogs } from "../../data/GuildLogs";
-import { mapToPublicFn } from "../../pluginUtils";
+import { makeIoTsConfigParser, mapToPublicFn } from "../../pluginUtils";
 import { trimPluginDescription } from "../../utils";
 import { TimeAndDatePlugin } from "../TimeAndDate/TimeAndDatePlugin";
 import { zeppelinGuildPlugin } from "../ZeppelinPluginBlueprint";
@@ -18,6 +18,11 @@ import { postCaseToCaseLogChannel } from "./functions/postToCaseLogChannel";
 import { CaseArgs, CaseNoteArgs, CasesPluginType, ConfigSchema } from "./types";
 import { InternalPosterPlugin } from "../InternalPoster/InternalPosterPlugin";
 import { GuildSavedMessages } from "../../data/GuildSavedMessages";
+
+// The `any` cast here is to prevent TypeScript from locking up from the circular dependency
+function getLogsPlugin(): Promise<any> {
+  return import("../Logs/LogsPlugin.js") as Promise<any>;
+}
 
 const defaultOptions = {
   config: {
@@ -39,15 +44,11 @@ export const CasesPlugin = zeppelinGuildPlugin<CasesPluginType>()({
     description: trimPluginDescription(`
       This plugin contains basic configuration for cases created by other plugins
     `),
+    configSchema: ConfigSchema,
   },
 
-  dependencies: async () => [
-    TimeAndDatePlugin,
-    InternalPosterPlugin,
-    // The `as any` cast here is to prevent TypeScript from locking up from the circular dependency
-    ((await import("../Logs/LogsPlugin")) as any).LogsPlugin,
-  ],
-  configSchema: ConfigSchema,
+  dependencies: async () => [TimeAndDatePlugin, InternalPosterPlugin, (await getLogsPlugin()).LogsPlugin],
+  configParser: makeIoTsConfigParser(ConfigSchema),
   defaultOptions,
 
   public: {
@@ -83,9 +84,11 @@ export const CasesPlugin = zeppelinGuildPlugin<CasesPluginType>()({
   },
 
   afterLoad(pluginData) {
-    pluginData.state.logs = new GuildLogs(pluginData.guild.id);
-    pluginData.state.archives = GuildArchives.getGuildInstance(pluginData.guild.id);
-    pluginData.state.cases = GuildCases.getGuildInstance(pluginData.guild.id);
-    pluginData.state.savedMessages = GuildSavedMessages.getGuildInstance(pluginData.guild.id);
+    const { state, guild } = pluginData;
+
+    state.logs = new GuildLogs(guild.id);
+    state.archives = GuildArchives.getGuildInstance(guild.id);
+    state.cases = GuildCases.getGuildInstance(guild.id);
+    state.savedMessages = GuildSavedMessages.getGuildInstance(guild.id);
   },
 });

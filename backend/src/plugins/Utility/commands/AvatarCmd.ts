@@ -1,7 +1,7 @@
-import { MessageEmbedOptions } from "discord.js";
+import { APIEmbed, ImageFormat } from "discord.js";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { sendErrorMessage } from "../../../pluginUtils";
-import { UnknownUser } from "../../../utils";
+import { UnknownUser, renderUserUsername } from "../../../utils";
 import { utilityCmd } from "../types";
 
 export const AvatarCmd = utilityCmd({
@@ -18,12 +18,11 @@ export const AvatarCmd = utilityCmd({
 
     if (!(user instanceof UnknownUser)) {
       const member = await pluginData.guild.members.fetch(user.id).catch(() => null);
-
-      const embed: MessageEmbedOptions = {
+      const embed: APIEmbed = {
         image: {
-          url: (member ?? user).displayAvatarURL({ dynamic: true, format: "png", size: 2048 }),
+          url: (member ?? user).displayAvatarURL({ extension: ImageFormat.PNG, size: 2048 }),
         },
-        title: `Avatar of ${user.tag}:`,
+        title: `Avatar of ${renderUserUsername(user)}:`,
       };
 
       await msg.channel.send({ embeds: [embed] });

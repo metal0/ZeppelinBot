@@ -1,5 +1,4 @@
 import { configUtils, CooldownManager } from "knub";
-import { ConfigPreprocessorFn } from "knub/dist/config/configTypes";
 import { GuildAntiraidLevels } from "../../data/GuildAntiraidLevels";
 import { GuildArchives } from "../../data/GuildArchives";
 import { GuildLogs } from "../../data/GuildLogs";
@@ -9,11 +8,14 @@ import { discardRegExpRunner, getRegExpRunner } from "../../regExpRunners";
 import { MINUTES, SECONDS } from "../../utils";
 import { registerEventListenersFromMap } from "../../utils/registerEventListenersFromMap";
 import { unregisterEventListenersFromMap } from "../../utils/unregisterEventListenersFromMap";
-import { StrictValidationError } from "../../validatorUtils";
+import { parseIoTsSchema, StrictValidationError } from "../../validatorUtils";
 import { CountersPlugin } from "../Counters/CountersPlugin";
+import { InternalPosterPlugin } from "../InternalPoster/InternalPosterPlugin";
 import { LogsPlugin } from "../Logs/LogsPlugin";
 import { ModActionsPlugin } from "../ModActions/ModActionsPlugin";
 import { MutesPlugin } from "../Mutes/MutesPlugin";
+import { PhishermanPlugin } from "../Phisherman/PhishermanPlugin";
+import { RoleManagerPlugin } from "../RoleManager/RoleManagerPlugin";
 import { zeppelinGuildPlugin } from "../ZeppelinPluginBlueprint";
 import { availableActions } from "./actions/availableActions";
 import { AntiraidClearCmd } from "./commands/AntiraidClearCmd";
@@ -35,8 +37,6 @@ import { clearOldRecentSpam } from "./functions/clearOldRecentSpam";
 import { pluginInfo } from "./info";
 import { availableTriggers } from "./triggers/availableTriggers";
 import { AutomodPluginType, ConfigSchema } from "./types";
-import { PhishermanPlugin } from "../Phisherman/PhishermanPlugin";
-import { InternalPosterPlugin } from "../InternalPoster/InternalPosterPlugin";
 
 const defaultOptions = {
   config: {
@@ -63,29 +63,31 @@ const defaultOptions = {
 
 /**
  * Config preprocessor to set default values for triggers and perform extra validation
+ * TODO: Separate input and output types
  */
-const configPreprocessor: ConfigPreprocessorFn<AutomodPluginType> = (options) => {
-  if (options.config?.rules) {
+const configParser = (input: unknown) => {
+  const rules = (input as any).rules;
+  if (rules) {
     // Loop through each rule
-    for (const [name, rule] of Object.entries(options.config.rules)) {
+    for (const [name, rule] of Object.entries(rules)) {
       if (rule == null) {
-        delete options.config.rules[name];
+        delete rules[name];
         continue;
       }
 
-      rule.name = name;
+      rule["name"] = name;
 
       // If the rule doesn't have an explicitly set "enabled" property, set it to true
-      if (rule.enabled == null) {
-        rule.enabled = true;
+      if (rule["enabled"] == null) {
+        rule["enabled"] = true;
       }
 
-      if (rule.allow_further_rules == null) {
-        rule.allow_further_rules = false;
+      if (rule["allow_further_rules"] == null) {
+        rule["allow_further_rules"] = false;
       }
 
-      if (rule.affects_bots == null) {
-        rule.affects_bots = false;
+      if (rule["affects_bots"] == null) {
+        rule["affects_bots"] = false;
       }
 
       if (rule["affects_self"] == null) {
@@ -93,11 +95,11 @@ const configPreprocessor: ConfigPreprocessorFn<AutomodPluginType> = (options) =>
       }
 
       // Loop through the rule's triggers
-      if (rule.triggers) {
-        for (const triggerObj of rule.triggers) {
+      if (rule["triggers"]) {
+        for (const triggerObj of rule["triggers"]) {
           for (const triggerName in triggerObj) {
             if (!availableTriggers[triggerName]) {
-              throw new StrictValidationError([`Unknown trigger '${triggerName}' in rule '${rule.name}'`]);
+              throw new StrictValidationError([`Unknown trigger '${triggerName}' in rule '${rule["name"]}'`]);
             }
 
             const triggerBlueprint = availableTriggers[triggerName];
@@ -117,11 +119,11 @@ const configPreprocessor: ConfigPreprocessorFn<AutomodPluginType> = (options) =>
 
               if (white && black) {
                 throw new StrictValidationError([
-                  `Cannot have both blacklist and whitelist enabled at rule <${rule.name}/match_attachment_type>`,
+                  `Cannot have both blacklist and whitelist enabled at rule <${rule["name"]}/match_attachment_type>`,
                 ]);
               } else if (!white && !black) {
                 throw new StrictValidationError([
-                  `Must have either blacklist or whitelist enabled at rule <${rule.name}/match_attachment_type>`,
+                  `Must have either blacklist or whitelist enabled at rule <${rule["name"]}/match_attachment_type>`,
                 ]);
               }
             }
@@ -132,11 +134,11 @@ const configPreprocessor: ConfigPreprocessorFn<AutomodPluginType> = (options) =>
 
               if (white && black) {
                 throw new StrictValidationError([
-                  `Cannot have both blacklist and whitelist enabled at rule <${rule.name}/match_mime_type>`,
+                  `Cannot have both blacklist and whitelist enabled at rule <${rule["name"]}/match_mime_type>`,
                 ]);
               } else if (!white && !black) {
                 throw new StrictValidationError([
-                  `Must have either blacklist or whitelist enabled at rule <${rule.name}/match_mime_type>`,
+                  `Must have either blacklist or whitelist enabled at rule <${rule["name"]}/match_mime_type>`,
                 ]);
               }
             }
@@ -144,54 +146,42 @@ const configPreprocessor: ConfigPreprocessorFn<AutomodPluginType> = (options) =>
         }
       }
 
-      if (rule.actions) {
-        if (rule.actions.change_roles && (rule.actions.add_roles || rule.actions.remove_roles)) {
-          throw new StrictValidationError([
-            `Can't use both 'change_roles' and 'add_roles'/'remove_roles' at rule '${rule.name}'`,
-          ]);
-        }
-
-        if (rule.actions.add_roles && rule.actions.remove_roles) {
-          throw new StrictValidationError([
-            `Can't use both 'add_roles' and 'remove_roles' at rule '${rule.name}', use 'change_roles' instead`,
-          ]);
-        }
-
-        for (const actionName in rule.actions) {
+      if (rule["actions"]) {
+        for (const actionName in rule["actions"]) {
           if (!availableActions[actionName]) {
-            throw new StrictValidationError([`Unknown action '${actionName}' in rule '${rule.name}'`]);
+            throw new StrictValidationError([`Unknown action '${actionName}' in rule '${rule["name"]}'`]);
           }
 
           const actionBlueprint = availableActions[actionName];
-          const actionConfig = rule.actions[actionName];
+          const actionConfig = rule["actions"][actionName];
 
           if (typeof actionConfig !== "object" || Array.isArray(actionConfig) || actionConfig == null) {
-            rule.actions[actionName] = actionConfig;
+            rule["actions"][actionName] = actionConfig;
           } else {
-            rule.actions[actionName] = configUtils.mergeConfig(actionBlueprint.defaultConfig, actionConfig);
+            rule["actions"][actionName] = configUtils.mergeConfig(actionBlueprint.defaultConfig, actionConfig);
           }
         }
       }
 
       // Enable logging of automod actions by default
-      if (rule.actions) {
-        for (const actionName in rule.actions) {
+      if (rule["actions"]) {
+        for (const actionName in rule["actions"]) {
           if (!availableActions[actionName]) {
-            throw new StrictValidationError([`Unknown action '${actionName}' in rule '${rule.name}'`]);
+            throw new StrictValidationError([`Unknown action '${actionName}' in rule '${rule["name"]}'`]);
           }
         }
 
-        if (rule.actions.log == null) {
-          rule.actions.log = true;
+        if (rule["actions"]["log"] == null) {
+          rule["actions"]["log"] = true;
         }
         if (rule["actions"]["clean"] && rule["actions"]["start_thread"]) {
-          throw new StrictValidationError([`Cannot have both clean and start_thread at rule '${rule.name}'`]);
+          throw new StrictValidationError([`Cannot have both clean and start_thread at rule '${rule["name"]}'`]);
         }
       }
     }
   }
 
-  return options;
+  return parseIoTsSchema(ConfigSchema, input);
 };
 
 export const AutomodPlugin = zeppelinGuildPlugin<AutomodPluginType>()({
@@ -207,11 +197,11 @@ export const AutomodPlugin = zeppelinGuildPlugin<AutomodPluginType>()({
     CountersPlugin,
     PhishermanPlugin,
     InternalPosterPlugin,
+    RoleManagerPlugin,
   ],
 
-  configSchema: ConfigSchema,
   defaultOptions,
-  configPreprocessor,
+  configParser,
 
   customOverrideCriteriaFunctions: {
     antiraid_level: (pluginData, matchParams, value) => {
@@ -230,136 +220,126 @@ export const AutomodPlugin = zeppelinGuildPlugin<AutomodPluginType>()({
     // Messages use message events from SavedMessages, see onLoad below
   ],
 
-  commands: [AntiraidClearCmd, SetAntiraidCmd, ViewAntiraidCmd],
+  messageCommands: [AntiraidClearCmd, SetAntiraidCmd, ViewAntiraidCmd],
 
   async beforeLoad(pluginData) {
-    pluginData.state.queue = new Queue();
+    const { state, guild } = pluginData;
 
-    pluginData.state.regexRunner = getRegExpRunner(`guild-${pluginData.guild.id}`);
+    state.queue = new Queue();
 
-    pluginData.state.recentActions = [];
+    state.regexRunner = getRegExpRunner(`guild-${guild.id}`);
 
-    pluginData.state.recentSpam = [];
+    state.recentActions = [];
 
-    pluginData.state.recentNicknameChanges = new Map();
+    state.recentSpam = [];
 
-    pluginData.state.ignoredRoleChanges = new Set();
+    state.recentNicknameChanges = new Map();
 
-    pluginData.state.cooldownManager = new CooldownManager();
+    state.ignoredRoleChanges = new Set();
 
-    pluginData.state.logs = new GuildLogs(pluginData.guild.id);
-    pluginData.state.savedMessages = GuildSavedMessages.getGuildInstance(pluginData.guild.id);
-    pluginData.state.antiraidLevels = GuildAntiraidLevels.getGuildInstance(pluginData.guild.id);
-    pluginData.state.archives = GuildArchives.getGuildInstance(pluginData.guild.id);
+    state.cooldownManager = new CooldownManager();
 
-    pluginData.state.cachedAntiraidLevel = await pluginData.state.antiraidLevels.get();
+    state.logs = new GuildLogs(guild.id);
+    state.savedMessages = GuildSavedMessages.getGuildInstance(guild.id);
+    state.antiraidLevels = GuildAntiraidLevels.getGuildInstance(guild.id);
+    state.archives = GuildArchives.getGuildInstance(guild.id);
+
+    state.cachedAntiraidLevel = await state.antiraidLevels.get();
   },
 
   async afterLoad(pluginData) {
-    pluginData.state.clearRecentActionsInterval = setInterval(() => clearOldRecentActions(pluginData), 1 * MINUTES);
-    pluginData.state.clearRecentSpamInterval = setInterval(() => clearOldRecentSpam(pluginData), 1 * SECONDS);
-    pluginData.state.clearRecentNicknameChangesInterval = setInterval(
+    const { state } = pluginData;
+
+    state.clearRecentActionsInterval = setInterval(() => clearOldRecentActions(pluginData), 1 * MINUTES);
+    state.clearRecentSpamInterval = setInterval(() => clearOldRecentSpam(pluginData), 1 * SECONDS);
+    state.clearRecentNicknameChangesInterval = setInterval(
       () => clearOldRecentNicknameChanges(pluginData),
       30 * SECONDS,
     );
 
-    pluginData.state.onMessageCreateFn = (message) => runAutomodOnMessage(pluginData, message, false);
-    pluginData.state.savedMessages.events.on("create", pluginData.state.onMessageCreateFn);
+    state.onMessageCreateFn = (message) => runAutomodOnMessage(pluginData, message, false);
+    state.savedMessages.events.on("create", state.onMessageCreateFn);
 
-    pluginData.state.onMessageUpdateFn = (message) => runAutomodOnMessage(pluginData, message, true);
-    pluginData.state.savedMessages.events.on("update", pluginData.state.onMessageUpdateFn);
-
+    state.onMessageUpdateFn = (message) => runAutomodOnMessage(pluginData, message, true);
+    state.savedMessages.events.on("update", state.onMessageUpdateFn);
     const countersPlugin = pluginData.getPlugin(CountersPlugin);
 
-    pluginData.state.onCounterTrigger = (name, triggerName, channelId, userId) => {
+    state.onCounterTrigger = (name, triggerName, channelId, userId) => {
       runAutomodOnCounterTrigger(pluginData, name, triggerName, channelId, userId, false);
     };
 
-    pluginData.state.onCounterReverseTrigger = (name, triggerName, channelId, userId) => {
+    state.onCounterReverseTrigger = (name, triggerName, channelId, userId) => {
       runAutomodOnCounterTrigger(pluginData, name, triggerName, channelId, userId, true);
     };
-
-    countersPlugin.onCounterEvent("trigger", pluginData.state.onCounterTrigger);
-    countersPlugin.onCounterEvent("reverseTrigger", pluginData.state.onCounterReverseTrigger);
+    countersPlugin.onCounterEvent("trigger", state.onCounterTrigger);
+    countersPlugin.onCounterEvent("reverseTrigger", state.onCounterReverseTrigger);
 
     const modActionsEvents = pluginData.getPlugin(ModActionsPlugin).getEventEmitter();
-    pluginData.state.modActionsListeners = new Map();
-    pluginData.state.modActionsListeners.set("note", (userId: string) =>
-      runAutomodOnModAction(pluginData, "note", userId),
+    state.modActionsListeners = new Map();
+    state.modActionsListeners.set("note", (userId: string) => runAutomodOnModAction(pluginData, "note", userId));
+    state.modActionsListeners.set("warn", (userId: string, reason: string | undefined, isAutomodAction: boolean) =>
+      runAutomodOnModAction(pluginData, "warn", userId, reason, isAutomodAction),
     );
-    pluginData.state.modActionsListeners.set(
-      "warn",
-      (userId: string, reason: string | undefined, isAutomodAction: boolean) =>
-        runAutomodOnModAction(pluginData, "warn", userId, reason, isAutomodAction),
+    state.modActionsListeners.set("kick", (userId: string, reason: string | undefined, isAutomodAction: boolean) =>
+      runAutomodOnModAction(pluginData, "kick", userId, reason, isAutomodAction),
     );
-    pluginData.state.modActionsListeners.set(
-      "kick",
-      (userId: string, reason: string | undefined, isAutomodAction: boolean) =>
-        runAutomodOnModAction(pluginData, "kick", userId, reason, isAutomodAction),
+    state.modActionsListeners.set("ban", (userId: string, reason: string | undefined, isAutomodAction: boolean) =>
+      runAutomodOnModAction(pluginData, "ban", userId, reason, isAutomodAction),
     );
-    pluginData.state.modActionsListeners.set(
-      "ban",
-      (userId: string, reason: string | undefined, isAutomodAction: boolean) =>
-        runAutomodOnModAction(pluginData, "ban", userId, reason, isAutomodAction),
-    );
-    pluginData.state.modActionsListeners.set("unban", (userId: string) =>
-      runAutomodOnModAction(pluginData, "unban", userId),
-    );
-    registerEventListenersFromMap(modActionsEvents, pluginData.state.modActionsListeners);
+    state.modActionsListeners.set("unban", (userId: string) => runAutomodOnModAction(pluginData, "unban", userId));
+    registerEventListenersFromMap(modActionsEvents, state.modActionsListeners);
 
     const mutesEvents = pluginData.getPlugin(MutesPlugin).getEventEmitter();
-    pluginData.state.mutesListeners = new Map();
-    pluginData.state.mutesListeners.set(
-      "mute",
-      (userId: string, reason: string | undefined, isAutomodAction: boolean) =>
-        runAutomodOnModAction(pluginData, "mute", userId, reason, isAutomodAction),
+    state.mutesListeners = new Map();
+    state.mutesListeners.set("mute", (userId: string, reason: string | undefined, isAutomodAction: boolean) =>
+      runAutomodOnModAction(pluginData, "mute", userId, reason, isAutomodAction),
     );
-    pluginData.state.mutesListeners.set("unmute", (userId: string) =>
-      runAutomodOnModAction(pluginData, "unmute", userId),
-    );
-    registerEventListenersFromMap(mutesEvents, pluginData.state.mutesListeners);
+    state.mutesListeners.set("unmute", (userId: string) => runAutomodOnModAction(pluginData, "unmute", userId));
+    registerEventListenersFromMap(mutesEvents, state.mutesListeners);
   },
 
   async beforeUnload(pluginData) {
+    const { state, guild } = pluginData;
+
     const countersPlugin = pluginData.getPlugin(CountersPlugin);
-    if (pluginData.state.onCounterTrigger) {
-      countersPlugin.offCounterEvent("trigger", pluginData.state.onCounterTrigger);
+    if (state.onCounterTrigger) {
+      countersPlugin.offCounterEvent("trigger", state.onCounterTrigger);
     }
-    if (pluginData.state.onCounterReverseTrigger) {
-      countersPlugin.offCounterEvent("reverseTrigger", pluginData.state.onCounterReverseTrigger);
+    if (state.onCounterReverseTrigger) {
+      countersPlugin.offCounterEvent("reverseTrigger", state.onCounterReverseTrigger);
     }
 
     const modActionsEvents = pluginData.getPlugin(ModActionsPlugin).getEventEmitter();
-    if (pluginData.state.modActionsListeners) {
-      unregisterEventListenersFromMap(modActionsEvents, pluginData.state.modActionsListeners);
+    if (state.modActionsListeners) {
+      unregisterEventListenersFromMap(modActionsEvents, state.modActionsListeners);
     }
 
     const mutesEvents = pluginData.getPlugin(MutesPlugin).getEventEmitter();
-    if (pluginData.state.mutesListeners) {
-      unregisterEventListenersFromMap(mutesEvents, pluginData.state.mutesListeners);
+    if (state.mutesListeners) {
+      unregisterEventListenersFromMap(mutesEvents, state.mutesListeners);
     }
 
-    pluginData.state.queue.clear();
+    state.queue.clear();
 
-    discardRegExpRunner(`guild-${pluginData.guild.id}`);
+    discardRegExpRunner(`guild-${guild.id}`);
 
-    if (pluginData.state.clearRecentActionsInterval) {
-      clearInterval(pluginData.state.clearRecentActionsInterval);
+    if (state.clearRecentActionsInterval) {
+      clearInterval(state.clearRecentActionsInterval);
     }
 
-    if (pluginData.state.clearRecentSpamInterval) {
-      clearInterval(pluginData.state.clearRecentSpamInterval);
+    if (state.clearRecentSpamInterval) {
+      clearInterval(state.clearRecentSpamInterval);
     }
 
-    if (pluginData.state.clearRecentNicknameChangesInterval) {
-      clearInterval(pluginData.state.clearRecentNicknameChangesInterval);
+    if (state.clearRecentNicknameChangesInterval) {
+      clearInterval(state.clearRecentNicknameChangesInterval);
     }
 
-    if (pluginData.state.onMessageCreateFn) {
-      pluginData.state.savedMessages.events.off("create", pluginData.state.onMessageCreateFn);
+    if (state.onMessageCreateFn) {
+      state.savedMessages.events.off("create", state.onMessageCreateFn);
     }
-    if (pluginData.state.onMessageUpdateFn) {
-      pluginData.state.savedMessages.events.off("update", pluginData.state.onMessageUpdateFn);
+    if (state.onMessageUpdateFn) {
+      state.savedMessages.events.off("update", state.onMessageUpdateFn);
     }
   },
 });

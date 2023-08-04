@@ -1,19 +1,18 @@
-import { GuildPluginData } from "knub";
-import { ExtendedMatchParams } from "knub/dist/config/PluginConfigManager";
-import { CounterValue } from "../../../data/entities/CounterValue";
+import { GuildPluginData, ExtendedMatchParams } from "knub";
 import { renderTemplate, TemplateSafeValue, TemplateSafeValueContainer } from "../../../templateFormatter";
 import { renderRecursively, resolveUser, StrictMessageContent, UnknownUser } from "../../../utils";
 import { CountersPlugin } from "../../Counters/CountersPlugin";
-import { TagsPluginType, TTag } from "../types";
+import { TTag, TagsPluginType } from "../types";
 import { findTagByName } from "./findTagByName";
 import {
   counterValueToTemplateSafeCounterValue,
-  TemplateSafeCounterValue,
   userToTemplateSafeUser,
 } from "../../../utils/templateSafeObjects";
-import { isArray } from "util";
 
 const MAX_TAG_FN_CALLS = 25;
+
+// This is used to disallow setting/getting default object properties (such as __proto__) in dynamicVars
+const emptyObject = {};
 
 export async function renderTagBody(
   pluginData: GuildPluginData<TagsPluginType>,
@@ -38,15 +37,19 @@ export async function renderTagBody(
     ...pluginData.state.tagFunctions,
     set(name, val) {
       if (typeof name !== "string") return;
+      if (emptyObject[name]) return;
       dynamicVars[name] = val;
     },
     setr(name, val) {
       if (typeof name !== "string") return "";
+      if (emptyObject[name]) return;
       dynamicVars[name] = val;
       return val;
     },
     get(name) {
-      return dynamicVars[name] == null ? "" : dynamicVars[name];
+      if (typeof name !== "string") return "";
+      if (emptyObject[name]) return;
+      return !Object.hasOwn(dynamicVars, name) || dynamicVars[name] == null ? "" : dynamicVars[name];
     },
     async get_counter_value(counter, userId?, channelId?) {
       if (!countersPlugin) return "";

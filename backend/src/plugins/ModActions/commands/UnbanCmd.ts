@@ -2,7 +2,7 @@ import { Snowflake } from "discord.js";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { CaseTypes } from "../../../data/CaseTypes";
 import { LogType } from "../../../data/LogType";
-import { CasesPlugin } from "../../../plugins/Cases/CasesPlugin";
+import { CasesPlugin } from '../../Cases/CasesPlugin';
 import { hasPermission, sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
 import { resolveUser } from "../../../utils";
 import { formatReasonWithAttachments } from "../functions/formatReasonWithAttachments";

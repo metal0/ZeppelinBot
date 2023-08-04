@@ -1,11 +1,11 @@
-import { GuildMember, MessageEmbedOptions, Snowflake } from "discord.js";
+import { GuildMember, Snowflake } from "discord.js";
 import { PluginOptions } from "knub";
 import { GuildArchives } from "../../data/GuildArchives";
 import { GuildCases } from "../../data/GuildCases";
 import { GuildLogs } from "../../data/GuildLogs";
 import { GuildSavedMessages } from "../../data/GuildSavedMessages";
 import { Supporters } from "../../data/Supporters";
-import { sendSuccessMessage } from "../../pluginUtils";
+import { makeIoTsConfigParser, sendSuccessMessage } from "../../pluginUtils";
 import { discardRegExpRunner, getRegExpRunner } from "../../regExpRunners";
 import { ModActionsPlugin } from "../ModActions/ModActionsPlugin";
 import { TimeAndDatePlugin } from "../TimeAndDate/TimeAndDatePlugin";
@@ -120,14 +120,15 @@ export const UtilityPlugin = zeppelinGuildPlugin<UtilityPluginType>()({
   showInDocs: true,
   info: {
     prettyName: "Utility",
+    configSchema: ConfigSchema,
   },
 
   dependencies: () => [TimeAndDatePlugin, ModActionsPlugin, LogsPlugin],
-  configSchema: ConfigSchema,
+  configParser: makeIoTsConfigParser(ConfigSchema),
   defaultOptions,
 
   // prettier-ignore
-  commands: [
+  messageCommands: [
     SearchCmd,
     BanSearchCmd,
     UserInfoCmd,

@@ -1,5 +1,5 @@
 import { commandTypeHelpers as ct } from "../../../commandTypes";
-import { MutesPlugin } from "../../../plugins/Mutes/MutesPlugin";
+import { MutesPlugin } from '../../Mutes/MutesPlugin';
 import { canActOn, sendErrorMessage } from "../../../pluginUtils";
 import { resolveMember, resolveUser } from "../../../utils";
 import { waitForButtonConfirm } from "../../../utils/waitForInteraction";
@@ -44,7 +44,11 @@ export const UnmuteCmd = modActionsCmd({
     const hasMuteRole = memberToUnmute && mutesPlugin.hasMutedRole(memberToUnmute);
 
     // Check if they're muted in the first place
-    if (!(await pluginData.state.mutes.isMuted(user.id)) && !hasMuteRole) {
+    if (
+      !(await pluginData.state.mutes.isMuted(user.id)) &&
+      !hasMuteRole &&
+      !memberToUnmute?.isCommunicationDisabled()
+    ) {
       sendErrorMessage(pluginData, msg.channel, "Cannot unmute: member is not muted");
       return;
     }

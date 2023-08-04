@@ -1,11 +1,6 @@
-import { getRepository, Repository } from "typeorm";
-import { Reminder } from "./entities/Reminder";
-import { BaseRepository } from "./BaseRepository";
-import moment from "moment-timezone";
-import { DBDateFormat } from "../utils";
+import { Repository } from "typeorm";
 import { BaseGuildRepository } from "./BaseGuildRepository";
-import { RoleQueueItem } from "./entities/RoleQueueItem";
-import { connection } from "./db";
+import { dataSource } from "./dataSource";
 import { RoleButtonsItem } from "./entities/RoleButtonsItem";
 
 export class GuildRoleButtons extends BaseGuildRepository {
@@ -13,11 +8,15 @@ export class GuildRoleButtons extends BaseGuildRepository {
 
   constructor(guildId) {
     super(guildId);
-    this.roleButtons = getRepository(RoleButtonsItem);
+    this.roleButtons = dataSource.getRepository(RoleButtonsItem);
   }
 
   getSavedRoleButtons(): Promise<RoleButtonsItem[]> {
-    return this.roleButtons.find({ guild_id: this.guildId });
+    return this.roleButtons.find({
+      where: {
+        guild_id: this.guildId,
+      },
+    });
   }
 
   async deleteRoleButtonItem(name: string): Promise<void> {

@@ -63,7 +63,8 @@ export interface ThinDocsPlugin {
 }
 
 export interface DocsPlugin extends ThinDocsPlugin {
-  commands: any[];
+  messageCommands: any[];
+  slashCommands: any[];
   defaultOptions: any;
   configSchema?: string;
   info: {
