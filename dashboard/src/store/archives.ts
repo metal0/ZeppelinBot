@@ -16,7 +16,7 @@ export const ArchiveStore: Module<ArchiveState, RootState> = {
         return;
       }
 
-      const messageRegex = /\[#([^\]]+)\] \[(\d+)\] \[([0-9 :-]+)\] (.{1,255}(#(\d{4}|0))): (.+)/gu;
+      const messageRegex = /\[#([^\]]+)\] \[(\d+)\] \[([0-9 :-]+)\] (.{1,255}(#(\d{4}|0))?): (.+)/gu;
       const messages = archive.body.split("\n");
 
       archive.heading = messages
