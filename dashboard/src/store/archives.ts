@@ -1,5 +1,5 @@
-import { get } from "../api";
 import { Module } from "vuex";
+import { get } from "../api";
 import { ArchiveState, RootState } from "./types";
 
 export const ArchiveStore: Module<ArchiveState, RootState> = {
@@ -16,7 +16,7 @@ export const ArchiveStore: Module<ArchiveState, RootState> = {
         return;
       }
 
-      const messageRegex = /\[#([^\]]+)\] \[(\d+)\] \[([0-9 :-]+)\] (.{1,255}#(\d{4}|0)): (.+)/gu;
+      const messageRegex = /\[#([^\]]+)\] \[(\d+)\] \[([0-9 :-]+)\] (.{1,255}(#(\d{4}|0))): (.+)/gu;
       const messages = archive.body.split("\n");
 
       archive.heading = messages
@@ -35,7 +35,7 @@ export const ArchiveStore: Module<ArchiveState, RootState> = {
           return;
         }
 
-        const [, channel, userId, postedAt, userTag, , content] = matches;
+        const [, channel, userId, postedAt, userTag, , , content] = matches;
         const messageData = { userId, postedAt, userTag, content };
 
         if (archive.channels.length < 1 || archive.channels[archive.channels.length - 1].name !== channel) {
