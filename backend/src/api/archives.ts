@@ -28,7 +28,15 @@ export function initArchives(app: express.Express) {
     archive["userInfo"] = {};
 
     for (const userId of userIds) {
-      archive["userInfo"][userId] = await simpleDiscordAPIRequest(env.BOT_TOKEN, `users/${userId}`, true);
+      archive["userInfo"][userId] = await simpleDiscordAPIRequest(env.BOT_TOKEN, `users/${userId}`, true).catch(
+        () => null,
+      );
+
+      if (!archive["userInfo"][userId]) {
+        delete archive["userInfo"][userId];
+
+        continue;
+      }
 
       const avatarPath = `https://cdn.discordapp.com/avatars`;
       const avatarId = archive["userInfo"][userId]["avatar"];
