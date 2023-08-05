@@ -1,7 +1,11 @@
 import express, { Request, Response } from "express";
 import moment from "moment-timezone";
 import { GuildArchives } from "../data/GuildArchives";
+import { env } from "../env";
+import { simpleDiscordAPIRequest } from "./auth";
 import { notFound } from "./responses";
+
+const DISCORD_API_URL = "https://discord.com/api";
 
 export function initArchives(app: express.Express) {
   const archives = new GuildArchives(null);
@@ -17,6 +21,27 @@ export function initArchives(app: express.Express) {
 
     res.setHeader("Content-Type", "application/json; charset=UTF-8");
     res.setHeader("X-Content-Type-Options", "nosniff");
+
+    const userIds = [...new Set(archive.body.match(/\d{16,19}/gu))];
+
+    userIds.shift(); // Removing the server ID
+    archive["userInfo"] = {};
+
+    for (const userId of userIds) {
+      archive["userInfo"][userId] = await simpleDiscordAPIRequest(env.BOT_TOKEN, `users/${userId}`, true);
+
+      const avatarPath = `https://cdn.discordapp.com/avatars`;
+      const avatarId = archive["userInfo"][userId]["avatar"];
+      const avatarFileName = `${avatarId}.png`;
+      const animatedAvatarFileName = avatarId.startsWith("a_") ? `${avatarId}.gif` : null;
+      const avatarSize = 128;
+
+      archive["userInfo"][userId]["avatar_url"] = `${avatarPath}/${userId}/${avatarFileName}?size=${avatarSize}`;
+      archive["userInfo"][userId]["avatar_url_animated"] = animatedAvatarFileName
+        ? `${avatarPath}/${userId}/${animatedAvatarFileName}?size=${avatarSize}`
+        : null;
+    }
+
     res.json(archive);
   });
 

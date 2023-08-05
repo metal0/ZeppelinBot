@@ -26,8 +26,8 @@
             </h2>
 
             <ul class="archive-channel-messages">
-              <li v-for="message in channel.messages">
-                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAMAAABrrFhUAAAAY1BMVEVYZfJib/OMlfahqPeWn/eBi/XLz/vq6/7////19f5tePTq7P22vPnV2Pyrsvirsvl3gvT09f7Axfp3gfRtePNsePPg4v22vPq2u/qCi/WhqPjf4/zf4v2Xn/essvjLzvuXnvdbidFTAAAETElEQVR4AezBgQAAAACAoP2pF6kCAAAAAAAAAAAAAAAAAAAAAIDZudMtV1UlDuCFRKlWIEJ6uOwbzXn/lzzzYc/GWiT6zya/79WrLeYSc5Vq9IFWa3Sr6JehWt0ZZn5RtFJvmHnodPsrPLx1/B9PKx1ziLOPnIRRO84EXaAP/CWnR3pArTWcybpA5G8NsX20pw+cSbpAngEeOQenY+Cf8KIZ4FuDfSV4Ko/7hS7wNjYH7W3MvNeHtn2jvxn+OXcgaP0x8KJo43vgnwqu85EXDfGVULWON9G1BOmDN/M/AnTgDSWC0xve0KAITeSsykFw4qzOQWB4YwNBOfLmPAHpeXsvr5XOgJkjGA3vIlU6A2bvOHvAnXwiCMrwTl5UpUtg5us7BAB2gcg78nXugaC6QORd+bo7AEAXiLwzX+8SANEFNHPdXcAwV90FDgxA037+zwAc7aZlCKnSNTDrADZBdU6DBwbha5wCAabBkWGkSqfAzFa6C8xeADYB9Y2ByEBsbSMAYAy0zHWPActQLPQuKBh3DiwiDRlwzwFOv9JfTpORh5x5rVfQc8CQiLLJiEMaA1oW6XgVq+grVh4yY56JA68x07fm8hCIhXCUPn823zgkG/HK4Rf6kYv8YBt5BQ03BQyv9CMq8M/JQ7IItw+e6cd8QQjKTqCX3OMTtOdCCNZOoCnqkrYgZEFD2/FF/08qDAE4Dji+TtHPKHknVmBboVB2i9HI9zIGahZUhaVqVxCyQEEVQ7rSBMj3QiPUUTCWJkC+8zrQVjzmELBYG2H5jDYUFqAiQDlMtAwKQgjr+nwoq9O2BSEQJQFVWKeNBSEQ6+BYeG3BFIUAHIfasmsLh7IQgLcjDZd0AWXEIZRDMDYCuuj73g95yJGxEuBLPmr6VBSyzMO9Fpzko3kqeA1r8W4GHOWNKQ/JIl4COL4SZf2lPAQhAY4lYrv860rlIVmHlYAsuBhjFwpCwO4LOkb0TMAzAc8EPBPwTMAGngl4JuCZgMig4jMB27AMykJUhCr4ekwzKI10T9hpwzcz6DNSUbRdORzThW/CJSKagd4LjKurof1suFCYVR54MDckpsBXDLk3pliQgxBTHneBrwiaNtOfeUUKCnMQYlKC32x2r7SlmSUpoOQdi5xtoqx1DNP8WW9kKSCVvAu8QnC2USR4/I2bP5vDmhS80pdOjXULw8dc7HSiL6ljYLTmz/ooKvJTdkqTt9G5s/mHczH6qXlV9I32Ehi0+QVfQbn7HryHhvY033V1Tuu3CRncOIj3rL3EV9pf7+53ced0bY+MIZm7ndEt9uNnkxN8OSWhAvjjZ8ktnIoKaMDHF0yH8S416C4Rpv7bU094pWJ9QFv4BJOBvnkFzjWKMvhu4G78IibMIz2EFM3KFUAwCEI+ID9MDia6kd/+enpFj+YE+af+aA8OZAAAAAAG+Vvf46sAAAAAAAAAAAAAAAAAAAAAAFYCeHSjWah9hFcAAAAASUVORK5CYII=" width="40" height="40" />
+              <li v-for="message in channel.messages" v-on:mouseenter="messageMouseOverListener" v-on:mouseleave="messageMouseOutListener">
+                <img :src="message.avatarUrl" :data-src="message.avatarUrl" :data-src-hover="message.animatedAvatarUrl" :alt="message.userTag" width="40" height="40" />
                 <h3>
                   <span class="user-tag">{{ message.userTag }}</span>
                   <span class="message-date">{{ message.postedAt }}</span>
@@ -95,10 +95,26 @@
     },
     methods: {
       themeChangeListener(event) {
-        const checkbox = event.currentTarget as HTMLInputElement;console.log(checkbox.checked);
+        const checkbox = event.currentTarget as HTMLInputElement;
 
         this.darkTheme = checkbox.checked;
         localStorage.setItem('dark-theme', this.darkTheme ? '1' : '0');
+      },
+      messageMouseOverListener(event) {
+        const messageContainer = event.currentTarget as HTMLLIElement;
+        const avatar = messageContainer.querySelector('img') as HTMLImageElement;
+
+        if (avatar.src !== avatar.getAttribute('data-src-hover')) {
+          avatar.src = avatar.getAttribute('data-src-hover');
+        }
+      },
+      messageMouseOutListener(event) {
+        const messageContainer = event.currentTarget as HTMLLIElement;
+        const avatar = messageContainer.querySelector('img') as HTMLImageElement;
+
+        if (avatar.src !== avatar.getAttribute('data-src')) {
+          avatar.src = avatar.getAttribute('data-src');
+        }
       }
     },
   };

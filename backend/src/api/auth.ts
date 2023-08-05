@@ -24,13 +24,13 @@ declare global {
 
 const DISCORD_API_URL = "https://discord.com/api";
 
-function simpleDiscordAPIRequest(bearerToken, path): Promise<any> {
+export function simpleDiscordAPIRequest(bearerToken, path, bot = false): Promise<any> {
   return new Promise((resolve, reject) => {
     const request = https.get(
       `${DISCORD_API_URL}/${path}`,
       {
         headers: {
-          Authorization: `Bearer ${bearerToken}`,
+          Authorization: `${bot ? "Bot" : "Bearer"} ${bearerToken}`,
         },
       },
       (res) => {
