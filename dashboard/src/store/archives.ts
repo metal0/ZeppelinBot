@@ -35,9 +35,11 @@ export const ArchiveStore: Module<ArchiveState, RootState> = {
         const matches = messageRegex.exec(message);
 
         if (!matches) {
-          const lastMessages = archive.channels[archive.channels.length - 1].messages;
+          if (archive.channels.length > 0) {
+            const lastMessages = archive.channels[archive.channels.length - 1].messages;
 
-          lastMessages[lastMessages.length - 1].content += `\n${message}`;
+            lastMessages[lastMessages.length - 1].content += `\n${message}`;
+          }
 
           return;
         }
