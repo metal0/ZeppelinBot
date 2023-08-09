@@ -9,6 +9,7 @@ import { CompanionChannelsPlugin } from "./CompanionChannels/CompanionChannelsPl
 import { ContextMenuPlugin } from "./ContextMenus/ContextMenuPlugin";
 import { CountersPlugin } from "./Counters/CountersPlugin";
 import { CustomEventsPlugin } from "./CustomEvents/CustomEventsPlugin";
+import { GlobalPlugin } from "./Global/GlobalPlugin";
 import { GuildAccessMonitorPlugin } from "./GuildAccessMonitor/GuildAccessMonitorPlugin";
 import { GuildConfigReloaderPlugin } from "./GuildConfigReloader/GuildConfigReloaderPlugin";
 import { GuildInfoSaverPlugin } from "./GuildInfoSaver/GuildInfoSaverPlugin";
@@ -44,6 +45,7 @@ import { ZeppelinGlobalPluginBlueprint, ZeppelinGuildPluginBlueprint } from "./Z
 export const guildPlugins: Array<ZeppelinGuildPluginBlueprint<any>> = [
   AutoDeletePlugin,
   AutoReactionsPlugin,
+  GlobalPlugin,
   GuildInfoSaverPlugin,
   CensorPlugin,
   ChannelArchiverPlugin,

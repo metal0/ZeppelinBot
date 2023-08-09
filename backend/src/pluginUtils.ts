@@ -105,7 +105,7 @@ export async function sendSuccessMessage(
   body: string,
   allowedMentions?: MessageMentionOptions,
 ): Promise<Message | undefined> {
-  const emoji = pluginData.fullConfig.success_emoji || undefined;
+  const emoji = pluginData.fullConfig.plugins.global.config.success_emoji || undefined;
   const formattedBody = successMessage(body, emoji);
   const content: MessageCreateOptions = allowedMentions
     ? { content: formattedBody, allowedMentions }
@@ -126,7 +126,7 @@ export async function sendErrorMessage(
   body: string,
   allowedMentions?: MessageMentionOptions,
 ): Promise<Message | undefined> {
-  const emoji = pluginData.fullConfig.error_emoji || undefined;
+  const emoji = pluginData.fullConfig.plugins.global.config.error_emoji || undefined;
   const formattedBody = errorMessage(body, emoji);
   const content: MessageCreateOptions = allowedMentions
     ? { content: formattedBody, allowedMentions }
