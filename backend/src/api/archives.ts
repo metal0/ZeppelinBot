@@ -32,7 +32,7 @@ export function initArchives(app: express.Express) {
         () => null,
       );
 
-      if (!archive["userInfo"][userId]) {
+      if (!archive["userInfo"][userId] || !archive["userInfo"][userId]["avatar"]) {
         delete archive["userInfo"][userId];
 
         continue;
