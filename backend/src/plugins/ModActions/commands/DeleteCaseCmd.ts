@@ -9,7 +9,7 @@ import { TimeAndDatePlugin } from "../../TimeAndDate/TimeAndDatePlugin";
 import { modActionsCmd } from "../types";
 
 export const DeleteCaseCmd = modActionsCmd({
-  trigger: ["delete_case", "deletecase"],
+  trigger: ["delete_case", "deletecase", "del_case", "delcase"],
   permission: "can_deletecase",
   description: trimLines(`
     Delete the specified case. This operation can *not* be reversed.
