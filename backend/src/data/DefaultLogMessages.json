@@ -70,7 +70,9 @@
 
   "MASSUNBAN": "{timestamp} ⚒ {userMention(mod)} mass-unbanned {count} users",
   "MASSBAN": "{timestamp} ⚒ {userMention(mod)} massbanned {count} users",
+  "MASSKICK": "{timestamp} 👢 {userMention(mod)} masskicked {count} users",
   "MASSMUTE": "{timestamp} 📢🚫 {userMention(mod)} massmuted {count} users",
+  "MASSWARN": "{timestamp} ⚠️ {userMention(mod)} masswarned {count} users",
 
   "MEMBER_JOIN_WITH_PRIOR_RECORDS": "{timestamp} ⚠ {userMention(member)} joined with prior records. Recent cases:\n{recentCaseSummary}",
 

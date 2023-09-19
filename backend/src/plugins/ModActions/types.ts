@@ -39,6 +39,7 @@ export const ConfigSchema = t.type({
   can_addcase: t.boolean,
   can_massunban: t.boolean,
   can_massban: t.boolean,
+  can_masskick: t.boolean,
   can_massmute: t.boolean,
   can_masswarn: t.boolean,
   can_hidecase: t.boolean,
@@ -75,6 +76,7 @@ export interface ModActionsPluginType extends BasePluginType {
     unregisterGuildEventListener: () => void;
     ignoredEvents: IIgnoredEvent[];
     massbanQueue: Queue;
+    masskickQueue: Queue;
     masswarnQueue: Queue;
 
     events: ModActionsEventEmitter;

@@ -1,13 +1,15 @@
-import { GuildMember, Message, PartialUser, Snowflake, User } from "discord.js";
+import { GuildMember, Message, Snowflake, User } from "discord.js";
 import { EventEmitter } from "events";
+import { Queue } from "../../Queue";
 import { GuildCases } from "../../data/GuildCases";
+import { onGuildEvent } from "../../data/GuildEvents";
 import { GuildLogs } from "../../data/GuildLogs";
 import { GuildMutes } from "../../data/GuildMutes";
 import { GuildTempbans } from "../../data/GuildTempbans";
 import { makeIoTsConfigParser, mapToPublicFn } from "../../pluginUtils";
-import { Queue } from "../../Queue";
 import { MINUTES, trimPluginDescription } from "../../utils";
 import { CasesPlugin } from "../Cases/CasesPlugin";
+import { LogsPlugin } from "../Logs/LogsPlugin";
 import { MutesPlugin } from "../Mutes/MutesPlugin";
 import { TimeAndDatePlugin } from "../TimeAndDate/TimeAndDatePlugin";
 import { zeppelinGuildPlugin } from "../ZeppelinPluginBlueprint";
@@ -23,9 +25,10 @@ import { ForceUnmuteCmd } from "./commands/ForceunmuteCmd";
 import { HideCaseCmd } from "./commands/HideCaseCmd";
 import { KickCmd } from "./commands/KickCmd";
 import { MassbanCmd } from "./commands/MassBanCmd";
-import { MassmuteCmd } from "./commands/MassmuteCmd";
+import { MasskickCmd } from "./commands/MassKickCmd";
 import { MassunbanCmd } from "./commands/MassUnbanCmd";
 import { MassWarnCmd } from "./commands/MassWarnCmd";
+import { MassmuteCmd } from "./commands/MassmuteCmd";
 import { MuteCmd } from "./commands/MuteCmd";
 import { NoteCmd } from "./commands/NoteCmd";
 import { SoftbanCmd } from "./commands/SoftbanCommand";
@@ -39,6 +42,7 @@ import { CreateBanCaseOnManualBanEvt } from "./events/CreateBanCaseOnManualBanEv
 import { CreateUnbanCaseOnManualUnbanEvt } from "./events/CreateUnbanCaseOnManualUnbanEvt";
 import { PostAlertOnMemberJoinEvt } from "./events/PostAlertOnMemberJoinEvt";
 import { banUserId } from "./functions/banUserId";
+import { clearTempban } from "./functions/clearTempban";
 import { hasMutePermission } from "./functions/hasMutePerm";
 import { kickMember } from "./functions/kickMember";
 import { offModActionsEvent } from "./functions/offModActionsEvent";
@@ -46,9 +50,6 @@ import { onModActionsEvent } from "./functions/onModActionsEvent";
 import { updateCase } from "./functions/updateCase";
 import { warnMember } from "./functions/warnMember";
 import { BanOptions, ConfigSchema, KickOptions, ModActionsPluginType, WarnOptions } from "./types";
-import { LogsPlugin } from "../Logs/LogsPlugin";
-import { onGuildEvent } from "../../data/GuildEvents";
-import { clearTempban } from "./functions/clearTempban";
 
 const defaultOptions = {
   config: {
@@ -81,6 +82,7 @@ const defaultOptions = {
     can_addcase: false,
     can_massunban: false,
     can_massban: false,
+    can_masskick: false,
     can_massmute: false,
     can_masswarn: false,
     can_hidecase: false,
@@ -108,6 +110,7 @@ const defaultOptions = {
       config: {
         can_massunban: true,
         can_massban: true,
+        can_masskick: true,
         can_massmute: true,
         can_masswarn: true,
         can_hidecase: true,
@@ -148,6 +151,7 @@ export const ModActionsPlugin = zeppelinGuildPlugin<ModActionsPluginType>()({
     UnbanCmd,
     ForcebanCmd,
     MassbanCmd,
+    MasskickCmd,
     MassmuteCmd,
     MassunbanCmd,
     MassWarnCmd,
@@ -211,6 +215,9 @@ export const ModActionsPlugin = zeppelinGuildPlugin<ModActionsPluginType>()({
     // Massbans can take a while depending on rate limits,
     // so we're giving each massban 15 minutes to complete before launching the next massban
     state.massbanQueue = new Queue(15 * MINUTES);
+
+    // Same goes for masskicks, since they have to send a lot of DMs
+    state.masskickQueue = new Queue(15 * MINUTES);
 
     // Same goes for masswarns, since they have to send a lot of DMs
     state.masswarnQueue = new Queue(15 * MINUTES);

@@ -101,4 +101,5 @@ export enum LogType {
   DM_FAILED,
 
   MASSWARN,
+  MASSKICK,
 }
