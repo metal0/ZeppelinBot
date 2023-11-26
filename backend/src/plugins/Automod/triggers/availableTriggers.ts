@@ -45,6 +45,7 @@ export const availableTriggers: Record<string, AutomodTriggerBlueprint<any, any>
   match_attachment_type: MatchAttachmentTypeTrigger,
   match_mime_type: MatchMimeTypeTrigger,
   member_join: MemberJoinTrigger,
+  member_leave: MemberLeaveTrigger,
   role_added: RoleAddedTrigger,
   role_removed: RoleRemovedTrigger,
 
