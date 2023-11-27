@@ -87,10 +87,22 @@ export async function getUserInfoEmbed(
     return embed;
   }
 
-  const userInfoLines = [`ID: \`${user.id}\``, `Username: **${user.username}**`];
+  const userInfoLines = [`ID: \`${user.id}\`\n`, `Username: **${user.username}**`];
+
   if (user.discriminator !== "0") {
     userInfoLines.push(`Discriminator: **${user.discriminator}**`);
   }
+
+  userInfoLines.push(`Display Name: **${user.displayName}**`);
+
+  if (user.globalName !== user.displayName) {
+    userInfoLines.push(`Global Name: **${user.globalName}**`);
+  }
+
+  if (member) {
+    userInfoLines.push(`Server Nickname: **${member.nickname ?? "*no nickname defined*"}**\n`);
+  }
+
   userInfoLines.push(`Created: **<t:${Math.round(user.createdTimestamp / 1000)}:R>** (\`${prettyCreatedAt}\`)`);
   userInfoLines.push(`Mention: <@!${user.id}>`);
 
