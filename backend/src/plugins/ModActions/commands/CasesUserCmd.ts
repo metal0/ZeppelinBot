@@ -126,7 +126,7 @@ export const CasesUserCmd = modActionsCmd({
               icon_url: user instanceof User ? user.displayAvatarURL() : undefined,
             },
             fields: [
-              ...getChunkedEmbedFields(emptyEmbedValue, linesInChunk.join("\n")),
+              ...getChunkedEmbedFields(emptyEmbedValue, linesInChunk.join("\n\n")),
               ...(isLastChunk ? [footerField] : []),
             ],
           } satisfies APIEmbed;

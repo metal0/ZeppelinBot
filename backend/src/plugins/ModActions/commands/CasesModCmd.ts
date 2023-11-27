@@ -60,7 +60,7 @@ export const CasesModCmd = modActionsCmd({
             icon_url: mod instanceof User ? mod.displayAvatarURL() : undefined,
           },
           fields: [
-            ...getChunkedEmbedFields(emptyEmbedValue, lines.join("\n")),
+            ...getChunkedEmbedFields(emptyEmbedValue, lines.join("\n\n")),
             {
               name: emptyEmbedValue,
               value: trimLines(`

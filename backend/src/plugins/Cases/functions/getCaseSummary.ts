@@ -72,7 +72,7 @@ export async function getCaseSummary(
       ? config.guild_aliases[theCase.guild_id]
       : pluginData.client.guilds.cache.get(theCase.guild_id)?.name ?? theCase.guild_id;
 
-  let line = `${icon} **\`${caseType}\`** \`[${prettyTimestamp}]\` **${guildName}** ${caseTitle} ${reason}`;
+  let line = `${icon} **\`${caseType}\`** \`[${prettyTimestamp}]\` **${guildName}** ${caseTitle} **Mod:** ${theCase.mod_name}\n${reason}`;
   if (leftoverNotes > 1) {
     line += ` *(+${leftoverNotes} ${leftoverNotes === 1 ? "note" : "notes"})*`;
   }
