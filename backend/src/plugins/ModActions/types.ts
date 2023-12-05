@@ -47,6 +47,8 @@ export const ConfigSchema = t.type({
   can_act_as_other: t.boolean,
   create_cases_for_manual_actions: t.boolean,
   reason_aliases: tNullable(t.record(t.string, t.string)),
+  embed_colour: t.number,
+  embed_color: t.number,
 });
 export type TConfigSchema = t.TypeOf<typeof ConfigSchema>;
 

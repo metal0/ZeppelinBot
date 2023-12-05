@@ -4,9 +4,9 @@ import { CaseNameToType, CaseTypes } from "../../data/CaseTypes";
 import { GuildArchives } from "../../data/GuildArchives";
 import { GuildCases } from "../../data/GuildCases";
 import { GuildLogs } from "../../data/GuildLogs";
+import { GuildSavedMessages } from "../../data/GuildSavedMessages";
 import { tDelayString, tNullable, tPartialDictionary } from "../../utils";
 import { tColor } from "../../utils/tColor";
-import { GuildSavedMessages } from "../../data/GuildSavedMessages";
 
 export const ConfigSchema = t.type({
   log_automatic_actions: t.boolean,
@@ -16,6 +16,8 @@ export const ConfigSchema = t.type({
   guild_aliases: tNullable(t.record(t.string, t.string)),
   case_colors: tNullable(tPartialDictionary(t.keyof(CaseNameToType), tColor)),
   case_icons: tNullable(tPartialDictionary(t.keyof(CaseNameToType), t.string)),
+  embed_colour: t.number,
+  embed_color: t.number,
 });
 export type TConfigSchema = t.TypeOf<typeof ConfigSchema>;
 

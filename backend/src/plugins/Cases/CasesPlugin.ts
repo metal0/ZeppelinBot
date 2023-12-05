@@ -1,10 +1,12 @@
 import { CaseTypes } from "../../data/CaseTypes";
-import { Case } from "../../data/entities/Case";
 import { GuildArchives } from "../../data/GuildArchives";
 import { GuildCases } from "../../data/GuildCases";
 import { GuildLogs } from "../../data/GuildLogs";
+import { GuildSavedMessages } from "../../data/GuildSavedMessages";
+import { Case } from "../../data/entities/Case";
 import { makeIoTsConfigParser, mapToPublicFn } from "../../pluginUtils";
 import { trimPluginDescription } from "../../utils";
+import { InternalPosterPlugin } from "../InternalPoster/InternalPosterPlugin";
 import { TimeAndDatePlugin } from "../TimeAndDate/TimeAndDatePlugin";
 import { zeppelinGuildPlugin } from "../ZeppelinPluginBlueprint";
 import { createCase } from "./functions/createCase";
@@ -16,8 +18,6 @@ import { getRecentCasesByMod } from "./functions/getRecentCasesByMod";
 import { getTotalCasesByMod } from "./functions/getTotalCasesByMod";
 import { postCaseToCaseLogChannel } from "./functions/postToCaseLogChannel";
 import { CaseArgs, CaseNoteArgs, CasesPluginType, ConfigSchema } from "./types";
-import { InternalPosterPlugin } from "../InternalPoster/InternalPosterPlugin";
-import { GuildSavedMessages } from "../../data/GuildSavedMessages";
 
 // The `any` cast here is to prevent TypeScript from locking up from the circular dependency
 function getLogsPlugin(): Promise<any> {
@@ -33,6 +33,8 @@ const defaultOptions = {
     guild_aliases: null,
     case_colors: null,
     case_icons: null,
+    embed_colour: 0x2b2d31,
+    embed_color: 0x2b2d31,
   },
 };
 

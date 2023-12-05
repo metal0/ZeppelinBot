@@ -64,9 +64,7 @@ export async function getCaseSummary(
     caseTitle = `\`${caseTitle}\``;
   }
 
-  let caseType = (caseAbbreviations[theCase.type] || String(theCase.type)).toUpperCase();
-  caseType = (caseType + "    ").slice(0, 4);
-
+  const caseType = (caseAbbreviations[theCase.type] || String(theCase.type)).toUpperCase();
   const guildName =
     config.guild_aliases && theCase.guild_id in config.guild_aliases
       ? config.guild_aliases[theCase.guild_id]

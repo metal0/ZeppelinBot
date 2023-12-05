@@ -47,6 +47,8 @@ export const CasesModCmd = modActionsCmd({
       msg.channel,
       totalPages,
       async (page) => {
+        const config = pluginData.config.get();
+        const embedColour = config.embed_colour ?? config.embed_color ?? 0x2b2d31;
         const cases = await casesPlugin.getRecentCasesByMod(modId, casesPerPage, (page - 1) * casesPerPage);
         const lines = await asyncMap(cases, (c) => casesPlugin.getCaseSummary(c, true, msg.author.id));
 
@@ -59,6 +61,7 @@ export const CasesModCmd = modActionsCmd({
             name: title,
             icon_url: mod instanceof User ? mod.displayAvatarURL() : undefined,
           },
+          color: embedColour,
           fields: [
             ...getChunkedEmbedFields(emptyEmbedValue, lines.join("\n\n")),
             {

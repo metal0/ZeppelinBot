@@ -90,6 +90,8 @@ const defaultOptions = {
     can_act_as_other: false,
     create_cases_for_manual_actions: true,
     reason_aliases: {},
+    embed_colour: 0x2b2d31,
+    embed_color: 0x2b2d31,
   },
   overrides: [
     {

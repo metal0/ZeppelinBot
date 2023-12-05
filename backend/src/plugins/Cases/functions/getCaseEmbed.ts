@@ -36,6 +36,7 @@ export async function getCaseEmbed(
     : timeAndDate.inGuildTz(createdAt);
 
   const config = pluginData.config.get();
+  const embedColour = config.embed_colour ?? config.embed_color ?? 0x2b2d31;
   const guildName =
     config.guild_aliases && theCase.guild_id in config.guild_aliases
       ? config.guild_aliases[theCase.guild_id]
@@ -43,6 +44,7 @@ export async function getCaseEmbed(
 
   const embed: any = {
     title: `${actionTypeStr} - Case #${theCase.case_number}`,
+    color: embedColour,
     footer: {
       text: `Case created on ${createdAtWithTz.format(timeAndDate.getDateFormat("pretty_datetime"))}`,
     },

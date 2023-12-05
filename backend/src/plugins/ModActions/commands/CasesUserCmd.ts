@@ -89,6 +89,8 @@ export const CasesUserCmd = modActionsCmd({
         }
       } else {
         // Compact view (= regular message with a preview of each case)
+        const config = pluginData.config.get();
+        const embedColour = config.embed_colour ?? config.embed_color ?? 0x2b2d31;
         const casesPlugin = pluginData.getPlugin(CasesPlugin);
         const lines = await asyncMap(casesToDisplay, (c) => casesPlugin.getCaseSummary(c, true, msg.author.id));
 
@@ -125,6 +127,7 @@ export const CasesUserCmd = modActionsCmd({
                   : `Cases ${chunkStart}–${chunkEnd} of ${lines.length} for ${userName}`,
               icon_url: user instanceof User ? user.displayAvatarURL() : undefined,
             },
+            color: embedColour,
             fields: [
               ...getChunkedEmbedFields(emptyEmbedValue, linesInChunk.join("\n\n")),
               ...(isLastChunk ? [footerField] : []),
