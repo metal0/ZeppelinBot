@@ -7,15 +7,16 @@ import { GuildSavedMessages } from "../../data/GuildSavedMessages";
 import { Supporters } from "../../data/Supporters";
 import { makeIoTsConfigParser, sendSuccessMessage } from "../../pluginUtils";
 import { discardRegExpRunner, getRegExpRunner } from "../../regExpRunners";
+import { LogsPlugin } from "../Logs/LogsPlugin";
 import { ModActionsPlugin } from "../ModActions/ModActionsPlugin";
 import { TimeAndDatePlugin } from "../TimeAndDate/TimeAndDatePlugin";
 import { zeppelinGuildPlugin } from "../ZeppelinPluginBlueprint";
 import { AboutCmd } from "./commands/AboutCmd";
+import { ArchiveArgs, ArchiveCmd, archiveCmd } from "./commands/ArchiveCmd";
 import { AvatarCmd } from "./commands/AvatarCmd";
 import { BanSearchCmd } from "./commands/BanSearchCmd";
 import { ChannelInfoCmd } from "./commands/ChannelInfoCmd";
-import { CleanArgs, cleanCmd, CleanCmd } from "./commands/CleanCmd";
-import { ArchiveArgs, archiveCmd, ArchiveCmd } from "./commands/ArchiveCmd";
+import { CleanArgs, CleanCmd, cleanCmd } from "./commands/CleanCmd";
 import { ContextCmd } from "./commands/ContextCmd";
 import { EmojiInfoCmd } from "./commands/EmojiInfoCmd";
 import { HelpCmd } from "./commands/HelpCmd";
@@ -43,7 +44,6 @@ import { hasPermission } from "./functions/hasPermission";
 import { activeReloads } from "./guildReloads";
 import { refreshMembersIfNeeded } from "./refreshMembers";
 import { ConfigSchema, UtilityPluginType } from "./types";
-import { LogsPlugin } from "../Logs/LogsPlugin";
 
 const defaultOptions: PluginOptions<UtilityPluginType> = {
   config: {
@@ -75,6 +75,8 @@ const defaultOptions: PluginOptions<UtilityPluginType> = {
     can_avatar: false,
     info_on_single_result: true,
     autojoin_threads: true,
+    embed_colour: 0x2b2d31,
+    embed_color: 0x2b2d31,
   },
   overrides: [
     {
