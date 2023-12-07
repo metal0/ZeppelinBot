@@ -17,12 +17,14 @@ export const UserInfoCmd = utilityCmd({
 
   async run({ message, args, pluginData }) {
     const userId = args.user?.id || message.author.id;
+    const config = pluginData.config.get();
+    const embedColour = config.embed_colour ?? config.embed_color ?? 0x2b2d31;
     const embed = await getUserInfoEmbed(pluginData, userId, args.compact, message.author.id);
     if (!embed) {
       sendErrorMessage(pluginData, message.channel, "User not found");
       return;
     }
 
-    message.channel.send({ embeds: [embed] });
+    message.channel.send({ embeds: [{ color: embedColour, ...embed }] });
   },
 });
