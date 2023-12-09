@@ -73,6 +73,7 @@ const defaultOptions: PluginOptions<UtilityPluginType> = {
     can_jumbo: false,
     jumbo_size: 128,
     can_avatar: false,
+    avatar_spoilered: false,
     info_on_single_result: true,
     autojoin_threads: true,
     embed_colour: 0x2b2d31,

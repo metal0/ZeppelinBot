@@ -1,4 +1,4 @@
-import { APIEmbed, ImageFormat } from "discord.js";
+import { AttachmentBuilder } from "discord.js";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { sendErrorMessage } from "../../../pluginUtils";
 import { UnknownUser, renderUserUsername } from "../../../utils";
@@ -17,15 +17,16 @@ export const AvatarCmd = utilityCmd({
     const user = args.user || msg.author;
 
     if (!(user instanceof UnknownUser)) {
+      const config = pluginData.config.get();
       const member = await pluginData.guild.members.fetch(user.id).catch(() => null);
-      const embed: APIEmbed = {
-        image: {
-          url: (member ?? user).displayAvatarURL({ extension: ImageFormat.PNG, size: 2048 }),
-        },
-        title: `Avatar of ${renderUserUsername(user)}:`,
-      };
+      const url = (member ?? user).displayAvatarURL({ size: 2048 });
+      const title = `Avatar of ${renderUserUsername(user)}:`;
 
-      await msg.channel.send({ embeds: [embed] });
+      await msg.channel.send(
+        config.avatar_spoilered
+          ? { content: title, files: [new AttachmentBuilder(url, { name: "SPOILER_avatar.png" })] }
+          : { embeds: [{ image: { url }, title, color: config.embed_colour ?? config.embed_color }] },
+      );
     } else {
       await sendErrorMessage(pluginData, msg.channel, "Invalid user ID");
     }
