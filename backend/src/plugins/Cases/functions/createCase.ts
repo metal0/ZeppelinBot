@@ -1,26 +1,26 @@
 import type { Snowflake } from "discord.js";
 import { GuildPluginData } from "knub";
+import { CaseTypes } from "../../../data/CaseTypes";
 import { logger } from "../../../logger";
-import { renderUserUsername, resolveUser } from "../../../utils";
+import { getDashboardUrl } from "../../../pluginUtils";
+import { renderUsername, resolveUser } from "../../../utils";
 import { CaseArgs, CasesPluginType } from "../types";
 import { createCaseNote } from "./createCaseNote";
 import { postCaseToCaseLogChannel } from "./postToCaseLogChannel";
-import { getDashboardUrl } from "../../../pluginUtils";
-import { CaseTypes } from "../../../data/CaseTypes";
 
 export async function createCase(pluginData: GuildPluginData<CasesPluginType>, args: CaseArgs) {
   const casesTypesWithoutArchive = [CaseTypes.Note, CaseTypes.Unban];
   const user = await resolveUser(pluginData.client, args.userId);
-  const userName = renderUserUsername(user);
+  const name = renderUsername(user);
 
   const mod = await resolveUser(pluginData.client, args.modId);
-  const modName = mod.tag;
+  const modName = renderUsername(mod);
 
   let ppName: string | null = null;
   let ppId: Snowflake | null = null;
   if (args.ppId) {
     const pp = await resolveUser(pluginData.client, args.ppId);
-    ppName = pp.tag;
+    ppName = renderUsername(pp);
     ppId = pp.id;
   }
 
@@ -35,7 +35,7 @@ export async function createCase(pluginData: GuildPluginData<CasesPluginType>, a
   const createdCase = await pluginData.state.cases.create({
     type: args.type,
     user_id: user.id,
-    user_name: userName,
+    user_name: name,
     mod_id: mod.id,
     mod_name: modName,
     audit_log_id: args.auditLogId,

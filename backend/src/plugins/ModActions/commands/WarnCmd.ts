@@ -2,7 +2,7 @@ import { User } from "discord.js";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { CaseTypes } from "../../../data/CaseTypes";
 import { canActOn, hasPermission, sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
-import { errorMessage, renderUserUsername, resolveMember, resolveUser } from "../../../utils";
+import { errorMessage, renderUsername, resolveMember, resolveUser } from "../../../utils";
 import { waitForButtonConfirm } from "../../../utils/waitForInteraction";
 import { CasesPlugin } from "../../Cases/CasesPlugin";
 import { formatReasonWithAttachments } from "../functions/formatReasonWithAttachments";
@@ -106,7 +106,9 @@ export const WarnCmd = modActionsCmd({
     sendSuccessMessage(
       pluginData,
       msg.channel,
-      `Warned **${memberToWarn ? renderUserUsername(memberToWarn.user) : memberToWarn}** (Case #${warnResult.case.case_number})${messageResultText}`,
+      `Warned **${memberToWarn ? renderUsername(memberToWarn.user) : memberToWarn}** (Case #${
+        warnResult.case.case_number
+      })${messageResultText}`,
     );
   },
 });

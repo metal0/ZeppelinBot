@@ -37,14 +37,13 @@ export async function getUserInfoEmbed(
 
   const member = await resolveMember(pluginData.client, pluginData.guild, user.id);
 
+  const timeAndDate = pluginData.getPlugin(TimeAndDatePlugin);
   const embed: EmbedWith<"fields"> = {
     fields: [],
   };
 
-  const timeAndDate = pluginData.getPlugin(TimeAndDatePlugin);
-
   embed.author = {
-    name: `${user.bot ? "Bot" : "User"}:  ${renderUsername(user.username, user.discriminator)}`,
+    name: `${user.bot ? "Bot" : "User"}:  ${renderUsername(user)}`,
   };
 
   const createdAt = moment.utc(user.createdAt, "x");
@@ -63,7 +62,7 @@ export async function getUserInfoEmbed(
     prettyJoinedAt = tzJoinedAt.format(timeAndDate.getDateFormat("pretty_datetime"));
   }
 
-  embed.author.icon_url = user.displayAvatarURL();
+  embed.author.icon_url = (member ?? user).displayAvatarURL();
 
   if (compact) {
     embed.fields.push({
@@ -89,19 +88,9 @@ export async function getUserInfoEmbed(
 
   const userInfoLines = [`ID: \`${user.id}\`\n`, `Username: **${user.username}**`];
 
-  if (user.discriminator !== "0") {
-    userInfoLines.push(`Discriminator: **${user.discriminator}**`);
-  }
-
-  userInfoLines.push(`Display Name: **${user.displayName}**`);
-
-  if (user.globalName !== user.displayName) {
-    userInfoLines.push(`Global Name: **${user.globalName}**`);
-  }
-
-  if (member) {
-    userInfoLines.push(`Server Nickname: **${member.nickname ?? "*no nickname defined*"}**\n`);
-  }
+  if (user.discriminator !== "0") userInfoLines.push(`Discriminator: **${user.discriminator}**`);
+  if (user.globalName) userInfoLines.push(`Display Name: **${user.globalName}**`);
+  if (member) userInfoLines.push(`Server Nickname: **${member.nickname ?? "*no nickname defined*"}**\n`);
 
   userInfoLines.push(`Created: **<t:${Math.round(user.createdTimestamp / 1000)}:R>** (\`${prettyCreatedAt}\`)`);
   userInfoLines.push(`Mention: <@!${user.id}>`);
