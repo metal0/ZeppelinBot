@@ -6,7 +6,10 @@ import { humanizeDurationShort } from "../../../humanizeDurationShort";
 import { canActOn, sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
 import { MINUTES, noop, resolveMember, resolveUser } from "../../../utils";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
-import { formatReasonWithAttachments } from "../functions/formatReasonWithAttachments";
+import {
+  formatReasonWithAttachments,
+  formatReasonWithMessageLinkForAttachments,
+} from "../functions/formatReasonForAttachments";
 import { parseReason } from "../functions/parseReason";
 import { warnMember } from "../functions/warnMember";
 import { modActionsCmd } from "../types";
@@ -37,7 +40,15 @@ export const MassWarnCmd = modActionsCmd({
       return;
     }
 
-    const warnReason = formatReasonWithAttachments(warnReasonReply.content, msg);
+    const config = pluginData.config.get();
+    const warnReason = parseReason(
+      config,
+      formatReasonWithMessageLinkForAttachments(warnReasonReply.content, warnReasonReply),
+    );
+    const warnReasonWithAttachments = parseReason(
+      config,
+      formatReasonWithAttachments(warnReasonReply.content, [...warnReasonReply.attachments.values()]),
+    );
 
     // Verify we can act on each of the users specified
     for (const userId of args.userIds) {
@@ -96,15 +107,12 @@ export const MassWarnCmd = modActionsCmd({
         const memberToWarn = await resolveMember(pluginData.client, pluginData.guild, user.id);
 
         try {
-          const config = pluginData.config.get();
-          const reason = parseReason(config, formatReasonWithAttachments(warnReason, msg));
-
-          const warnResult = await warnMember(pluginData, reason, memberToWarn, user, {
+          const warnResult = await warnMember(pluginData, warnReason, warnReasonWithAttachments, memberToWarn, user, {
             contactMethods: [{ type: "dm" }],
             caseArgs: {
               modId: msg.member.id,
               ppId: undefined,
-              reason,
+              reason: warnReason,
             },
             silentErrors: true,
           });

@@ -4,7 +4,7 @@ import { sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
 import { renderUsername, resolveUser } from "../../../utils";
 import { CasesPlugin } from "../../Cases/CasesPlugin";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
-import { formatReasonWithAttachments } from "../functions/formatReasonWithAttachments";
+import { formatReasonWithMessageLinkForAttachments } from "../functions/formatReasonForAttachments";
 import { modActionsCmd } from "../types";
 
 export const NoteCmd = modActionsCmd({
@@ -30,7 +30,7 @@ export const NoteCmd = modActionsCmd({
     }
 
     const userName = renderUsername(user);
-    const reason = formatReasonWithAttachments(args.note, msg);
+    const reason = formatReasonWithMessageLinkForAttachments(args.note, msg);
 
     const casesPlugin = pluginData.getPlugin(CasesPlugin);
     const createdCase = await casesPlugin.createCase({

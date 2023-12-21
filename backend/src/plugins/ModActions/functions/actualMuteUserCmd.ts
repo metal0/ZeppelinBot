@@ -8,7 +8,7 @@ import { UnknownUser, asSingleLine, isDiscordAPIError, renderUsername } from "..
 import { MutesPlugin } from "../../Mutes/MutesPlugin";
 import { MuteResult } from "../../Mutes/types";
 import { ModActionsPluginType } from "../types";
-import { formatReasonWithAttachments } from "./formatReasonWithAttachments";
+import { formatReasonWithAttachments, formatReasonWithMessageLinkForAttachments } from "./formatReasonForAttachments";
 import { parseReason } from "./parseReason";
 import { readContactMethodsFromArgs } from "./readContactMethodsFromArgs";
 
@@ -44,7 +44,12 @@ export async function actualMuteUserCmd(
 
   const timeUntilUnmute = args.time && humanizeDuration(args.time);
   const config = pluginData.config.get();
-  const reason = args.reason ? parseReason(config, formatReasonWithAttachments(args.reason, msg)) : undefined;
+  const reason = args.reason
+    ? parseReason(config, formatReasonWithMessageLinkForAttachments(args.reason, msg))
+    : undefined;
+  const reasonWithAttachments = args.reason
+    ? parseReason(config, formatReasonWithAttachments(args.reason, [...msg.attachments.values()]))
+    : undefined;
 
   let muteResult: MuteResult;
   const mutesPlugin = pluginData.getPlugin(MutesPlugin);
@@ -58,7 +63,7 @@ export async function actualMuteUserCmd(
   }
 
   try {
-    muteResult = await mutesPlugin.muteUser(user.id, args.time, reason, {
+    muteResult = await mutesPlugin.muteUser(user.id, args.time, reason, reasonWithAttachments, {
       contactMethods,
       caseArgs: {
         modId: mod.id,

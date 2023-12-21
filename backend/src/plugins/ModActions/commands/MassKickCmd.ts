@@ -11,7 +11,10 @@ import { MINUTES, noop, notifyUser, resolveMember } from "../../../utils";
 import { userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
 import { CasesPlugin } from "../../Cases/CasesPlugin";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
-import { formatReasonWithAttachments } from "../functions/formatReasonWithAttachments";
+import {
+  formatReasonWithAttachments,
+  formatReasonWithMessageLinkForAttachments,
+} from "../functions/formatReasonForAttachments";
 import { ignoreEvent } from "../functions/ignoreEvent";
 import { parseReason } from "../functions/parseReason";
 import { IgnoredEventType, modActionsCmd } from "../types";
@@ -42,7 +45,14 @@ export const MasskickCmd = modActionsCmd({
       return;
     }
 
-    const kickReason = parseReason(pluginData.config.get(), formatReasonWithAttachments(kickReasonReply.content, msg));
+    const kickReason = parseReason(
+      pluginData.config.get(),
+      formatReasonWithMessageLinkForAttachments(kickReasonReply.content, msg),
+    );
+    const kickReasonWithAttachments = parseReason(
+      pluginData.config.get(),
+      formatReasonWithAttachments(kickReasonReply.content, [...msg.attachments.values()]),
+    );
 
     // Verify we can act on each of the users specified
     for (const userId of args.userIds) {
@@ -109,7 +119,7 @@ export const MasskickCmd = modActionsCmd({
                 config.kick_message,
                 new TemplateSafeValueContainer({
                   guildName: pluginData.guild.name,
-                  reason: kickReason,
+                  reason: kickReasonWithAttachments,
                   moderator: userToTemplateSafeUser(msg.author),
                 }),
               );

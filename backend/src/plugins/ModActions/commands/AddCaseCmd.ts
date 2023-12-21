@@ -5,7 +5,7 @@ import { canActOn, hasPermission, sendErrorMessage, sendSuccessMessage } from ".
 import { renderUsername, resolveMember, resolveUser } from "../../../utils";
 import { CasesPlugin } from "../../Cases/CasesPlugin";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
-import { formatReasonWithAttachments } from "../functions/formatReasonWithAttachments";
+import { formatReasonWithMessageLinkForAttachments } from "../functions/formatReasonForAttachments";
 import { parseReason } from "../functions/parseReason";
 import { modActionsCmd } from "../types";
 
@@ -60,7 +60,7 @@ export const AddCaseCmd = modActionsCmd({
       return;
     }
     const config = pluginData.config.get();
-    const reason = parseReason(config, formatReasonWithAttachments(args.reason, msg));
+    const reason = parseReason(config, formatReasonWithMessageLinkForAttachments(args.reason, msg));
 
     // Create the case
     const casesPlugin = pluginData.getPlugin(CasesPlugin);

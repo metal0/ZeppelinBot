@@ -7,7 +7,7 @@ import { hasPermission, sendErrorMessage, sendSuccessMessage } from "../../../pl
 import { resolveUser } from "../../../utils";
 import { CasesPlugin } from "../../Cases/CasesPlugin";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
-import { formatReasonWithAttachments } from "../functions/formatReasonWithAttachments";
+import { formatReasonWithMessageLinkForAttachments } from "../functions/formatReasonForAttachments";
 import { ignoreEvent } from "../functions/ignoreEvent";
 import { parseReason } from "../functions/parseReason";
 import { IgnoredEventType, modActionsCmd } from "../types";
@@ -50,7 +50,7 @@ export const UnbanCmd = modActionsCmd({
 
     pluginData.state.serverLogs.ignoreLog(LogType.MEMBER_UNBAN, user.id);
     const config = pluginData.config.get();
-    const reason = parseReason(config, formatReasonWithAttachments(args.reason, msg));
+    const reason = parseReason(config, formatReasonWithMessageLinkForAttachments(args.reason, msg));
 
     try {
       ignoreEvent(pluginData, IgnoredEventType.Unban, user.id);

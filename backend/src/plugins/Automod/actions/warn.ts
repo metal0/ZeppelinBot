@@ -37,7 +37,11 @@ export const WarnAction = automodAction({
     const modActions = pluginData.getPlugin(ModActionsPlugin);
     for (const member of membersToWarn) {
       if (!member) continue;
-      await modActions.warnMember(reason, member, member.user, { contactMethods, caseArgs, isAutomodAction: true });
+      await modActions.warnMember(reason, reason, member, member.user, {
+        contactMethods,
+        caseArgs,
+        isAutomodAction: true,
+      });
     }
   },
 });

@@ -10,7 +10,10 @@ import { banLock } from "../../../utils/lockNameHelpers";
 import { waitForButtonConfirm } from "../../../utils/waitForInteraction";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
 import { banUserId } from "../functions/banUserId";
-import { formatReasonWithAttachments } from "../functions/formatReasonWithAttachments";
+import {
+  formatReasonWithAttachments,
+  formatReasonWithMessageLinkForAttachments,
+} from "../functions/formatReasonForAttachments";
 import { isBanned } from "../functions/isBanned";
 import { readContactMethodsFromArgs } from "../functions/readContactMethodsFromArgs";
 import { modActionsCmd } from "../types";
@@ -51,7 +54,8 @@ export const BanCmd = modActionsCmd({
     }
     const time = args["time"] ? args["time"] : null;
 
-    const reason = formatReasonWithAttachments(args.reason, msg);
+    const reason = formatReasonWithMessageLinkForAttachments(args.reason, msg);
+    const reasonWithAttachments = formatReasonWithAttachments(args.reason, [...msg.attachments.values()]);
     const memberToBan = await resolveMember(pluginData.client, pluginData.guild, user.id);
     // The moderator who did the action is the message author or, if used, the specified -mod
     let mod = msg.member;
@@ -181,6 +185,7 @@ export const BanCmd = modActionsCmd({
       pluginData,
       user.id,
       reason,
+      reasonWithAttachments,
       {
         contactMethods,
         caseArgs: {

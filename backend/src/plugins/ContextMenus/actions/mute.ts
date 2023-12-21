@@ -43,7 +43,8 @@ export async function muteAction(
   };
 
   try {
-    const result = await mutes.muteUser(userId, durationMs, "Context Menu Action", { caseArgs });
+    const reason = "Context Menu Action";
+    const result = await mutes.muteUser(userId, durationMs, reason, reason, { caseArgs });
 
     const muteMessage = `Muted **${result.case.user_name}** ${
       durationMs ? `for ${humanizeDuration(durationMs)}` : "indefinitely"

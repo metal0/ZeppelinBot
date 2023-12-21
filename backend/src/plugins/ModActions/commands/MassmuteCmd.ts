@@ -6,7 +6,10 @@ import { logger } from "../../../logger";
 import { canActOn, sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
 import { MutesPlugin } from "../../Mutes/MutesPlugin";
-import { formatReasonWithAttachments } from "../functions/formatReasonWithAttachments";
+import {
+  formatReasonWithAttachments,
+  formatReasonWithMessageLinkForAttachments,
+} from "../functions/formatReasonForAttachments";
 import { parseReason } from "../functions/parseReason";
 import { modActionsCmd } from "../types";
 
@@ -41,7 +44,11 @@ export const MassmuteCmd = modActionsCmd({
     }
 
     const config = pluginData.config.get();
-    const muteReason = parseReason(config, formatReasonWithAttachments(muteReasonReceived.content, msg));
+    const muteReason = parseReason(config, formatReasonWithMessageLinkForAttachments(muteReasonReceived.content, msg));
+    const muteReasonWithAttachments = parseReason(
+      config,
+      formatReasonWithAttachments(muteReasonReceived.content, [...msg.attachments.values()]),
+    );
 
     // Verify we can act upon all users
     for (const userId of args.userIds) {
@@ -68,7 +75,7 @@ export const MassmuteCmd = modActionsCmd({
     const mutesPlugin = pluginData.getPlugin(MutesPlugin);
     for (const userId of args.userIds) {
       try {
-        await mutesPlugin.muteUser(userId, 0, `Mass mute: ${muteReason}`, {
+        await mutesPlugin.muteUser(userId, 0, `Mass mute: ${muteReason}`, muteReasonWithAttachments, {
           caseArgs: {
             modId,
           },

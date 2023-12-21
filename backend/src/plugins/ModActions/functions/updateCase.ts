@@ -4,7 +4,7 @@ import { Case } from "../../../data/entities/Case";
 import { sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
 import { CasesPlugin } from "../../../plugins/Cases/CasesPlugin";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
-import { formatReasonWithAttachments } from "./formatReasonWithAttachments";
+import { formatReasonWithMessageLinkForAttachments } from "./formatReasonForAttachments";
 
 export async function updateCase(pluginData, msg: Message, args) {
   let theCase: Case | undefined;
@@ -24,7 +24,7 @@ export async function updateCase(pluginData, msg: Message, args) {
     return;
   }
 
-  const note = formatReasonWithAttachments(args.note, msg);
+  const note = formatReasonWithMessageLinkForAttachments(args.note, msg);
 
   const casesPlugin = pluginData.getPlugin(CasesPlugin);
   await casesPlugin.createCaseNote({

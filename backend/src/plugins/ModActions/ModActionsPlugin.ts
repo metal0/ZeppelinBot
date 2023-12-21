@@ -168,20 +168,32 @@ export const ModActionsPlugin = zeppelinGuildPlugin<ModActionsPluginType>()({
 
   public: {
     warnMember(pluginData) {
-      return (reason: string, member: GuildMember | null, user?: User | null, warnOptions?: WarnOptions) => {
-        warnMember(pluginData, reason, member, user, warnOptions);
+      return (
+        reason: string,
+        reasonWithAttachments: string,
+        member: GuildMember | null,
+        user?: User | null,
+        warnOptions?: WarnOptions,
+      ) => {
+        warnMember(pluginData, reason, reasonWithAttachments, member, user, warnOptions);
       };
     },
 
     kickMember(pluginData) {
-      return (member: GuildMember, reason: string, kickOptions?: KickOptions) => {
-        kickMember(pluginData, member, reason, kickOptions);
+      return (member: GuildMember, reason: string, reasonWithAttachments: string, kickOptions?: KickOptions) => {
+        kickMember(pluginData, member, reason, reasonWithAttachments, kickOptions);
       };
     },
 
     banUserId(pluginData) {
-      return (userId: string, reason?: string, banOptions?: BanOptions, banTime?: number) => {
-        banUserId(pluginData, userId, reason, banOptions, banTime);
+      return (
+        userId: string,
+        reason?: string,
+        reasonWithAttachments?: string,
+        banOptions?: BanOptions,
+        banTime?: number,
+      ) => {
+        banUserId(pluginData, userId, reason, reasonWithAttachments, banOptions, banTime);
       };
     },
 

@@ -5,7 +5,7 @@ import { hasPermission, sendErrorMessage, sendSuccessMessage } from "../../../pl
 import { MutesPlugin } from "../../../plugins/Mutes/MutesPlugin";
 import { UnknownUser, asSingleLine, renderUsername } from "../../../utils";
 import { ModActionsPluginType } from "../types";
-import { formatReasonWithAttachments } from "./formatReasonWithAttachments";
+import { formatReasonWithMessageLinkForAttachments } from "./formatReasonForAttachments";
 import { parseReason } from "./parseReason";
 
 export async function actualUnmuteCmd(
@@ -29,7 +29,9 @@ export async function actualUnmuteCmd(
   }
 
   const config = pluginData.config.get();
-  const reason = args.reason ? parseReason(config, formatReasonWithAttachments(args.reason, msg)) : undefined;
+  const reason = args.reason
+    ? parseReason(config, formatReasonWithMessageLinkForAttachments(args.reason, msg))
+    : undefined;
 
   const mutesPlugin = pluginData.getPlugin(MutesPlugin);
   const result = await mutesPlugin.unmuteUser(user.id, args.time, {

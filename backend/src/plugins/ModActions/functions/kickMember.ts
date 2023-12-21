@@ -1,16 +1,15 @@
 import { GuildMember } from "discord.js";
 import { GuildPluginData } from "knub";
-import { userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
 import { CaseTypes } from "../../../data/CaseTypes";
 import { LogType } from "../../../data/LogType";
 import { renderTemplate, TemplateSafeValueContainer } from "../../../templateFormatter";
 import { createUserNotificationError, notifyUser, resolveUser, ucfirst, UserNotificationResult } from "../../../utils";
+import { userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
 import { CasesPlugin } from "../../Cases/CasesPlugin";
+import { LogsPlugin } from "../../Logs/LogsPlugin";
 import { IgnoredEventType, KickOptions, KickResult, ModActionsPluginType } from "../types";
 import { getDefaultContactMethods } from "./getDefaultContactMethods";
 import { ignoreEvent } from "./ignoreEvent";
-import { LogsPlugin } from "../../Logs/LogsPlugin";
-import { parseReason } from "./parseReason";
 
 /**
  * Kick the specified server member. Generates a case.
@@ -19,13 +18,14 @@ export async function kickMember(
   pluginData: GuildPluginData<ModActionsPluginType>,
   member: GuildMember,
   reason?: string,
+  reasonWithAttachments?: string,
   kickOptions: KickOptions = {},
 ): Promise<KickResult> {
   const config = pluginData.config.get();
 
   // Attempt to message the user *before* kicking them, as doing it after may not be possible
   let notifyResult: UserNotificationResult = { method: null, success: true };
-  if (reason && member) {
+  if (reasonWithAttachments && member) {
     const contactMethods = kickOptions?.contactMethods
       ? kickOptions.contactMethods
       : getDefaultContactMethods(pluginData, "kick");
@@ -36,7 +36,7 @@ export async function kickMember(
           config.kick_message,
           new TemplateSafeValueContainer({
             guildName: pluginData.guild.name,
-            reason,
+            reason: reasonWithAttachments,
             moderator: kickOptions.caseArgs?.modId
               ? userToTemplateSafeUser(await resolveUser(pluginData.client, kickOptions.caseArgs.modId))
               : null,

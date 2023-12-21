@@ -8,7 +8,6 @@ import { MuteTypes } from "../../../data/MuteTypes";
 import { Case } from "../../../data/entities/Case";
 import { Mute } from "../../../data/entities/Mute";
 import { registerExpiringMute } from "../../../data/loops/expiringMutesLoop";
-import { LogsPlugin } from '../../Logs/LogsPlugin';
 import { TemplateSafeValueContainer, renderTemplate } from "../../../templateFormatter";
 import {
   UserNotificationMethod,
@@ -21,6 +20,7 @@ import {
 import { muteLock } from "../../../utils/lockNameHelpers";
 import { userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
 import { CasesPlugin } from "../../Cases/CasesPlugin";
+import { LogsPlugin } from "../../Logs/LogsPlugin";
 import { RoleManagerPlugin } from "../../RoleManager/RoleManagerPlugin";
 import { MuteOptions, MutesPluginType } from "../types";
 import { getDefaultMuteType } from "./getDefaultMuteType";
@@ -36,6 +36,7 @@ export async function muteUser(
   userId: string,
   muteTime?: number,
   reason?: string,
+  reasonWithAttachments?: string,
   muteOptions: MuteOptions = {},
   removeRolesOnMuteOverride: boolean | string[] | null = null,
   restoreRolesOnMuteOverride: boolean | string[] | null = null,
@@ -177,7 +178,7 @@ export async function muteUser(
       template,
       new TemplateSafeValueContainer({
         guildName: pluginData.guild.name,
-        reason: reason || "None",
+        reason: reasonWithAttachments || "None",
         time: timeUntilUnmuteStr,
         moderator: muteOptions.caseArgs?.modId
           ? userToTemplateSafeUser(await resolveUser(pluginData.client, muteOptions.caseArgs.modId))

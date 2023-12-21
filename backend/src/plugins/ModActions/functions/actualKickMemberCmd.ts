@@ -1,11 +1,11 @@
-import { GuildMember, GuildTextBasedChannel } from "discord.js";
+import { GuildMember, GuildTextBasedChannel, Message } from "discord.js";
 import { GuildPluginData } from "knub";
 import { hasPermission } from "knub/helpers";
 import { LogType } from "../../../data/LogType";
 import { canActOn, sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
 import { DAYS, SECONDS, errorMessage, renderUsername, resolveMember, resolveUser } from "../../../utils";
 import { IgnoredEventType, ModActionsPluginType } from "../types";
-import { formatReasonWithAttachments } from "./formatReasonWithAttachments";
+import { formatReasonWithAttachments, formatReasonWithMessageLinkForAttachments } from "./formatReasonForAttachments";
 import { ignoreEvent } from "./ignoreEvent";
 import { isBanned } from "./isBanned";
 import { kickMember } from "./kickMember";
@@ -14,7 +14,7 @@ import { readContactMethodsFromArgs } from "./readContactMethodsFromArgs";
 
 export async function actualKickMemberCmd(
   pluginData: GuildPluginData<ModActionsPluginType>,
-  msg,
+  msg: Message,
   args: {
     user: string;
     reason: string;
@@ -44,13 +44,13 @@ export async function actualKickMemberCmd(
   }
 
   // Make sure we're allowed to kick this member
-  if (!canActOn(pluginData, msg.member, memberToKick)) {
+  if (!canActOn(pluginData, msg.member!, memberToKick)) {
     sendErrorMessage(pluginData, msg.channel, "Cannot kick: insufficient permissions");
     return;
   }
 
   // The moderator who did the action is the message author or, if used, the specified -mod
-  let mod = msg.member;
+  let mod = msg.member!;
   if (args.mod) {
     if (!(await hasPermission(await pluginData.config.getForMessage(msg), "can_act_as_other"))) {
       sendErrorMessage(pluginData, msg.channel, "You don't have permission to use -mod");
@@ -69,13 +69,17 @@ export async function actualKickMemberCmd(
   }
 
   const config = pluginData.config.get();
-  const reason = parseReason(config, formatReasonWithAttachments(args.reason, msg.attachments));
+  const reason = parseReason(config, formatReasonWithMessageLinkForAttachments(args.reason, msg));
+  const reasonWithAttachments = parseReason(
+    config,
+    formatReasonWithAttachments(args.reason, [...msg.attachments.values()]),
+  );
 
-  const kickResult = await kickMember(pluginData, memberToKick, reason, {
+  const kickResult = await kickMember(pluginData, memberToKick, reason, reasonWithAttachments, {
     contactMethods,
     caseArgs: {
       modId: mod.id,
-      ppId: mod.id !== msg.author.id ? msg.author.id : null,
+      ppId: mod.id !== msg.author.id ? msg.author.id : undefined,
     },
   });
 

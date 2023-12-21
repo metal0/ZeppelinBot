@@ -1,9 +1,9 @@
 import { DiscordAPIError, Snowflake } from "discord.js";
 import humanizeDuration from "humanize-duration";
 import { GuildPluginData } from "knub";
-import { userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
 import { CaseTypes } from "../../../data/CaseTypes";
 import { LogType } from "../../../data/LogType";
+import { registerExpiringTempban } from "../../../data/loops/expiringTempbansLoop";
 import { logger } from "../../../logger";
 import { TemplateSafeValueContainer, renderTemplate } from "../../../templateFormatter";
 import {
@@ -16,13 +16,13 @@ import {
   resolveUser,
   ucfirst,
 } from "../../../utils";
+import { userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
 import { CasesPlugin } from "../../Cases/CasesPlugin";
+import { LogsPlugin } from "../../Logs/LogsPlugin";
 import { BanOptions, BanResult, IgnoredEventType, ModActionsPluginType } from "../types";
 import { getDefaultContactMethods } from "./getDefaultContactMethods";
 import { ignoreEvent } from "./ignoreEvent";
-import { LogsPlugin } from "../../Logs/LogsPlugin";
 import { parseReason } from "./parseReason";
-import { registerExpiringTempban } from "../../../data/loops/expiringTempbansLoop";
 
 /**
  * Ban the specified user id, whether or not they're actually on the server at the time. Generates a case.
@@ -31,6 +31,7 @@ export async function banUserId(
   pluginData: GuildPluginData<ModActionsPluginType>,
   userId: string,
   reason?: string,
+  reasonWithAttachments?: string,
   banOptions: BanOptions = {},
   banTime?: number,
 ): Promise<BanResult> {
@@ -43,11 +44,12 @@ export async function banUserId(
     };
   }
   if (reason) reason = parseReason(config, reason);
+  if (reasonWithAttachments) reasonWithAttachments = parseReason(config, reasonWithAttachments);
 
   // Attempt to message the user *before* banning them, as doing it after may not be possible
   const member = await resolveMember(pluginData.client, pluginData.guild, userId);
   let notifyResult: UserNotificationResult = { method: null, success: true };
-  if (reason && member) {
+  if (reasonWithAttachments && member) {
     const contactMethods = banOptions?.contactMethods
       ? banOptions.contactMethods
       : getDefaultContactMethods(pluginData, "ban");
@@ -58,7 +60,7 @@ export async function banUserId(
           config.ban_message,
           new TemplateSafeValueContainer({
             guildName: pluginData.guild.name,
-            reason,
+            reason: reasonWithAttachments,
             moderator: banOptions.caseArgs?.modId
               ? userToTemplateSafeUser(await resolveUser(pluginData.client, banOptions.caseArgs.modId))
               : null,
@@ -71,7 +73,7 @@ export async function banUserId(
           config.tempban_message,
           new TemplateSafeValueContainer({
             guildName: pluginData.guild.name,
-            reason,
+            reason: reasonWithAttachments,
             moderator: banOptions.caseArgs?.modId
               ? userToTemplateSafeUser(await resolveUser(pluginData.client, banOptions.caseArgs.modId))
               : null,

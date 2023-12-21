@@ -11,7 +11,10 @@ import { DAYS, MINUTES, SECONDS, noop, notifyUser, resolveUser } from "../../../
 import { userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
 import { CasesPlugin } from "../../Cases/CasesPlugin";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
-import { formatReasonWithAttachments } from "../functions/formatReasonWithAttachments";
+import {
+  formatReasonWithAttachments,
+  formatReasonWithMessageLinkForAttachments,
+} from "../functions/formatReasonForAttachments";
 import { ignoreEvent } from "../functions/ignoreEvent";
 import { parseReason } from "../functions/parseReason";
 import { IgnoredEventType, modActionsCmd } from "../types";
@@ -42,7 +45,14 @@ export const MassbanCmd = modActionsCmd({
       return;
     }
 
-    const banReason = parseReason(pluginData.config.get(), formatReasonWithAttachments(banReasonReply.content, msg));
+    const banReason = parseReason(
+      pluginData.config.get(),
+      formatReasonWithMessageLinkForAttachments(banReasonReply.content, msg),
+    );
+    const banReasonWithAttachments = parseReason(
+      pluginData.config.get(),
+      formatReasonWithAttachments(banReasonReply.content, [...msg.attachments.values()]),
+    );
 
     // Verify we can act on each of the users specified
     for (const userId of args.userIds) {
@@ -106,7 +116,7 @@ export const MassbanCmd = modActionsCmd({
                 config.ban_message,
                 new TemplateSafeValueContainer({
                   guildName: pluginData.guild.name,
-                  reason: banReason,
+                  reason: banReasonWithAttachments,
                   moderator: userToTemplateSafeUser(msg.author),
                 }),
               );

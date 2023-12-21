@@ -5,7 +5,10 @@ import { canActOn, hasPermission, sendErrorMessage, sendSuccessMessage } from ".
 import { errorMessage, renderUsername, resolveMember, resolveUser } from "../../../utils";
 import { waitForButtonConfirm } from "../../../utils/waitForInteraction";
 import { CasesPlugin } from "../../Cases/CasesPlugin";
-import { formatReasonWithAttachments } from "../functions/formatReasonWithAttachments";
+import {
+  formatReasonWithAttachments,
+  formatReasonWithMessageLinkForAttachments,
+} from "../functions/formatReasonForAttachments";
 import { isBanned } from "../functions/isBanned";
 import { parseReason } from "../functions/parseReason";
 import { readContactMethodsFromArgs } from "../functions/readContactMethodsFromArgs";
@@ -62,7 +65,11 @@ export const WarnCmd = modActionsCmd({
     }
 
     const config = pluginData.config.get();
-    const reason = parseReason(config, formatReasonWithAttachments(args.reason, msg));
+    const reason = parseReason(config, formatReasonWithMessageLinkForAttachments(args.reason, msg));
+    const reasonWithAttachments = parseReason(
+      config,
+      formatReasonWithAttachments(args.reason, [...msg.attachments.values()]),
+    );
 
     const casesPlugin = pluginData.getPlugin(CasesPlugin);
     const priorWarnAmount = await casesPlugin.getCaseTypeAmountForUserId(user.id, CaseTypes.Warn);
@@ -86,7 +93,7 @@ export const WarnCmd = modActionsCmd({
       return;
     }
 
-    const warnResult = await warnMember(pluginData, reason, memberToWarn, user!, {
+    const warnResult = await warnMember(pluginData, reason, reasonWithAttachments, memberToWarn, user!, {
       contactMethods,
       caseArgs: {
         modId: mod.id,

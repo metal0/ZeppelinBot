@@ -1,19 +1,19 @@
 import { GuildMember, Snowflake, User } from "discord.js";
 import { GuildPluginData } from "knub";
-import { userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
 import { CaseTypes } from "../../../data/CaseTypes";
-import { renderTemplate, TemplateSafeValueContainer } from "../../../templateFormatter";
+import { TemplateSafeValueContainer, renderTemplate } from "../../../templateFormatter";
 import { UserNotificationResult, createUserNotificationError, notifyUser, resolveUser, ucfirst } from "../../../utils";
+import { userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
 import { waitForButtonConfirm } from "../../../utils/waitForInteraction";
 import { CasesPlugin } from "../../Cases/CasesPlugin";
+import { LogsPlugin } from "../../Logs/LogsPlugin";
 import { ModActionsPluginType, WarnOptions, WarnResult } from "../types";
 import { getDefaultContactMethods } from "./getDefaultContactMethods";
-import { LogsPlugin } from "../../Logs/LogsPlugin";
-import { parseReason } from "./parseReason";
 
 export async function warnMember(
   pluginData: GuildPluginData<ModActionsPluginType>,
   reason: string,
+  reasonWithAttachments: string,
   member: GuildMember | null,
   user?: User | null,
   warnOptions: WarnOptions = {},
@@ -28,7 +28,6 @@ export async function warnMember(
   user = member?.user ?? user;
 
   const config = pluginData.config.get();
-  reason = parseReason(config, reason);
   let notifyResult: UserNotificationResult;
 
   if (config.warn_message) {
@@ -36,7 +35,7 @@ export async function warnMember(
       config.warn_message,
       new TemplateSafeValueContainer({
         guildName: pluginData.guild.name,
-        reason,
+        reason: reasonWithAttachments,
         moderator: warnOptions.caseArgs?.modId
           ? userToTemplateSafeUser(await resolveUser(pluginData.client, warnOptions.caseArgs.modId))
           : null,
