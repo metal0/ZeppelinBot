@@ -1,0 +1,6 @@
+diff a/backend/src/plugins/ModActions/commands/WarnCmd.ts b/backend/src/plugins/ModActions/commands/WarnCmd.ts	(rejected hunks)
+@@ -109 +109,3 @@ export const WarnCmd = modActionsCmd({
+-      `Warned **${memberToWarn ? renderUsername(memberToWarn.user) : memberToWarn}** (Case #${warnResult.case.case_number})${messageResultText}`,
++      `Warned **${memberToWarn ? renderUsername(memberToWarn.user) : memberToWarn}** (Case #${
++        warnResult.case.case_number
++      })${messageResultText}`,

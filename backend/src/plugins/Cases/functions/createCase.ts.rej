@@ -1,0 +1,4 @@
+diff a/backend/src/plugins/Cases/functions/createCase.ts b/backend/src/plugins/Cases/functions/createCase.ts	(rejected hunks)
+@@ -8,2 +9,0 @@ import { postCaseToCaseLogChannel } from "./postToCaseLogChannel";
+-import { getDashboardUrl } from "../../../pluginUtils";
+-import { CaseTypes } from "../../../data/CaseTypes";

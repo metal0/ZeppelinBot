@@ -124,6 +124,7 @@ export async function log<TLogType extends keyof ILogTypeData>(
                 console.warn(
                   `Error while sending ${typeStr} log to ${pluginData.guild.id}/${channelId}: ${err.message}`,
                 );
+                console.debug(err);
               });
           },
         }),

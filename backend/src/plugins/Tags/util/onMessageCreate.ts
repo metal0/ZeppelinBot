@@ -101,10 +101,20 @@ export async function onMessageCreate(pluginData: GuildPluginData<TagsPluginType
   }
 
   const allowMentions = tagResult.category?.allow_mentions ?? config.allow_mentions;
-  const responseMsg = await channel.send({
-    ...tagResult.renderedContent,
-    allowedMentions: erisAllowedMentionsToDjsMentionOptions({ roles: allowMentions, users: allowMentions }),
-  });
+  const responseMsg = await channel
+    .send({
+      ...tagResult.renderedContent,
+      allowedMentions: erisAllowedMentionsToDjsMentionOptions({ roles: allowMentions, users: allowMentions }),
+    })
+    .catch((error) => {
+      console.error(error.toString());
+      console.debug(tagResult.renderedContent);
+      console.debug(error);
+    });
+
+  if (!responseMsg) {
+    return;
+  }
 
   // Save the command-response message pair once the message is in our database
   const deleteWithCommand = tagResult.category?.delete_with_command ?? config.delete_with_command;
