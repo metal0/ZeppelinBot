@@ -1,3 +1,0 @@
-diff a/backend/src/plugins/ModActions/commands/AddCaseCmd.ts b/backend/src/plugins/ModActions/commands/AddCaseCmd.ts	(rejected hunks)
-@@ -4 +3,0 @@ import { Case } from "../../../data/entities/Case";
--import { CasesPlugin } from '../../Cases/CasesPlugin';

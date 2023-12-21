@@ -62,7 +62,7 @@ export const WarnCmd = modActionsCmd({
     }
 
     const config = pluginData.config.get();
-    const reason = parseReason(config, formatReasonWithAttachments(args.reason, [...msg.attachments.values()]));
+    const reason = parseReason(config, formatReasonWithAttachments(args.reason, msg));
 
     const casesPlugin = pluginData.getPlugin(CasesPlugin);
     const priorWarnAmount = await casesPlugin.getCaseTypeAmountForUserId(user.id, CaseTypes.Warn);

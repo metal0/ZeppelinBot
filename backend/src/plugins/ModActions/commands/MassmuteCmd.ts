@@ -3,12 +3,12 @@ import { waitForReply } from "knub/helpers";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { LogType } from "../../../data/LogType";
 import { logger } from "../../../logger";
-import { MutesPlugin } from '../../Mutes/MutesPlugin';
 import { canActOn, sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
-import { formatReasonWithAttachments } from "../functions/formatReasonWithAttachments";
-import { modActionsCmd } from "../types";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
+import { MutesPlugin } from "../../Mutes/MutesPlugin";
+import { formatReasonWithAttachments } from "../functions/formatReasonWithAttachments";
 import { parseReason } from "../functions/parseReason";
+import { modActionsCmd } from "../types";
 
 export const MassmuteCmd = modActionsCmd({
   trigger: "massmute",
@@ -41,10 +41,7 @@ export const MassmuteCmd = modActionsCmd({
     }
 
     const config = pluginData.config.get();
-    const muteReason = parseReason(
-      config,
-      formatReasonWithAttachments(muteReasonReceived.content, [...msg.attachments.values()]),
-    );
+    const muteReason = parseReason(config, formatReasonWithAttachments(muteReasonReceived.content, msg));
 
     // Verify we can act upon all users
     for (const userId of args.userIds) {

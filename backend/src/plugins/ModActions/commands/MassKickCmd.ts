@@ -42,10 +42,7 @@ export const MasskickCmd = modActionsCmd({
       return;
     }
 
-    const kickReason = parseReason(
-      pluginData.config.get(),
-      formatReasonWithAttachments(kickReasonReply.content, [...msg.attachments.values()]),
-    );
+    const kickReason = parseReason(pluginData.config.get(), formatReasonWithAttachments(kickReasonReply.content, msg));
 
     // Verify we can act on each of the users specified
     for (const userId of args.userIds) {

@@ -51,7 +51,7 @@ export const BanCmd = modActionsCmd({
     }
     const time = args["time"] ? args["time"] : null;
 
-    const reason = formatReasonWithAttachments(args.reason, [...msg.attachments.values()]);
+    const reason = formatReasonWithAttachments(args.reason, msg);
     const memberToBan = await resolveMember(pluginData.client, pluginData.guild, user.id);
     // The moderator who did the action is the message author or, if used, the specified -mod
     let mod = msg.member;

@@ -5,12 +5,12 @@ import { CaseTypes } from "../../../data/CaseTypes";
 import { LogType } from "../../../data/LogType";
 import { sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
 import { CasesPlugin } from "../../Cases/CasesPlugin";
+import { LogsPlugin } from "../../Logs/LogsPlugin";
 import { formatReasonWithAttachments } from "../functions/formatReasonWithAttachments";
 import { ignoreEvent } from "../functions/ignoreEvent";
 import { isBanned } from "../functions/isBanned";
-import { IgnoredEventType, modActionsCmd } from "../types";
-import { LogsPlugin } from "../../Logs/LogsPlugin";
 import { parseReason } from "../functions/parseReason";
+import { IgnoredEventType, modActionsCmd } from "../types";
 
 export const MassunbanCmd = modActionsCmd({
   trigger: "massunban",
@@ -38,10 +38,7 @@ export const MassunbanCmd = modActionsCmd({
       return;
     }
     const config = pluginData.config.get();
-    const unbanReason = parseReason(
-      config,
-      formatReasonWithAttachments(unbanReasonReply.content, [...msg.attachments.values()]),
-    );
+    const unbanReason = parseReason(config, formatReasonWithAttachments(unbanReasonReply.content, msg));
 
     // Ignore automatic unban cases and logs for these users
     // We'll create our own cases below and post a single "mass unbanned" log instead

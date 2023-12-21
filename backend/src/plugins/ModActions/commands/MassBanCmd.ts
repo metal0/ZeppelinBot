@@ -5,16 +5,16 @@ import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { CaseTypes } from "../../../data/CaseTypes";
 import { LogType } from "../../../data/LogType";
 import { humanizeDurationShort } from "../../../humanizeDurationShort";
-import { CasesPlugin } from "../../Cases/CasesPlugin";
 import { canActOn, sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
+import { TemplateSafeValueContainer, renderTemplate } from "../../../templateFormatter";
 import { DAYS, MINUTES, SECONDS, noop, notifyUser, resolveUser } from "../../../utils";
+import { userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
+import { CasesPlugin } from "../../Cases/CasesPlugin";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
 import { formatReasonWithAttachments } from "../functions/formatReasonWithAttachments";
 import { ignoreEvent } from "../functions/ignoreEvent";
-import { IgnoredEventType, modActionsCmd } from "../types";
-import { renderTemplate, TemplateSafeValueContainer } from "../../../templateFormatter";
-import { userToTemplateSafeUser } from "../../../utils/templateSafeObjects";
 import { parseReason } from "../functions/parseReason";
+import { IgnoredEventType, modActionsCmd } from "../types";
 
 export const MassbanCmd = modActionsCmd({
   trigger: "massban",
@@ -42,10 +42,7 @@ export const MassbanCmd = modActionsCmd({
       return;
     }
 
-    const banReason = parseReason(
-      pluginData.config.get(),
-      formatReasonWithAttachments(banReasonReply.content, [...msg.attachments.values()]),
-    );
+    const banReason = parseReason(pluginData.config.get(), formatReasonWithAttachments(banReasonReply.content, msg));
 
     // Verify we can act on each of the users specified
     for (const userId of args.userIds) {

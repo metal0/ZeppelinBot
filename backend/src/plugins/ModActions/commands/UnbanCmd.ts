@@ -2,15 +2,15 @@ import { Snowflake } from "discord.js";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { CaseTypes } from "../../../data/CaseTypes";
 import { LogType } from "../../../data/LogType";
-import { CasesPlugin } from '../../Cases/CasesPlugin';
+import { clearExpiringTempban } from "../../../data/loops/expiringTempbansLoop";
 import { hasPermission, sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
 import { resolveUser } from "../../../utils";
+import { CasesPlugin } from "../../Cases/CasesPlugin";
+import { LogsPlugin } from "../../Logs/LogsPlugin";
 import { formatReasonWithAttachments } from "../functions/formatReasonWithAttachments";
 import { ignoreEvent } from "../functions/ignoreEvent";
-import { IgnoredEventType, modActionsCmd } from "../types";
-import { LogsPlugin } from "../../Logs/LogsPlugin";
 import { parseReason } from "../functions/parseReason";
-import { clearExpiringTempban } from "../../../data/loops/expiringTempbansLoop";
+import { IgnoredEventType, modActionsCmd } from "../types";
 
 const opts = {
   mod: ct.member({ option: true }),
@@ -50,7 +50,7 @@ export const UnbanCmd = modActionsCmd({
 
     pluginData.state.serverLogs.ignoreLog(LogType.MEMBER_UNBAN, user.id);
     const config = pluginData.config.get();
-    const reason = parseReason(config, formatReasonWithAttachments(args.reason, [...msg.attachments.values()]));
+    const reason = parseReason(config, formatReasonWithAttachments(args.reason, msg));
 
     try {
       ignoreEvent(pluginData, IgnoredEventType.Unban, user.id);

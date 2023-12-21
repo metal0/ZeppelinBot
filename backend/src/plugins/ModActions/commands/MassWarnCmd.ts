@@ -5,11 +5,11 @@ import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { humanizeDurationShort } from "../../../humanizeDurationShort";
 import { canActOn, sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
 import { MINUTES, noop, resolveMember, resolveUser } from "../../../utils";
-import { formatReasonWithAttachments } from "../functions/formatReasonWithAttachments";
-import { modActionsCmd } from "../types";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
+import { formatReasonWithAttachments } from "../functions/formatReasonWithAttachments";
 import { parseReason } from "../functions/parseReason";
 import { warnMember } from "../functions/warnMember";
+import { modActionsCmd } from "../types";
 
 export const MassWarnCmd = modActionsCmd({
   trigger: "masswarn",
@@ -37,7 +37,7 @@ export const MassWarnCmd = modActionsCmd({
       return;
     }
 
-    const warnReason = formatReasonWithAttachments(warnReasonReply.content, [...msg.attachments.values()]);
+    const warnReason = formatReasonWithAttachments(warnReasonReply.content, msg);
 
     // Verify we can act on each of the users specified
     for (const userId of args.userIds) {
@@ -97,7 +97,7 @@ export const MassWarnCmd = modActionsCmd({
 
         try {
           const config = pluginData.config.get();
-          const reason = parseReason(config, formatReasonWithAttachments(warnReason, [...msg.attachments.values()]));
+          const reason = parseReason(config, formatReasonWithAttachments(warnReason, msg));
 
           const warnResult = await warnMember(pluginData, reason, memberToWarn, user, {
             contactMethods: [{ type: "dm" }],

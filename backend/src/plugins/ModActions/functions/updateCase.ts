@@ -24,7 +24,7 @@ export async function updateCase(pluginData, msg: Message, args) {
     return;
   }
 
-  const note = formatReasonWithAttachments(args.note, [...msg.attachments.values()]);
+  const note = formatReasonWithAttachments(args.note, msg);
 
   const casesPlugin = pluginData.getPlugin(CasesPlugin);
   await casesPlugin.createCaseNote({
