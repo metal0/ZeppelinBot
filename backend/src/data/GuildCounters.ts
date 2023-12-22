@@ -51,7 +51,7 @@ export class GuildCounters extends BaseGuildRepository {
         guild_id: this.guildId,
         name,
       },
-    }).catch(() => {});
+    })
 
     if (existing) {
       // If the existing counter's properties match the ones we're looking for, return it.
