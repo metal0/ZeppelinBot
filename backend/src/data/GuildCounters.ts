@@ -57,6 +57,7 @@ export class GuildCounters extends BaseGuildRepository {
       // If the existing counter's properties match the ones we're looking for, return it.
       // Otherwise, delete the existing counter and re-create it with the proper properties.
       if (existing.per_channel === perChannel && existing.per_user === perUser) {
+        console.log('returning existing', existing)
         await this.counters.update({ id: existing.id }, { delete_at: null });
 
         return existing;
@@ -74,7 +75,7 @@ export class GuildCounters extends BaseGuildRepository {
       last_decay_at: moment.utc().format(DBDateFormat),
     });
 
-    console.log('ex3');
+    console.log('ex3', insertResult.identifiers[0]);
     return (await this.counters.findOne({
       where: {
         id: insertResult.identifiers[0].id,
@@ -288,9 +289,13 @@ export class GuildCounters extends BaseGuildRepository {
         reverse_comparison_value: reverseComparisonValue,
       });
 
-      return (await entityManager.findOne(CounterTrigger, {where: {
-        counter_id: insertResult.identifiers[0].id
-      }}))!;
+      console.log('insertResult', insertResult.identifiers[0]);
+
+      return (await entityManager.findOne(CounterTrigger, {
+        where: {
+          counter_id: insertResult.identifiers[0].id
+        }
+      }))!;
     });
   }
 
