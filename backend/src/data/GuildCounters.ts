@@ -45,6 +45,7 @@ export class GuildCounters extends BaseGuildRepository {
   }
 
   async findOrCreateCounter(name: string, perChannel: boolean, perUser: boolean): Promise<Counter> {
+    console.log('ex1');
     const existing = await this.counters.findOne({
       where: {
         guild_id: this.guildId,
@@ -63,6 +64,7 @@ export class GuildCounters extends BaseGuildRepository {
 
       await this.counters.delete({ id: existing.id });
     }
+    console.log('ex2');
 
     const insertResult = await this.counters.insert({
       guild_id: this.guildId,
@@ -72,6 +74,7 @@ export class GuildCounters extends BaseGuildRepository {
       last_decay_at: moment.utc().format(DBDateFormat),
     });
 
+    console.log('ex3');
     return (await this.counters.findOne({
       where: {
         id: insertResult.identifiers[0].id,
