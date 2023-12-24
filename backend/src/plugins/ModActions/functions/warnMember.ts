@@ -84,6 +84,7 @@ export async function warnMember(
   });
 
   const mod = await pluginData.guild.members.fetch(modId as Snowflake);
+
   pluginData.getPlugin(LogsPlugin).logMemberWarn({
     mod,
     member,

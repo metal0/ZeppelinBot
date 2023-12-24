@@ -33,6 +33,8 @@ const defaultOptions = {
     guild_aliases: null,
     case_colors: null,
     case_icons: null,
+    log_each_massban_case: false,
+    log_each_massunban_case: false,
     embed_colour: 0x2b2d31,
     embed_color: 0x2b2d31,
   },

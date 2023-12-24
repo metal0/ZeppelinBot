@@ -45,12 +45,11 @@ export const MassbanCmd = modActionsCmd({
       return;
     }
 
-    const banReason = parseReason(
-      pluginData.config.get(),
-      formatReasonWithMessageLinkForAttachments(banReasonReply.content, msg),
-    );
+    const config = pluginData.config.get();
+    const casesConfig = pluginData.fullConfig.plugins.cases.config;
+    const banReason = parseReason(config, formatReasonWithMessageLinkForAttachments(banReasonReply.content, msg));
     const banReasonWithAttachments = parseReason(
-      pluginData.config.get(),
+      config,
       formatReasonWithAttachments(banReasonReply.content, [...msg.attachments.values()]),
     );
 
@@ -95,7 +94,6 @@ export const MassbanCmd = modActionsCmd({
       const failedBans: string[] = [];
       const casesPlugin = pluginData.getPlugin(CasesPlugin);
       const deleteDays = (await pluginData.config.getForMessage(msg)).ban_delete_message_days;
-      const config = pluginData.config.get();
 
       for (const [i, userId] of args.userIds.entries()) {
         if (pluginData.state.unloaded) {
@@ -106,7 +104,10 @@ export const MassbanCmd = modActionsCmd({
           // Ignore automatic ban cases and logs
           // We create our own cases below and post a single "mass banned" log instead
           ignoreEvent(pluginData, IgnoredEventType.Ban, userId, 30 * MINUTES);
-          pluginData.state.serverLogs.ignoreLog(LogType.MEMBER_BAN, userId, 30 * MINUTES);
+
+          if (!casesConfig.log_each_massban_case) {
+            pluginData.state.serverLogs.ignoreLog(LogType.MEMBER_BAN, userId, 30 * MINUTES);
+          }
 
           if (config.ban_message) {
             const user = (await resolveUser(pluginData.client, userId)) as User;
@@ -130,13 +131,25 @@ export const MassbanCmd = modActionsCmd({
             reason: banReason,
           });
 
-          await casesPlugin.createCase({
+          const createdCase = await casesPlugin.createCase({
             userId,
             modId: msg.author.id,
             type: CaseTypes.Ban,
             reason: `Mass ban: ${banReason}`,
-            postInCaseLogOverride: false,
+            postInCaseLogOverride: casesConfig.log_each_massban_case ?? false,
           });
+
+          if (casesConfig.log_each_massban_case) {
+            const mod = await resolveUser(pluginData.client, msg.author.id);
+            const user = await resolveUser(pluginData.client, userId);
+
+            pluginData.getPlugin(LogsPlugin).logMemberBan({
+              mod,
+              user,
+              caseNumber: createdCase.case_number,
+              reason: `Mass ban: ${banReason}`,
+            });
+          }
 
           pluginData.state.events.emit("ban", userId, banReason);
         } catch {

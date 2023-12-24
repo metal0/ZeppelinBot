@@ -4,6 +4,7 @@ import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { CaseTypes } from "../../../data/CaseTypes";
 import { LogType } from "../../../data/LogType";
 import { sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
+import { MINUTES, resolveUser } from "../../../utils";
 import { CasesPlugin } from "../../Cases/CasesPlugin";
 import { LogsPlugin } from "../../Logs/LogsPlugin";
 import { formatReasonWithMessageLinkForAttachments } from "../functions/formatReasonForAttachments";
@@ -33,19 +34,22 @@ export const MassunbanCmd = modActionsCmd({
     // Ask for unban reason (cleaner this way instead of trying to cram it into the args)
     msg.channel.send("Unban reason? `cancel` to cancel");
     const unbanReasonReply = await waitForReply(pluginData.client, msg.channel, msg.author.id);
+
     if (!unbanReasonReply || !unbanReasonReply.content || unbanReasonReply.content.toLowerCase().trim() === "cancel") {
       sendErrorMessage(pluginData, msg.channel, "Cancelled");
       return;
     }
+
     const config = pluginData.config.get();
+    const casesConfig = pluginData.fullConfig.plugins.cases.config;
     const unbanReason = parseReason(config, formatReasonWithMessageLinkForAttachments(unbanReasonReply.content, msg));
 
     // Ignore automatic unban cases and logs for these users
     // We'll create our own cases below and post a single "mass unbanned" log instead
     args.userIds.forEach((userId) => {
       // Use longer timeouts since this can take a while
-      ignoreEvent(pluginData, IgnoredEventType.Unban, userId, 120 * 1000);
-      pluginData.state.serverLogs.ignoreLog(LogType.MEMBER_UNBAN, userId, 120 * 1000);
+      ignoreEvent(pluginData, IgnoredEventType.Unban, userId, 2 * MINUTES);
+      pluginData.state.serverLogs.ignoreLog(LogType.MEMBER_UNBAN, userId, 2 * MINUTES);
     });
 
     // Show a loading indicator since this can take a while
@@ -63,13 +67,24 @@ export const MassunbanCmd = modActionsCmd({
       try {
         await pluginData.guild.bans.remove(userId as Snowflake, unbanReason ?? undefined);
 
-        await casesPlugin.createCase({
+        const createdCase = await casesPlugin.createCase({
           userId,
           modId: msg.author.id,
           type: CaseTypes.Unban,
           reason: `Mass unban: ${unbanReason}`,
-          postInCaseLogOverride: false,
+          postInCaseLogOverride: casesConfig.log_each_massunban_case ?? false,
         });
+
+        if (casesConfig.log_each_massunban_case) {
+          const mod = await resolveUser(pluginData.client, msg.author.id);
+
+          pluginData.getPlugin(LogsPlugin).logMemberUnban({
+            mod,
+            userId,
+            caseNumber: createdCase.case_number,
+            reason: `Mass unban: ${unbanReason}`,
+          });
+        }
       } catch {
         failedUnbans.push({ userId, reason: UnbanFailReasons.UNBAN_FAILED });
       }
