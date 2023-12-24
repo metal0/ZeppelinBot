@@ -27,6 +27,8 @@ const opts = {
   unmutes: ct.switchOption({ def: false, shortcut: "um" }),
   bans: ct.switchOption({ def: false, shortcut: "b" }),
   unbans: ct.switchOption({ def: false, shortcut: "ub" }),
+  mod: ct.userId({ option: true }),
+  search: ct.string({ option: true, shortcut: "s" }),
 };
 
 export const CasesUserCmd = modActionsCmd({
@@ -51,7 +53,8 @@ export const CasesUserCmd = modActionsCmd({
       return;
     }
 
-    let cases = await pluginData.state.cases.with("notes").getByUserId(user.id);
+    const guildCases = pluginData.state.cases.with("notes");
+    let cases = await (args.mod ? guildCases.getByUserIdAndModId(user.id, args.mod) : guildCases.getByUserId(user.id));
 
     const typesToShow: CaseTypes[] = [];
     if (args.notes) typesToShow.push(CaseTypes.Note);
@@ -68,6 +71,12 @@ export const CasesUserCmd = modActionsCmd({
       else cases = cases.filter((c) => typesToShow.includes(c.type));
     }
 
+    if (args.search) {
+      const sanitizedSearch = args.search.replace(/[^a-zA-Z0-9]+/gu, "").toLowerCase();
+
+      cases = cases.filter((c) => c.notes.some((note) => note.body.toLowerCase().includes(sanitizedSearch)));
+    }
+
     const normalCases = cases.filter((c) => !c.is_hidden);
     const hiddenCases = cases.filter((c) => c.is_hidden);
 
@@ -75,7 +84,7 @@ export const CasesUserCmd = modActionsCmd({
       user instanceof UnknownUser && cases.length ? cases[cases.length - 1].user_name : renderUsername(user);
 
     if (cases.length === 0) {
-      msg.channel.send(`No cases found for **${userName}**`);
+      msg.channel.send(`No cases found for **${userName}**${args.mod ? ` by this moderator` : ""}.`);
     } else {
       const casesToDisplay = args.hidden ? cases : normalCases;
       if (!casesToDisplay.length) {

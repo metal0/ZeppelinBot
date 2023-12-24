@@ -77,6 +77,16 @@ export class GuildCases extends BaseGuildRepository {
     });
   }
 
+  async getByUserIdAndModId(userId: string, modId: string): Promise<Case[]> {
+    return this.cases.find({
+      relations: this.getRelations(),
+      where: {
+        user_id: userId,
+        mod_id: modId,
+      },
+    });
+  }
+
   async getTotalCasesByModId(modId: string): Promise<number> {
     return this.cases.count({
       where: {
