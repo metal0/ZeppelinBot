@@ -70,6 +70,11 @@ export interface ISavedMessageData {
     username: string;
     discriminator: string;
   };
+  reference?: {
+    channelId?: string;
+    guildId?: string;
+    messageId?: string;
+  };
   content: string;
   embeds?: ISavedMessageEmbedData[];
   stickers?: ISavedMessageStickerData[];

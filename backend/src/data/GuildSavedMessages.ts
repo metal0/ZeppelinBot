@@ -34,6 +34,22 @@ export class GuildSavedMessages extends BaseGuildRepository<SavedMessage> {
       timestamp: msg.createdTimestamp,
     };
 
+    if (msg.reference) {
+      data.reference = {};
+
+      if (msg.reference.channelId) {
+        data.reference.channelId = msg.reference.channelId;
+      }
+
+      if (msg.reference.guildId) {
+        data.reference.guildId = msg.reference.guildId;
+      }
+
+      if (msg.reference.messageId) {
+        data.reference.messageId = msg.reference.messageId;
+      }
+    }
+
     if (msg.attachments.size) {
       data.attachments = Array.from(msg.attachments.values()).map((att) => ({
         id: att.id,

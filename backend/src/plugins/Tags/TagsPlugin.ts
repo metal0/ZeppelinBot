@@ -36,6 +36,7 @@ const defaultOptions: PluginOptions<TagsPluginType> = {
     allow_mentions: false,
     global_cooldown: null,
     auto_delete_command: false,
+    auto_delete_command_on_reply: false,
 
     categories: {},
 

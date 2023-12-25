@@ -19,6 +19,7 @@ export const TagCategory = t.type({
   allow_mentions: tNullable(t.boolean), // Per user, per category
   global_category_cooldown: tNullable(t.union([t.string, t.number])), // Any user, per category
   auto_delete_command: tNullable(t.boolean), // Any tag, per tag category
+  auto_delete_command_on_reply: tNullable(t.boolean), // Any tag, per tag category
 
   tags: t.record(t.string, Tag),
 
@@ -36,6 +37,7 @@ export const ConfigSchema = t.type({
   allow_mentions: t.boolean, // Per user
   global_cooldown: tNullable(t.union([t.string, t.number])), // Any tag use
   auto_delete_command: t.boolean, // Any tag
+  auto_delete_command_on_reply: t.boolean, // Any tag
 
   categories: t.record(t.string, TagCategory),
 

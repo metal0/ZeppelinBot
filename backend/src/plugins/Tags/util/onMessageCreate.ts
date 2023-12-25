@@ -101,9 +101,20 @@ export async function onMessageCreate(pluginData: GuildPluginData<TagsPluginType
   }
 
   const allowMentions = tagResult.category?.allow_mentions ?? config.allow_mentions;
+  const needsReply = !!msg.data.reference?.messageId;
+  const reply = needsReply
+    ? {
+        reply: {
+          failIfNotExists: false,
+          messageReference: msg.data.reference!.messageId!,
+        },
+      }
+    : {};
+
   const responseMsg = await channel
     .send({
       ...tagResult.renderedContent,
+      ...reply,
       allowedMentions: erisAllowedMentionsToDjsMentionOptions({ roles: allowMentions, users: allowMentions }),
     })
     .catch((error) => {
@@ -122,7 +133,10 @@ export async function onMessageCreate(pluginData: GuildPluginData<TagsPluginType
     await pluginData.state.tags.addResponse(msg.id, responseMsg.id);
   }
 
-  const deleteInvoke = tagResult.category?.auto_delete_command ?? config.auto_delete_command;
+  const deleteInvoke = needsReply
+    ? tagResult.category?.auto_delete_command_on_reply ?? config.auto_delete_command_on_reply
+    : tagResult.category?.auto_delete_command ?? config.auto_delete_command;
+
   if (!deleteWithCommand && deleteInvoke) {
     // Try deleting the invoking message, ignore errors silently
     (pluginData.guild.channels.resolve(msg.channel_id as Snowflake) as TextChannel).messages.delete(
