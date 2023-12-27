@@ -27,6 +27,7 @@ import { LevelCmd } from "./commands/LevelCmd";
 import { MessageInfoCmd } from "./commands/MessageInfoCmd";
 import { NicknameCmd } from "./commands/NicknameCmd";
 import { NicknameResetCmd } from "./commands/NicknameResetCmd";
+import { NukeCmd } from "./commands/NukeCmd";
 import { PingCmd } from "./commands/PingCmd";
 import { ReloadGuildCmd } from "./commands/ReloadGuildCmd";
 import { RoleInfoCmd } from "./commands/RoleInfoCmd";
@@ -51,6 +52,7 @@ const defaultOptions: PluginOptions<UtilityPluginType> = {
     can_level: false,
     can_search: false,
     can_clean: false,
+    can_nuke: false,
     can_archive: false,
     can_info: false,
     can_server: false,
@@ -87,6 +89,7 @@ const defaultOptions: PluginOptions<UtilityPluginType> = {
         can_level: true,
         can_search: true,
         can_clean: true,
+        can_nuke: true,
         can_archive: true,
         can_info: true,
         can_server: true,
@@ -152,6 +155,7 @@ export const UtilityPlugin = zeppelinGuildPlugin<UtilityPluginType>()({
     JumboCmd,
     AvatarCmd,
     CleanCmd,
+    NukeCmd,
     ArchiveCmd,
     InviteInfoCmd,
     ChannelInfoCmd,
