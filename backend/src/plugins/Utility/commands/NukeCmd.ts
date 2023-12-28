@@ -55,7 +55,7 @@ export const NukeCmd = utilityCmd({
 
     const nukeTime = args.time || DEFAULT_NUKE_TIME;
     const nukingMessage = msg.channel.send("Nuking...");
-    const responseText: string[] = [];
+    const responseText: string[] = ["Nuking complete.", ""];
     const messagesToNuke = await pluginData.state.savedMessages.getRecentFromUserByChannel(args.user, nukeTime);
 
     if (messagesToNuke.length < 1) {

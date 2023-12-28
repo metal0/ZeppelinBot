@@ -29,7 +29,10 @@ export async function cleanMessages(
   const chunks = chunkArray(idsToDelete, 100);
   await Promise.all(
     chunks.map((chunk) =>
-      Promise.all([channel.bulkDelete(chunk), pluginData.state.savedMessages.markBulkAsDeleted(chunk)]),
+      Promise.all([
+        channel.bulkDelete(chunk, true).catch((error) => console.error(error)),
+        pluginData.state.savedMessages.markBulkAsDeleted(chunk),
+      ]),
     ),
   );
 

@@ -223,10 +223,10 @@ export class GuildSavedMessages extends BaseGuildRepository<SavedMessage> {
       .addSelect(
         `JSON_ARRAYAGG(
           JSON_OBJECT(
-            'id', id,
-            'guild_id', guild_id,
-            'channel_id', channel_id,
-            'user_id', user_id,
+            'id', CONCAT('', id),
+            'guild_id', CONCAT('', guild_id),
+            'channel_id', CONCAT('', channel_id),
+            'user_id', CONCAT('', user_id),
             'is_bot', is_bot,
             'data', \`data\`,
             'posted_at', posted_at,
@@ -238,6 +238,7 @@ export class GuildSavedMessages extends BaseGuildRepository<SavedMessage> {
       )
       .where("guild_id = :guild_id", { guild_id: this.guildId })
       .andWhere("user_id = :user_id", { user_id: userId })
+      .andWhere("deleted_at IS NULL")
       .andWhere("posted_at > DATE_SUB(NOW(), INTERVAL :duration SECOND)", { duration: Math.floor(duration / 1000) })
       .groupBy("channel_id")
       .getRawMany()) as { channel_id: string; channel_data: string }[];
