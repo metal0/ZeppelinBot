@@ -2,8 +2,8 @@ import { Message, TextChannel } from "discord.js";
 import { GuildPluginData } from "knub";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
 import { humanizeDurationShort } from "../../../humanizeDurationShort";
-import { sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
-import { DAYS, HOURS, SECONDS, noop } from "../../../utils";
+import { canActOn, sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
+import { DAYS, HOURS, SECONDS, noop, resolveMember } from "../../../utils";
 import { cleanMessages } from "../functions/cleanMessages";
 import { UtilityPluginType, utilityCmd } from "../types";
 
@@ -50,6 +50,18 @@ export const NukeCmd = utilityCmd({
   async run({ message: msg, args, pluginData }) {
     if (args.time && args.time > MAX_NUKE_TIME) {
       sendErrorMessage(pluginData, msg.channel, `Maximum nuke time is ${humanizeDurationShort(MAX_NUKE_TIME)}`);
+      return;
+    }
+
+    if (args.user === pluginData.client.user?.id) {
+      sendErrorMessage(pluginData, msg.channel, `I don't want to nuke my own messages!`);
+      return;
+    }
+
+    const memberToNuke = await resolveMember(pluginData.client, pluginData.guild, args.user);
+
+    if (memberToNuke && !canActOn(pluginData, msg.member, memberToNuke)) {
+      sendErrorMessage(pluginData, msg.channel, `You cannot nuke this member's messages.`);
       return;
     }
 
