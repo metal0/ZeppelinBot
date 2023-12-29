@@ -10,6 +10,7 @@ import { ContextMenuPlugin } from "./ContextMenus/ContextMenuPlugin";
 import { CountersPlugin } from "./Counters/CountersPlugin";
 import { CustomEventsPlugin } from "./CustomEvents/CustomEventsPlugin";
 import { GuildAccessMonitorPlugin } from "./GuildAccessMonitor/GuildAccessMonitorPlugin";
+import { GuildBanSyncPlugin } from "./GuildBanSync/GuildBanSyncPlugin.js";
 import { GuildConfigReloaderPlugin } from "./GuildConfigReloader/GuildConfigReloaderPlugin";
 import { GuildInfoSaverPlugin } from "./GuildInfoSaver/GuildInfoSaverPlugin";
 import { GuildMemberCachePlugin } from "./GuildMemberCache/GuildMemberCachePlugin";
@@ -79,6 +80,7 @@ export const guildPlugins: Array<ZeppelinGuildPluginBlueprint<any>> = [
   InternalPosterPlugin,
   RoleManagerPlugin,
   RoleButtonsPlugin,
+  GuildBanSyncPlugin
 ];
 
 // prettier-ignore
@@ -97,5 +99,6 @@ export const baseGuildPlugins: Array<ZeppelinGuildPluginBlueprint<any>> = [
   CasesPlugin,
   MutesPlugin,
   TimeAndDatePlugin,
+  GuildBanSyncPlugin
   // TODO: Replace these with proper dependencies
 ];

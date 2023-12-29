@@ -9,6 +9,7 @@ export enum ERRORS {
   INVALID_USER,
   INVALID_MUTE_ROLE_ID,
   MUTE_ROLE_ABOVE_ZEP,
+  MISSING_BAN_PERMS,
 }
 
 export const RECOVERABLE_PLUGIN_ERROR_MESSAGES = {
@@ -20,6 +21,7 @@ export const RECOVERABLE_PLUGIN_ERROR_MESSAGES = {
   [ERRORS.INVALID_USER]: "Invalid user",
   [ERRORS.INVALID_MUTE_ROLE_ID]: "Specified mute role is not valid",
   [ERRORS.MUTE_ROLE_ABOVE_ZEP]: "Specified mute role is above Zeppelin in the role hierarchy",
+  [ERRORS.MISSING_BAN_PERMS]: 'Bot is missing "ban members" permissions',
 };
 
 export class RecoverablePluginError extends Error {

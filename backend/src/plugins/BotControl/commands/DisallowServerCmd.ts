@@ -1,5 +1,7 @@
 import { Snowflake } from "discord.js";
 import { commandTypeHelpers as ct } from "../../../commandTypes";
+import { GuildBans } from "../../../data/GuildBans.js";
+import { GuildCases } from "../../../data/GuildCases.js";
 import { isStaffPreFilter, sendErrorMessage, sendSuccessMessage } from "../../../pluginUtils";
 import { noop } from "../../../utils";
 import { botControlCmd } from "../types";
@@ -28,5 +30,8 @@ export const DisallowServerCmd = botControlCmd({
       ?.leave()
       .catch(noop);
     sendSuccessMessage(pluginData, msg.channel, "Server removed!");
+    // TODO: move to a cleanup script, probably (?)
+    await GuildBans.getGuildInstance(args.guildId).deleteAllBans();
+    await GuildCases.getGuildInstance(args.guildId).deleteAllCases();
   },
 });
